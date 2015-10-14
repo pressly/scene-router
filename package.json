@@ -1,0 +1,8 @@
+{
+  "name": "react-native-scene",
+  "version": "0.0.1",
+
+  "dependencies": {
+    "trie-route": "0.0.1"
+  }
+}
