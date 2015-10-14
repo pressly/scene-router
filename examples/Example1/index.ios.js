@@ -14,13 +14,7 @@ const {
   Dimensions
 } = React;
 
-
-
 const window = Dimensions.get('window');
-
-console.log(window);
-
-//transform: [{ translateX: -100 }]
 
 class Example1 extends Component {
   constructor(props) {
@@ -30,7 +24,8 @@ class Example1 extends Component {
   render() {
     return (
       <View style={styles.container}>
-
+        <View style={styles.view1}/>
+        <View style={styles.view2}/>
       </View>
     );
   }
@@ -39,12 +34,31 @@ class Example1 extends Component {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
+    //top: 0,
+    //left: 0,
+    //width: window.width * 2,
+    //height: window.height,
+    backgroundColor: 'transparent',
+    transform: [{ translateY: 0 }, { translateX: -300 }]
+  },
+  view1: {
+    position: 'absolute',
+    width: window.width,
+    height: window.height,
+
     top: 0,
     left: 0,
-    width: window.width * 2,
+    backgroundColor: 'blue'
+  },
+
+  view2: {
+    position: 'absolute',
+    width: window.width,
     height: window.height,
-    backgroundColor: 'red',
-    transform: [{ translateY: 0 }, { translateX: -400 }]
+
+    top: 0,
+    left: window.width,
+    backgroundColor: 'yellow'
   }
 });
 
