@@ -16,6 +16,65 @@ const {
 
 const window = Dimensions.get('window');
 
+//TODO: we need to add an unique id to each scene
+//it is better to use scene's name. it has to be done during add the scene
+
+class Scene extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+
+  }
+}
+
+Scene.propTypes = {
+  x: React.PropTypes.number.isRequired,
+  y: React.PropTypes.number.isRequired
+}
+
+class Camera extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      scenes: []
+    };
+  }
+
+  addScene(name, element) {
+    this.state.scenes.push({
+      name,
+      element
+    });
+
+    this.setState(this.state);
+  }
+
+  findScene(name) {
+    let foundScene = null;
+
+    this.state.scenes.some((scene) => {
+      if (scene.name === name) {
+        foundScene = scene;
+        return true;
+      }
+      return false;
+    });
+
+    return foundScene;
+  }
+
+  render() {
+    return (
+      <View style={styles.cameraContainer}>
+        {this.state.scenes.map((scene) => scene.element)}
+      </View>
+    );
+  }
+}
+
+
 class Example1 extends Component {
   constructor(props) {
     super(props);
@@ -32,6 +91,10 @@ class Example1 extends Component {
 }
 
 const styles = StyleSheet.create({
+  cameraContainer: {
+    position: 'absolute',
+    backgroundColor: 'transparent'
+  },
   container: {
     position: 'absolute',
     //top: 0,
