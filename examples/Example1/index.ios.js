@@ -14,115 +14,53 @@ const {
   Dimensions
 } = React;
 
-const window = Dimensions.get('window');
+const { Scene, Scenes } = require('./libs');
 
-//TODO: we need to add an unique id to each scene
-//it is better to use scene's name. it has to be done during add the scene
-
-class Scene extends Component {
+class FirstScene extends Component {
   constructor(props) {
     super(props);
-  }
-
-  render() {
-
-  }
-}
-
-Scene.propTypes = {
-  x: React.PropTypes.number.isRequired,
-  y: React.PropTypes.number.isRequired
-}
-
-class Camera extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      scenes: []
-    };
-  }
-
-  addScene(name, element) {
-    this.state.scenes.push({
-      name,
-      element
-    });
-
-    this.setState(this.state);
-  }
-
-  findScene(name) {
-    let foundScene = null;
-
-    this.state.scenes.some((scene) => {
-      if (scene.name === name) {
-        foundScene = scene;
-        return true;
-      }
-      return false;
-    });
-
-    return foundScene;
   }
 
   render() {
     return (
-      <View style={styles.cameraContainer}>
-        {this.state.scenes.map((scene) => scene.element)}
-      </View>
+      <View ref="root" style={{ backgroundColor: 'red', flex: 1 }}></View>
     );
   }
 }
 
+class SecondScene extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <View ref="root" style={{ backgroundColor: 'yellow', flex: 1 }}></View>
+    );
+  }
+}
 
 class Example1 extends Component {
   constructor(props) {
     super(props);
   }
 
+  componentDidMount() {
+    const { scenes } = this.refs;
+    setTimeout(() => {
+      scenes.push('left', true, Scene()(SecondScene));
+    }, 1000);
+
+    setTimeout(() => {
+      scenes.pop();
+    }, 3000);
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.view1}/>
-        <View style={styles.view2}/>
-      </View>
+      <Scenes ref="scenes" initalScene={{ component: Scene()(FirstScene) }}/>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  cameraContainer: {
-    position: 'absolute',
-    backgroundColor: 'transparent'
-  },
-  container: {
-    position: 'absolute',
-    //top: 0,
-    //left: 0,
-    //width: window.width * 2,
-    //height: window.height,
-    backgroundColor: 'transparent',
-    transform: [{ translateY: 0 }, { translateX: -300 }]
-  },
-  view1: {
-    position: 'absolute',
-    width: window.width,
-    height: window.height,
-
-    top: 0,
-    left: 0,
-    backgroundColor: 'blue'
-  },
-
-  view2: {
-    position: 'absolute',
-    width: window.width,
-    height: window.height,
-
-    top: 0,
-    left: window.width,
-    backgroundColor: 'yellow'
-  }
-});
 
 AppRegistry.registerComponent('Example1', () => Example1);
