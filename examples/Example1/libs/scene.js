@@ -67,15 +67,15 @@ const Scene = (LoadingComponent) => {
 
       didBlur() {
         const { scene } = this.refs;
-        if (scene.sceneWillFocus) {
-          scene.sceneWillFocus();
+        if (scene.sceneDidBlur) {
+          scene.sceneDidBlur();
         }
       }
 
       willFocus() {
         const { scene } = this.refs;
-        if (scene.sceneDidBlur) {
-          scene.sceneDidBlur();
+        if (scene.sceneWillFocus) {
+          scene.sceneWillFocus();
         }
       }
 

@@ -21,6 +21,30 @@ class FirstScene extends Component {
     super(props);
   }
 
+  sceneWillFocus() {
+    console.log('FirstScene sceneWillFocus');
+  }
+
+  sceneDidFocus() {
+    console.log('FirstScene sceneDidFocus');
+  }
+
+  sceneWillBlur() {
+    console.log('FirstScene sceneWillBlur');
+  }
+
+  sceneDidBlur() {
+    console.log('FirstScene sceneDidBlur');
+  }
+
+  componentDidMount() {
+    console.log('FirstScene componentDidMount');
+  }
+
+  componentWillUnmount() {
+    console.log('FirstScene componentWillUnmount');
+  }
+
   render() {
     return (
       <View ref="root" style={{ backgroundColor: 'red', flex: 1 }}></View>
@@ -31,6 +55,30 @@ class FirstScene extends Component {
 class SecondScene extends Component {
   constructor(props) {
     super(props);
+  }
+
+  sceneWillFocus() {
+    console.log('SecondScene sceneWillFocus');
+  }
+
+  sceneDidFocus() {
+    console.log('SecondScene sceneDidFocus');
+  }
+
+  sceneWillBlur() {
+    console.log('SecondScene sceneWillBlur');
+  }
+
+  sceneDidBlur() {
+    console.log('SecondScene sceneDidBlur');
+  }
+
+  componentDidMount() {
+    console.log('SecondScene componentDidMount');
+  }
+
+  componentWillUnmount() {
+    console.log('SecondScene componentWillUnmount');
   }
 
   render() {
@@ -48,7 +96,7 @@ class Example1 extends Component {
   componentDidMount() {
     const { scenes } = this.refs;
     setTimeout(() => {
-      scenes.push('left', true, Scene()(SecondScene));
+      scenes.push('bottom', true, Scene()(SecondScene));
     }, 1000);
 
     setTimeout(() => {

@@ -89,7 +89,6 @@ class Scenes extends Component {
   }
 
   _moveCameraWithoutAnimationTo(x, y) {
-    console.log(x, y);
     //we need this for now because, Animated.View can find the setNativeProps
     //still don't know why. it might be related to component has not be mounted yet
     setTimeout(() => {
@@ -98,7 +97,6 @@ class Scenes extends Component {
   }
 
   _moveCameraWithAnimationTo(x, y, done) {
-    console.log(x, y);
     Animated.timing(this.cameraPosition, {
       duration: 300,
       toValue: { x: -x, y: -y }
@@ -153,8 +151,6 @@ class Scenes extends Component {
 
   _sceneWillUnmount(id) {
     const index = this._findSceneIndexById(id);
-    this.state.scenes.splice(index, 1);
-    this.setState(this.state);
   }
 
   //when this method calls, it means that camera has already moved to
@@ -165,7 +161,8 @@ class Scenes extends Component {
     this.prevScene.ref.didFocus();
     //currentScene will become prevScene
     this.currentScene = this.prevScene;
-    this.state.scenes.pop();
+    this.state.scenes.splice(this.state.scenes.length -1 , 1);
+
     if (this.state.scenes.length < 2) {
       this.prevScene = null;
     } else {
@@ -258,7 +255,6 @@ class Scenes extends Component {
       return scene.rendered;
     });
 
-    //, {transform: this.cameraPosition.getTranslateTransform()}
     return (
       <Animated.View style={[styles.camera, {transform: this.cameraPosition.getTranslateTransform()}]}>
         {scenes}
