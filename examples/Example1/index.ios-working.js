@@ -14,7 +14,7 @@ const {
   Dimensions
 } = React;
 
-const Scene = require('./libs');
+const { scenify, Scenes } = require('./libs');
 
 class FirstSceneLoading extends Component {
   constructor(props) {
@@ -105,12 +105,20 @@ class Example1 extends Component {
     super(props);
   }
 
+  componentDidMount() {
+    const { scenes } = this.refs;
+    setTimeout(() => {
+      scenes.push('left', true, scenify(FirstSceneLoading)(SecondScene));
+    }, 1000);
+
+    setTimeout(() => {
+      scenes.pop();
+    }, 3000);
+  }
+
   render() {
     return (
-      <Scene initialScenePath="/first/12">
-        <Scene path="first/:id" component={FirstScene}/>
-        <Scene path="second" component={SecondScene}/>
-      </Scene>
+      <Scenes ref="scenes" initalScene={{ component: scenify()(FirstScene) }}/>
     );
   }
 }

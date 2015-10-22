@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
     rendered
  */
 
-class Scenes extends Component {
+class SceneManager extends Component {
   constructor(props) {
     super(props);
 
-    const { initalScene } = props;
+    const { initialScene } = props;
 
     this.cameraPosition = new Animated.ValueXY();
 
@@ -52,10 +52,10 @@ class Scenes extends Component {
     this.currentScene = {
       id: genId(),
       position: { x: this.current.x, y: this.current.y },
-      component: initalScene.component,
-      props: initalScene.props || {},
-      params: initalScene.params || {},
-      queryString: initalScene.queryString || {},
+      component: initialScene.component,
+      props: initialScene.props || {},
+      params: initialScene.params || {},
+      queryString: initialScene.queryString || {},
       withAnimation: false,
       rendered: null
     };
@@ -263,8 +263,8 @@ class Scenes extends Component {
   }
 }
 
-Scenes.propTypes = {
-  initalScene: React.PropTypes.shape({
+SceneManager.propTypes = {
+  initialScene: React.PropTypes.shape({
     component: React.PropTypes.func.isRequired,
     props: React.PropTypes.object,
     params: React.PropTypes.object,
@@ -272,4 +272,4 @@ Scenes.propTypes = {
   }).isRequired
 };
 
-module.exports = Scenes;
+module.exports = SceneManager;

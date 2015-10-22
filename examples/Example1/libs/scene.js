@@ -1,106 +1,76 @@
 const React = require('react-native');
+const route = require('trie-route');
+const sceneWrapper = require('./sceneWrapper');
+const SceneManager = require('./sceneManager');
 
 const {
-  Dimensions,
-  StyleSheet,
-  Component,
-  View
+  Component
 } = React;
 
-const window = Dimensions.get('window');
+function parseScenes(children, arr, parentPath) {
+  React.Children.forEach(children, (child) => {
+    const { children, path, component, loadingComponent } = child.props;
+    const childPath = parentPath + '/' + path;
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    width: window.width,
-    height: window.height
-  }
-});
+    arr.push({
+      path: childPath,
+      component: sceneWrapper(loadingComponent)(component)
+    });
 
-function purifyProps(props) {
-  let newProps = { ...props };
-
-  delete newProps.id;
-  delete newProps.sceneDidMount;
-  delete newProps.sceneWillUnmount;
-
-  return newProps;
+    parseScenes(children, arr, childPath);
+  });
 }
 
-const Scene = (LoadingComponent) => {
-  return (SceneComponent) =>
-    class WrapComponent extends Component {
-      constructor(props, context) {
-        super(props, context);
+class Scene extends Component {
+  constructor(baseProps) {
+    super(baseProps);
+    this.router = route.create();
 
-        this.state = {
-          isReady: !(!!LoadingComponent)
-        };
-      }
+    const { initialScenePath, children, props } = baseProps;
 
-      componentDidMount() {
-        const { sceneDidMount } = this.props;
-        sceneDidMount(this, this.sceneReadyToRender.bind(this));
-      }
-
-      componentWillUnmount() {
-        const { sceneWillUnmount } = this.props;
-        sceneWillUnmount(this);
-      }
-
-      isSceneNeedLoading() {
-        return !!LoadingComponent;
-      }
-
-      sceneReadyToRender() {
-        if (this.isSceneNeedLoading() && !this.state.isReady) {
-          this.setState({ isReady: true });
-        }
-      }
-
-      willBlur() {
-        const { scene } = this.refs;
-        if (scene && scene.sceneWillBlur) {
-          scene.sceneWillBlur();
-        }
-      }
-
-      didBlur() {
-        const { scene } = this.refs;
-        if (scene && scene.sceneDidBlur) {
-          scene.sceneDidBlur();
-        }
-      }
-
-      willFocus() {
-        const { scene } = this.refs;
-        if (scene && scene.sceneWillFocus) {
-          scene.sceneWillFocus();
-        }
-      }
-
-      didFocus() {
-        const { scene } = this.refs;
-        if (scene && scene.sceneDidFocus) {
-          scene.sceneDidFocus();
-        }
-      }
-
-      render() {
-        const { position } = this.props;
-        const props = purifyProps(this.props);
-
-        const renderedComponent = !this.state.isReady ?
-                                    <LoadingComponent {...props}/> :
-                                    <SceneComponent ref="scene" {...props}/>;
-
-        return (
-          <View ref="root" style={[styles.container, { top: position.y, left: position.x }]}>
-            {renderedComponent}
-          </View>
-        );
-      }
+    if (!initialScenePath) {
+      throw new Error('Root Scene must have initialScenePath prop');
     }
+
+    let scenes = [];
+    parseScenes(children, scenes, '');
+
+    this.initialScene = null;
+    scenes.forEach((scene) => {
+      this.router.path(scene.path, (params) => {
+        if (!this.initialScene) {
+          this.initialScene = {
+            component: scene.component,
+            params: params,
+            props: props
+          };
+        } else {
+
+        }
+      });
+    });
+
+    this.router.process(initialScenePath);
+  }
+
+  render() {
+    if (!this.initialScene) {
+      throw new Error('initialScenePath not found');
+    }
+
+    return (
+      <SceneManager
+        ref="sceneManager"
+        initialScene={this.initialScene}/>
+    );
+  }
+}
+
+Scene.propTypes = {
+  initialScenePath: React.PropTypes.string,
+  path: React.PropTypes.string,
+  component: React.PropTypes.func,
+  loadingComponent: React.PropTypes.func
 };
 
 module.exports = Scene;
