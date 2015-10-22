@@ -96,7 +96,7 @@ class Example1 extends Component {
   componentDidMount() {
     const { scenes } = this.refs;
     setTimeout(() => {
-      scenes.push('bottom', true, Scene()(SecondScene));
+      scenes.push('left', true, Scene()(SecondScene));
     }, 1000);
 
     setTimeout(() => {

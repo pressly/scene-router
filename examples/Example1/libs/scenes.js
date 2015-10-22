@@ -89,10 +89,10 @@ class Scenes extends Component {
   }
 
   _moveCameraWithoutAnimationTo(x, y) {
-    //we need this for now because, Animated.View can find the setNativeProps
-    //still don't know why. it might be related to component has not be mounted yet
+    //we need this for now because, Animated.View can't find the setNativeProps
+    //still don't know why. one possible problem might be related to component has not be mounted yet
     setTimeout(() => {
-      this.cameraPosition.setValue({x: x, y: y});
+      this.cameraPosition.setValue({x: -x, y: -y});
     }, 0);
   }
 
