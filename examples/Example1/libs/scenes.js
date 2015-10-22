@@ -98,7 +98,7 @@ class Scenes extends Component {
 
   _moveCameraWithAnimationTo(x, y, done) {
     Animated.timing(this.cameraPosition, {
-      duration: 300,
+      duration: 400,
       toValue: { x: -x, y: -y }
     }).start((value) => {
       done();

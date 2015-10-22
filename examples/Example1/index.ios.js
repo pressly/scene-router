@@ -16,6 +16,18 @@ const {
 
 const { Scene, Scenes } = require('./libs');
 
+class FirstSceneLoading extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <Text>First Scene Loading</Text>
+    );
+  }
+}
+
 class FirstScene extends Component {
   constructor(props) {
     super(props);
@@ -96,7 +108,7 @@ class Example1 extends Component {
   componentDidMount() {
     const { scenes } = this.refs;
     setTimeout(() => {
-      scenes.push('left', true, Scene()(SecondScene));
+      scenes.push('left', true, Scene(FirstSceneLoading)(SecondScene));
     }, 1000);
 
     setTimeout(() => {
