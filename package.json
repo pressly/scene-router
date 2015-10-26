@@ -3,6 +3,6 @@
   "version": "0.0.1",
 
   "dependencies": {
-    "trie-route": "0.0.1"
+    "trie-route": "0.0.3"
   }
 }
