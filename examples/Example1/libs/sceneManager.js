@@ -55,7 +55,7 @@ class SceneManager extends Component {
       component: initialScene.component,
       props: initialScene.props || {},
       params: initialScene.params || {},
-      queryString: initialScene.queryString || {},
+      queryStrings: initialScene.queryStrings || {},
       withAnimation: false,
       rendered: null
     };
@@ -172,7 +172,7 @@ class SceneManager extends Component {
     this.setState(this.state);
   }
 
-  push(side, withAnimation, component, props={}, params={}, queryString={}) {
+  push(side, withAnimation, component, props={}, params={}, queryStrings={}) {
     let { scenes } = this.state;
 
     //we need to call wiilBlur which tells the component that you will be soon
@@ -191,7 +191,7 @@ class SceneManager extends Component {
       component: component,
       props: props,
       params: params,
-      queryString: queryString,
+      queryStrings: queryStrings,
       withAnimation: withAnimation,
       rendered: null
     };

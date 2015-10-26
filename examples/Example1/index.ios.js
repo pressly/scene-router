@@ -59,7 +59,9 @@ class FirstScene extends Component {
 
   render() {
     return (
-      <View ref="root" style={{ backgroundColor: 'red', flex: 1 }}></View>
+      <View
+        ref="root"
+        style={{ backgroundColor: 'red', flex: 1 }}></View>
     );
   }
 }
@@ -95,7 +97,9 @@ class SecondScene extends Component {
 
   render() {
     return (
-      <View ref="root" style={{ backgroundColor: 'yellow', flex: 1 }}></View>
+      <View
+        ref="root"
+        style={{ backgroundColor: 'yellow', flex: 1 }}></View>
     );
   }
 }
@@ -105,9 +109,19 @@ class Example1 extends Component {
     super(props);
   }
 
+  componentDidMount() {
+    setTimeout(() => {
+      this.refs.scene.goto('/second?enableBack=true');
+      setTimeout(() => {
+        this.refs.scene.goback();
+      }, 2000);
+
+    }, 3000);
+  }
+
   render() {
     return (
-      <Scene initialScenePath="/first/12">
+      <Scene ref="scene" initialScenePath="/first/12?hello=12&bye=nice">
         <Scene path="first/:id" component={FirstScene}/>
         <Scene path="second" component={SecondScene}/>
       </Scene>

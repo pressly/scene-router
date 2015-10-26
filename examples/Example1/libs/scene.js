@@ -35,22 +35,42 @@ class Scene extends Component {
     let scenes = [];
     parseScenes(children, scenes, '');
 
+    this.nextOptions = {};
+
     this.initialScene = null;
     scenes.forEach((scene) => {
-      this.router.path(scene.path, (params) => {
+      this.router.path(scene.path, (params, queryStrings) => {
         if (!this.initialScene) {
           this.initialScene = {
             component: scene.component,
             params: params,
+            queryStrings: queryStrings,
             props: props
           };
         } else {
-
+          this.refs.sceneManager.push(this.nextOptions.side || 'right',
+                                      !!this.nextOptions.withAnimation,
+                                      scene.component,
+                                      this.nextOptions.props || {},
+                                      params,
+                                      queryStrings);
+          this.nextOptions = {};
         }
       });
     });
 
     this.router.process(initialScenePath);
+  }
+
+  //options => props, side, withAnimation
+  goto(path, options={}) {
+    this.nextOptions = options;
+    this.router.process(path);
+  }
+
+  goback() {
+    const { sceneManager } = this.refs;
+    sceneManager.pop();
   }
 
   render() {
