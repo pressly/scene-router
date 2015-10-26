@@ -268,7 +268,7 @@ const childPropTypes = {
   component: React.PropTypes.func.isRequired,
   params: React.PropTypes.object,
   queryStrings: React.PropTypes.object,
-  child: React.PropTypes.shape(childPropTypes)
+  child: React.PropTypes.object
 };
 
 SceneManager.propTypes = {
