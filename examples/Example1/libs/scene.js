@@ -37,35 +37,60 @@ class Scene extends Component {
 
     this.nextOptions = {};
 
-    this.initialScene = null;
+    this.initialScene = {};
+
     scenes.forEach((scene) => {
-      this.router.path(scene.path, (params, queryStrings) => {
-        if (!this.initialScene) {
-          this.initialScene = {
-            component: scene.component,
-            params: params,
-            queryStrings: queryStrings,
-            props: props
-          };
-        } else {
-          this.refs.sceneManager.push(this.nextOptions.side || 'right',
-                                      !!this.nextOptions.withAnimation,
-                                      scene.component,
-                                      this.nextOptions.props || {},
-                                      params,
-                                      queryStrings);
-          this.nextOptions = {};
+      this.router.path(scene.path, (params, queryStrings, context) => {
+
+        //if this.nextOptions is null, it means that this route is a child of
+        //another node.
+        if (this.nextOptions) {
+          //setup some internal variables
+          context.side = this.nextOptions.side || 'right';
+          context.withAnimation = !!this.nextOptions.withAnimation;
+          context.props = this.nextOptions.props || {};
         }
+
+        //setup component and params
+        context.component = scene.component;
+        context.params = params;
+        context.queryStrings = queryStrings;
+        context.child = {};
+
+        //reset nextOptions
+        //since the rest of scenes are going to be included as child,
+        //we don't need the options any more
+        this.nextOptions = null;
+
+        //return the empty child so the next route can populate the child context
+        return context.child;
       });
     });
 
-    this.router.process(initialScenePath);
+    this.initialScene = this.router.capture(initialScenePath);
+    if (!this.initialScene) {
+      throw new Error(`scene with path '${initialScenePath}' not found`);
+    }
+  }
+
+  _renderScenes(path) {
+    const { sceneManager } = this.refs;
+    const scenes = this.router.capture(path);
+
+    if (!scenes) {
+      throw new Error(`scene with path '${path}' not found`);
+    }
+
+    //push the obj which contains all the information required for SceneManager
+    //to render and display the content.
+    sceneManager.push(obj);
   }
 
   //options => props, side, withAnimation
   goto(path, options={}) {
+    //set the options and call the render.
     this.nextOptions = options;
-    this.router.process(path);
+    this._renderScenes(path);
   }
 
   goback() {
@@ -87,7 +112,9 @@ class Scene extends Component {
 }
 
 Scene.propTypes = {
+  //this variable only uses for root scene, it will be ignored for any other scene
   initialScenePath: React.PropTypes.string,
+  //the rest of props are inly use in child scenes and they are ignored in root scene
   path: React.PropTypes.string,
   component: React.PropTypes.func,
   loadingComponent: React.PropTypes.func
