@@ -263,12 +263,19 @@ class SceneManager extends Component {
   }
 }
 
+const childPropTypes = {
+  props: React.PropTypes.object.
+  component: React.PropTypes.func.isRequired,
+  params: React.PropTypes.object,
+  queryStrings: React.PropTypes.object,
+  child: React.PropTypes.shape(childPropTypes)
+};
+
 SceneManager.propTypes = {
   initialScene: React.PropTypes.shape({
-    component: React.PropTypes.func.isRequired,
-    props: React.PropTypes.object,
-    params: React.PropTypes.object,
-    queryStrings: React.PropTypes.object
+    side: React.PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
+    withAnimation: React.Proptypes.bool,
+    ...childPropTypes
   }).isRequired
 };
 
