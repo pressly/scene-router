@@ -233,17 +233,6 @@ class SceneManager extends Component {
 
     this.currentScene = sceneGraph;
 
-    // this.currentScene = {
-    //   id: genId(),
-    //   position: { x: this.current.x, y: this.current.y },
-    //   component: component,
-    //   props: props,
-    //   params: params,
-    //   queryStrings: queryStrings,
-    //   withAnimation: withAnimation,
-    //   rendered: null
-    // };
-
     //pushing new scene to scenes stack. remmeber, this scene has not been
     //rendered yet. It will be rendered once _sceneDidMount is called.
     this.state.scenes.push(this.currentScene);
