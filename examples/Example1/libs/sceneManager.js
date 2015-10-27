@@ -31,8 +31,7 @@ const styles = StyleSheet.create({
     component: react component
     props any object
     params
-    queryStrings,
-    rendered
+    queryStrings
  */
 
 class SceneManager extends Component {
@@ -57,8 +56,7 @@ class SceneManager extends Component {
       props: initialSceneGraph.props || {},
       params: initialSceneGraph.params || {},
       queryStrings: initialSceneGraph.queryStrings || {},
-      withAnimation: false,
-      rendered: null
+      withAnimation: false
     };
 
     this.state = {
@@ -197,7 +195,7 @@ class SceneManager extends Component {
 
     //props only available for the first child. subsequent children won't
     //get the props.
-    const props = sceneGraph.props || {};
+    let props = sceneGraph.props || {};
 
     //adding id and key for the top component only
     //it will prevent component from thrown an error in scene map method
@@ -263,7 +261,6 @@ class SceneManager extends Component {
 
     sceneGraph.id = genId();
     sceneGraph.position = { x: this.current.x, y: this.current.y };
-    sceneGraph.rendered = null;
 
     this.currentScene = sceneGraph;
 
@@ -308,15 +305,8 @@ class SceneManager extends Component {
     const scenes = this.state.scenes.map((scene) => {
       const Component = scene.component;
 
-      //if scene is already rendered, return it.
-      if (scene.rendered) {
-        return scene.rendered;
-      }
-
       //otherwise, we need to return the component.
-      scene.rendered = this.buildSceneFromSceneGraph(scene);
-
-      return scene.rendered;
+      return this.buildSceneFromSceneGraph(scene);
     });
 
     return (
