@@ -41,17 +41,13 @@ const sceneWrapper = (LoadingComponent) => {
       }
 
       componentDidMount() {
-        const { isChild, sceneDidMount } = this.props;
-        if (!isChild) {
-          sceneDidMount(this, this.sceneReadyToRender.bind(this));
-        }
+        const { sceneDidMount } = this.props;
+        sceneDidMount(this, this.sceneReadyToRender.bind(this));
       }
 
       componentWillUnmount() {
         const { isChild, sceneWillUnmount } = this.props;
-        if (!isChild) {
-          sceneWillUnmount(this);
-        }
+        sceneWillUnmount(this);
       }
 
       isSceneNeedLoading() {

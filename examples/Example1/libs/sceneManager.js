@@ -117,16 +117,45 @@ class SceneManager extends Component {
     return foundIndex;
   }
 
+  _callWillFocus(refs) {
+    refs.forEach((ref) => {
+      ref.willFocus();
+    });
+  }
+
+  _callDidFocus(refs) {
+    refs.forEach((ref) => {
+      ref.didFocus();
+    });
+  }
+
+  _callWillBlur(refs) {
+    refs.forEach((ref) => {
+      ref.willBlur();
+    });
+  }
+
+  _callDidBlur(refs) {
+    refs.forEach((ref) => {
+      ref.didBlur();
+    });
+  }
+
   /**
    * id           {number}    unique number
    * startRender  {function}  uses inside scene wrapper to use LoadingComponent
    */
-  _sceneDidMount(ref, startRender) {
+  _sceneDidMount(ref, startRender, isChild) {
     //since the scene is mouned, but the camera hasn't moved yet,
     //we can call on willFocus to let the component know that you will be focus soon.
     //make sure that you don't do expensive operations here. this is only good for
     //setting up flags and trigger async calls.
-    this.currentScene.ref = ref;
+    if (!this.currentScene.refs) {
+      this.currentScene.refs = [];
+    }
+
+    this.currentScene.refs.push(ref);
+
     ref.willFocus();
 
     if (this.currentScene.withAnimation) {
@@ -134,7 +163,8 @@ class SceneManager extends Component {
       //we are rendering the content of the scene.
       this._moveCameraWithAnimationTo(this.currentScene.position.x, this.currentScene.position.y, () => {
         if (this.prevScene) {
-          this.prevScene.ref.didBlur();
+          this._callDidBlur(this.prevScene.refs);
+          //this.prevScene.refs.didBlur();
         }
         startRender();
         ref.didFocus();
@@ -142,7 +172,8 @@ class SceneManager extends Component {
     } else {
       this._moveCameraWithoutAnimationTo(this.currentScene.position.x, this.currentScene.position.y);
       if (this.prevScene) {
-        this.prevScene.ref.didBlur();
+        this._callDidBlur(this.prevScene.refs);
+        this.prevScene.refs.didBlur();
       }
       startRender();
       ref.didFocus();
@@ -176,13 +207,13 @@ class SceneManager extends Component {
       props.key = sceneGraph.id
       props.position = sceneGraph.position;
       props.isChild = false;
-
-      //TODO: we need to make sure that these props can be safe
-      props.sceneDidMount = this._sceneDidMount.bind(this);
-      props.sceneWillUnmount = this._sceneWillUnmount.bind(this);
     } else {
       props.isChild = true;
     }
+
+    //TODO: we need to make sure that these props can be safe
+    props.sceneDidMount = this._sceneDidMount.bind(this);
+    props.sceneWillUnmount = this._sceneWillUnmount.bind(this);
 
     const value = (
       <CurrentComponent
@@ -201,7 +232,9 @@ class SceneManager extends Component {
   //which now becomes currentScene and pop the scenes stack and set the previous scene
   //to one item before previous scene. At the end it will call setState.
   _popScene() {
-    this.prevScene.ref.didFocus();
+    this._callDidFocus(this.prevScene.refs);
+    //this.prevScene.refs.didFocus();
+
     //currentScene will become prevScene
     this.currentScene = this.prevScene;
     this.state.scenes.splice(this.state.scenes.length -1 , 1);
@@ -223,7 +256,8 @@ class SceneManager extends Component {
     //out of focus and some other scene will replace you.
     //this is a good start if you want to locked scene for no furthur changes.
     if (this.currentScene) {
-      this.currentScene.ref.willBlur();
+      this._callWillBlur(this.currentScene.refs);
+      //this.currentScene.refs.willBlur();
     }
 
     this.prevScene = this.currentScene;
@@ -253,18 +287,25 @@ class SceneManager extends Component {
     }
 
     //we need to call willBlur on currentScene
-    this.currentScene.ref.willBlur();
+    this._callWillBlur(this.currentScene.refs);
+    //this.currentScene.refs.willBlur();
+
     //we also need to call willFocus on previous scene
-    this.prevScene.ref.willFocus();
+    this._callWillFocus(this.prevScene.refs);
+    //this.prevScene.refs.willFocus();
 
     //we need to see whether currentScene has animated or not
     if (this.currentScene.withAnimation) {
-      this.currentScene.ref.didBlur();
+      this._callDidBlur(this.currentScene.refs);
+      //this.currentScene.refs.didBlur();
+
       this._moveCameraWithAnimationTo(this.prevScene.position.x, this.prevScene.position.y, () => {
         this._popScene();
       });
     } else {
-      this.currentScene.ref.didBlur();
+      this._callDidBlur(this.currentScene.refs);
+      //this.currentScene.refs.didBlur();
+
       this._moveCameraWithoutAnimationTo(this.prevScene.position.x, this.prevScene.position.y);
       this._popScene();
     }

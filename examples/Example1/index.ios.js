@@ -111,6 +111,30 @@ class SecondInner extends Component {
     super(props);
   }
 
+  sceneWillFocus() {
+    console.log('SecondInner sceneWillFocus');
+  }
+
+  sceneDidFocus() {
+    console.log('SecondInner sceneDidFocus');
+  }
+
+  sceneWillBlur() {
+    console.log('SecondInner sceneWillBlur');
+  }
+
+  sceneDidBlur() {
+    console.log('SecondInner sceneDidBlur');
+  }
+
+  componentDidMount() {
+    console.log('SecondInner componentDidMount');
+  }
+
+  componentWillUnmount() {
+    console.log('SecondInner componentWillUnmount');
+  }
+
   render() {
     return (
       <View style={{ backgroundColor: 'blue', opacity: 0.4, flex: 1 }}>
