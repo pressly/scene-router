@@ -175,10 +175,13 @@ class SceneManager extends Component {
       props.id = sceneGraph.id;
       props.key = sceneGraph.id
       props.position = sceneGraph.position;
+      props.isChild = false;
 
       //TODO: we need to make sure that these props can be safe
       props.sceneDidMount = this._sceneDidMount.bind(this);
       props.sceneWillUnmount = this._sceneWillUnmount.bind(this);
+    } else {
+      props.isChild = true;
     }
 
     const value = (

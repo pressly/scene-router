@@ -99,7 +99,23 @@ class SecondScene extends Component {
     return (
       <View
         ref="root"
-        style={{ backgroundColor: 'yellow', flex: 1 }}></View>
+        style={{ backgroundColor: 'yellow', flex: 1 }}>
+        {this.props.children}
+      </View>
+    );
+  }
+}
+
+class SecondInner extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <View style={{ backgroundColor: 'blue', opacity: 0.4, flex: 1 }}>
+
+      </View>
     );
   }
 }
@@ -111,7 +127,7 @@ class Example1 extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-      this.refs.scene.goto('/second?enableBack=true', { withAnimation: true });
+      this.refs.scene.goto('/second/inner?enableBack=true', { withAnimation: true });
       setTimeout(() => {
         this.refs.scene.goback();
       }, 2000);
@@ -123,7 +139,9 @@ class Example1 extends Component {
     return (
       <Scene ref="scene" initialScenePath="/first/12?hello=12&bye=nice">
         <Scene path="first/:id" component={FirstScene}/>
-        <Scene path="second" component={SecondScene}/>
+        <Scene path="second" component={SecondScene}>
+          <Scene path="inner" component={SecondInner}/>
+        </Scene>
       </Scene>
     );
   }

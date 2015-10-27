@@ -39,13 +39,17 @@ const sceneWrapper = (LoadingComponent) => {
       }
 
       componentDidMount() {
-        const { sceneDidMount } = this.props;
-        sceneDidMount(this, this.sceneReadyToRender.bind(this));
+        const { isChild, sceneDidMount } = this.props;
+        if (!isChild) {
+          sceneDidMount(this, this.sceneReadyToRender.bind(this));
+        }
       }
 
       componentWillUnmount() {
-        const { sceneWillUnmount } = this.props;
-        sceneWillUnmount(this);
+        const { isChild, sceneWillUnmount } = this.props;
+        if (!isChild) {
+          sceneWillUnmount(this);
+        }
       }
 
       isSceneNeedLoading() {
@@ -94,8 +98,10 @@ const sceneWrapper = (LoadingComponent) => {
                                     <LoadingComponent {...props}/> :
                                     <SceneComponent ref="scene" {...props}/>;
 
+        const rootStyleOnly = position? { top: position.y, left: position.x } : {};
+
         return (
-          <View ref="root" style={[styles.container, { top: position.y, left: position.x }]}>
+          <View ref="root" style={[styles.container, rootStyleOnly]}>
             {renderedComponent}
           </View>
         );
