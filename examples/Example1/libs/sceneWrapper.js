@@ -23,6 +23,8 @@ function purifyProps(props) {
   delete newProps.id;
   delete newProps.sceneDidMount;
   delete newProps.sceneWillUnmount;
+  delete newProps.isChild;
+  delete newProps.position;
 
   return newProps;
 }
@@ -91,14 +93,14 @@ const sceneWrapper = (LoadingComponent) => {
       }
 
       render() {
-        const { position } = this.props;
+        const { isChild, position } = this.props;
         const props = purifyProps(this.props);
 
         const renderedComponent = !this.state.isReady ?
                                     <LoadingComponent {...props}/> :
                                     <SceneComponent ref="scene" {...props}/>;
 
-        const rootStyleOnly = position? { top: position.y, left: position.x } : {};
+        const rootStyleOnly = isChild? {} : { top: position.y, left: position.x };
 
         return (
           <View ref="root" style={[styles.container, rootStyleOnly]}>
