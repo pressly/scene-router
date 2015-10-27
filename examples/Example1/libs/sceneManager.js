@@ -255,18 +255,34 @@ class SceneManager extends Component {
       this._callWillBlur(this.currentScene.refs);
     }
 
-    this.prevScene = this.currentScene;
+    if (sceneGraph.replace) {
+      //since we are replacing current scene with new one,
+      //we should set the animation to false;
+      sceneGraph.withAnimation = false;
+      //this varibale will be use to check whether replace scene has animated or not.
+      sceneGraph.prevWithAnimation = this.currentScene.withAnimation;
 
-    this._findEmptyPosition(sceneGraph.side);
+      this.currentScene = sceneGraph;
+      sceneGraph.id = genId();
+      //since we are in the same position, we are doing the same thing.
+      sceneGraph.position = { x: this.current.x, y: this.current.y };
 
-    sceneGraph.id = genId();
-    sceneGraph.position = { x: this.current.x, y: this.current.y };
+      //repalce the last scene with this new one.
+      scenes[scenes.length - 1] = this.currentScene;
+    } else {
+      this.prevScene = this.currentScene;
 
-    this.currentScene = sceneGraph;
+      this._findEmptyPosition(sceneGraph.side);
 
-    //pushing new scene to scenes stack. remmeber, this scene has not been
-    //rendered yet. It will be rendered once _sceneDidMount is called.
-    this.state.scenes.push(this.currentScene);
+      sceneGraph.id = genId();
+      sceneGraph.position = { x: this.current.x, y: this.current.y };
+
+      this.currentScene = sceneGraph;
+
+      //pushing new scene to scenes stack. remmeber, this scene has not been
+      //rendered yet. It will be rendered once _sceneDidMount is called.
+      scenes.push(this.currentScene);
+    }
 
     //we are passing the new scene to state.
     //it will be rendered and _sceneDidMount will be called.
@@ -287,7 +303,7 @@ class SceneManager extends Component {
     this._callWillFocus(this.prevScene.refs);
 
     //we need to see whether currentScene has animated or not
-    if (this.currentScene.withAnimation) {
+    if (this.currentScene.withAnimation || this.currentScene.prevWithAnimation) {
       this._callDidBlur(this.currentScene.refs);
 
       this._moveCameraWithAnimationTo(this.prevScene.position.x, this.prevScene.position.y, () => {

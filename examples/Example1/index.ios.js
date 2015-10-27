@@ -153,9 +153,11 @@ class Example1 extends Component {
     setTimeout(() => {
       this.refs.scene.goto('/second/inner?enableBack=true', { withAnimation: true });
       setTimeout(() => {
-        this.refs.scene.goback();
+        this.refs.scene.goto('/second?enableBack=false', { replace: true });
+        setTimeout(() => {
+          this.refs.scene.goback();
+        }, 2000)
       }, 2000);
-
     }, 3000);
   }
 
