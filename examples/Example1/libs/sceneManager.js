@@ -164,7 +164,6 @@ class SceneManager extends Component {
       this._moveCameraWithAnimationTo(this.currentScene.position.x, this.currentScene.position.y, () => {
         if (this.prevScene) {
           this._callDidBlur(this.prevScene.refs);
-          //this.prevScene.refs.didBlur();
         }
         startRender();
         ref.didFocus();
@@ -233,7 +232,6 @@ class SceneManager extends Component {
   //to one item before previous scene. At the end it will call setState.
   _popScene() {
     this._callDidFocus(this.prevScene.refs);
-    //this.prevScene.refs.didFocus();
 
     //currentScene will become prevScene
     this.currentScene = this.prevScene;
@@ -257,7 +255,6 @@ class SceneManager extends Component {
     //this is a good start if you want to locked scene for no furthur changes.
     if (this.currentScene) {
       this._callWillBlur(this.currentScene.refs);
-      //this.currentScene.refs.willBlur();
     }
 
     this.prevScene = this.currentScene;
@@ -288,23 +285,19 @@ class SceneManager extends Component {
 
     //we need to call willBlur on currentScene
     this._callWillBlur(this.currentScene.refs);
-    //this.currentScene.refs.willBlur();
 
     //we also need to call willFocus on previous scene
     this._callWillFocus(this.prevScene.refs);
-    //this.prevScene.refs.willFocus();
 
     //we need to see whether currentScene has animated or not
     if (this.currentScene.withAnimation) {
       this._callDidBlur(this.currentScene.refs);
-      //this.currentScene.refs.didBlur();
 
       this._moveCameraWithAnimationTo(this.prevScene.position.x, this.prevScene.position.y, () => {
         this._popScene();
       });
     } else {
       this._callDidBlur(this.currentScene.refs);
-      //this.currentScene.refs.didBlur();
 
       this._moveCameraWithoutAnimationTo(this.prevScene.position.x, this.prevScene.position.y);
       this._popScene();
