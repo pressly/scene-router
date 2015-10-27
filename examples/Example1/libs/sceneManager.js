@@ -39,7 +39,7 @@ class SceneManager extends Component {
   constructor(props) {
     super(props);
 
-    const { initialScene } = props;
+    const { initialSceneGraph } = props;
 
     this.cameraPosition = new Animated.ValueXY();
 
@@ -52,10 +52,10 @@ class SceneManager extends Component {
     this.currentScene = {
       id: genId(),
       position: { x: this.current.x, y: this.current.y },
-      component: initialScene.component,
-      props: initialScene.props || {},
-      params: initialScene.params || {},
-      queryStrings: initialScene.queryStrings || {},
+      component: initialSceneGraph.component,
+      props: initialSceneGraph.props || {},
+      params: initialSceneGraph.params || {},
+      queryStrings: initialSceneGraph.queryStrings || {},
       withAnimation: false,
       rendered: null
     };
@@ -153,6 +153,46 @@ class SceneManager extends Component {
     const index = this._findSceneIndexById(id);
   }
 
+  buildSceneFromSceneGraph(sceneGraph) {
+    //this condition terminates recursive calls to this method
+    //the second condition is that child might be just a plain object {}.
+    //we need to make sure that if there is no component attach to it, return null;
+    if (!sceneGraph || !sceneGraph.component) {
+      return null;
+    }
+
+    const CurrentComponent = sceneGraph.component;
+    const params = sceneGraph.params;
+    const queryStrings = sceneGraph.queryStrings;
+
+    //props only available for the first child. subsequent children won't
+    //get the props.
+    const props = sceneGraph.props || {};
+
+    //adding id and key for the top component only
+    //it will prevent component from thrown an error in scene map method
+    if (sceneGraph.id) {
+      props.id = sceneGraph.id;
+      props.key = sceneGraph.id
+      props.position = sceneGraph.position;
+
+      //TODO: we need to make sure that these props can be safe
+      props.sceneDidMount = this._sceneDidMount.bind(this);
+      props.sceneWillUnmount = this._sceneWillUnmount.bind(this);
+    }
+
+    const value = (
+      <CurrentComponent
+        params={params}
+        queryStrings={queryStrings}
+        {...props}>
+        {this.buildSceneFromSceneGraph(sceneGraph.child)}
+      </CurrentComponent>
+    );
+
+    return value;
+  }
+
   //when this method calls, it means that camera has already moved to
   //previous scene. So what this method do is calling didFocus on prevScene,
   //which now becomes currentScene and pop the scenes stack and set the previous scene
@@ -172,7 +212,8 @@ class SceneManager extends Component {
     this.setState(this.state);
   }
 
-  push(side, withAnimation, component, props={}, params={}, queryStrings={}) {
+  //push(side, withAnimation, component, props={}, params={}, queryStrings={}) {
+  push(sceneGraph) {
     let { scenes } = this.state;
 
     //we need to call wiilBlur which tells the component that you will be soon
@@ -184,17 +225,24 @@ class SceneManager extends Component {
 
     this.prevScene = this.currentScene;
 
-    this._findEmptyPosition(side);
-    this.currentScene = {
-      id: genId(),
-      position: { x: this.current.x, y: this.current.y },
-      component: component,
-      props: props,
-      params: params,
-      queryStrings: queryStrings,
-      withAnimation: withAnimation,
-      rendered: null
-    };
+    this._findEmptyPosition(sceneGraph.side);
+
+    sceneGraph.id = genId();
+    sceneGraph.position = { x: this.current.x, y: this.current.y };
+    sceneGraph.rendered = null;
+
+    this.currentScene = sceneGraph;
+
+    // this.currentScene = {
+    //   id: genId(),
+    //   position: { x: this.current.x, y: this.current.y },
+    //   component: component,
+    //   props: props,
+    //   params: params,
+    //   queryStrings: queryStrings,
+    //   withAnimation: withAnimation,
+    //   rendered: null
+    // };
 
     //pushing new scene to scenes stack. remmeber, this scene has not been
     //rendered yet. It will be rendered once _sceneDidMount is called.
@@ -240,17 +288,7 @@ class SceneManager extends Component {
       }
 
       //otherwise, we need to return the component.
-      scene.rendered = (
-        <Component
-          id={scene.id}
-          sceneDidMount={this._sceneDidMount.bind(this)}
-          sceneWillUnmount={this._sceneWillUnmount.bind(this)}
-          position={scene.position}
-          key={scene.id}
-          params={scene.params}
-          queryStrings={scene.queryStrings}
-          {...scene.props}/>
-      );
+      scene.rendered = this.buildSceneFromSceneGraph(scene);
 
       return scene.rendered;
     });
@@ -263,20 +301,8 @@ class SceneManager extends Component {
   }
 }
 
-const childPropTypes = {
-  props: React.PropTypes.object.
-  component: React.PropTypes.func.isRequired,
-  params: React.PropTypes.object,
-  queryStrings: React.PropTypes.object,
-  child: React.PropTypes.object
-};
-
 SceneManager.propTypes = {
-  initialScene: React.PropTypes.shape({
-    side: React.PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
-    withAnimation: React.Proptypes.bool,
-    ...childPropTypes
-  }).isRequired
+  initialSceneGraph: React.PropTypes.object.isRequired
 };
 
 module.exports = SceneManager;

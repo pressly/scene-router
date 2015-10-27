@@ -111,7 +111,7 @@ class Example1 extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-      this.refs.scene.goto('/second?enableBack=true');
+      this.refs.scene.goto('/second?enableBack=true', { withAnimation: true });
       setTimeout(() => {
         this.refs.scene.goback();
       }, 2000);

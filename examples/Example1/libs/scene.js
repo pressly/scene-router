@@ -37,7 +37,7 @@ class Scene extends Component {
 
     this.nextOptions = {};
 
-    this.initialScene = {};
+    this.initialSceneGraph = {};
 
     scenes.forEach((scene) => {
       this.router.path(scene.path, (params, queryStrings, context) => {
@@ -67,26 +67,30 @@ class Scene extends Component {
       });
     });
 
-    this.initialScene = this.router.capture(initialScenePath);
-    if (!this.initialScene) {
+    this.initialSceneGraph = this._createSceneGraph(initialScenePath);
+    if (!this.initialSceneGraph) {
       throw new Error(`scene with path '${initialScenePath}' not found`);
     }
   }
 
+  _createSceneGraph(path) {
+    return this.router.capture(path);
+  }
+
   _renderScenes(path) {
     const { sceneManager } = this.refs;
-    const scenes = this.router.capture(path);
+    const sceneGraph = this._createSceneGraph(path);
 
-    if (!scenes) {
+    if (!sceneGraph) {
       throw new Error(`scene with path '${path}' not found`);
     }
 
     //push the obj which contains all the information required for SceneManager
     //to render and display the content.
-    sceneManager.push(obj);
+    sceneManager.push(sceneGraph);
   }
 
-  //options => props, side, withAnimation
+  //options => props, side, withAnimation, passPropsToChild
   goto(path, options={}) {
     //set the options and call the render.
     this.nextOptions = options;
@@ -99,22 +103,22 @@ class Scene extends Component {
   }
 
   render() {
-    if (!this.initialScene) {
+    if (!this.initialSceneGraph) {
       throw new Error('initialScenePath not found');
     }
 
     return (
       <SceneManager
         ref="sceneManager"
-        initialScene={this.initialScene}/>
+        initialSceneGraph={this.initialSceneGraph}/>
     );
   }
 }
 
 Scene.propTypes = {
-  //this variable only uses for root scene, it will be ignored for any other scene
+  //this prop only uses for root scene, it will be ignored for any other scene
   initialScenePath: React.PropTypes.string,
-  //the rest of props are inly use in child scenes and they are ignored in root scene
+  //the rest of props are only use in child scenes and they are ignored in root scene
   path: React.PropTypes.string,
   component: React.PropTypes.func,
   loadingComponent: React.PropTypes.func
