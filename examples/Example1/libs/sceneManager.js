@@ -50,6 +50,7 @@ class SceneManager extends Component {
 
     this.prevScene = null;
     this.currentScene = {
+      sceneId: initialSceneGraph.sceneId,
       id: genId(),
       position: { x: this.current.x, y: this.current.y },
       component: initialSceneGraph.component,
@@ -172,7 +173,6 @@ class SceneManager extends Component {
       this._moveCameraWithoutAnimationTo(this.currentScene.position.x, this.currentScene.position.y);
       if (this.prevScene) {
         this._callDidBlur(this.prevScene.refs);
-        this.prevScene.refs.didBlur();
       }
       startRender();
       ref.didFocus();

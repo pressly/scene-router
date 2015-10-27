@@ -39,7 +39,10 @@ class Scene extends Component {
 
     this.initialSceneGraph = {};
 
-    scenes.forEach((scene) => {
+    scenes.forEach((scene, index) => {
+      //this is a uninqe id for every scene.
+      const sceneId = `scene:${index}`;
+      
       this.router.path(scene.path, (params, queryStrings, context) => {
 
         //if this.nextOptions is null, it means that this route is a child of
@@ -50,6 +53,10 @@ class Scene extends Component {
           context.withAnimation = !!this.nextOptions.withAnimation;
           context.props = this.nextOptions.props || {};
         }
+
+        //we need this to detect which scene is rendered currently.
+        //so we don't do animation if only props, params and/or queryStrings of the same scene change.
+        context.sceneId = sceneId;
 
         //setup component and params
         context.component = scene.component;
