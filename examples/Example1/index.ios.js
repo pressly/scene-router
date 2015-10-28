@@ -159,7 +159,7 @@ class Example1 extends Component {
     await wait(2000);
     this.refs.scene.goto('/second/10/inner/cool?enableBack=true', { side:'top', withAnimation: true });
     await wait(2000);
-    this.refs.scene.goto('/second/20?enableBack=false', { replace: true });
+    this.refs.scene.goto('/second/20?enableBack=false', { side:'left', withAnimation: true, clearHistory: true });
     await wait(2000);
     this.refs.scene.goback();
   }
