@@ -14,7 +14,7 @@ const {
   Dimensions
 } = React;
 
-const Scene = require('./libs');
+const Scene = require('scene-router');
 
 async function wait(delay) {
   return new Promise((resolve) => {
@@ -166,7 +166,7 @@ class Example1 extends Component {
 
   render() {
     return (
-      <Scene ref="scene" initialScenePath="/first/12?hello=12&bye=nice">
+      <Scene ref="scene" initialPath="/first/12?hello=12&bye=nice">
         <Scene path="first/:id" component={FirstScene}/>
         <Scene path="second/:id" component={SecondScene} flatten={true}>
           <Scene path="inner/:code" component={SecondInner}/>
