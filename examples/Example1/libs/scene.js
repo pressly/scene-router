@@ -9,16 +9,21 @@ const {
 
 function parseScenes(children, arr, parentPath) {
   React.Children.forEach(children, (child) => {
-    const { children, path, component, loadingComponent } = child.props;
+    const { children, path, component, loadingComponent, flatten } = child.props;
     const childPath = parentPath + '/' + path;
 
     arr.push({
       path: childPath,
-      component: sceneWrapper(loadingComponent)(component)
+      component: sceneWrapper(loadingComponent)(component),
+      flatten: flatten
     });
 
     parseScenes(children, arr, childPath);
   });
+}
+
+function isChildEmpty(child) {
+  return Object.getOwnPropertyNames(child).length === 0;
 }
 
 class Scene extends Component {
@@ -45,15 +50,11 @@ class Scene extends Component {
 
       this.router.path(scene.path, (params, queryStrings, context) => {
 
-        //if this.nextOptions is null, it means that this route is a child of
-        //another node.
-        if (this.nextOptions) {
-          //setup some internal variables
-          context.side = this.nextOptions.side || 'right';
-          context.withAnimation = !!this.nextOptions.withAnimation;
-          context.props = this.nextOptions.props || {};
-          context.replace = !!this.nextOptions.replace;
-        }
+        //setup some internal variables
+        context.side = this.nextOptions.side || 'right';
+        context.withAnimation = !!this.nextOptions.withAnimation;
+        context.props = this.nextOptions.props || {};
+        context.replace = !!this.nextOptions.replace;
 
         //we need this to detect which scene is rendered currently.
         //so we don't do animation if only props, params and/or queryStrings of the same scene change.
@@ -64,11 +65,7 @@ class Scene extends Component {
         context.params = params;
         context.queryStrings = queryStrings;
         context.child = {};
-
-        //reset nextOptions
-        //since the rest of scenes are going to be included as child,
-        //we don't need the options any more
-        this.nextOptions = null;
+        context.flatten = scene.flatten;
 
         //return the empty child so the next route can populate the child context
         return context.child;
@@ -87,7 +84,18 @@ class Scene extends Component {
 
   _renderScenes(path) {
     const { sceneManager } = this.refs;
-    const sceneGraph = this._createSceneGraph(path);
+    let sceneGraph = this._createSceneGraph(path);
+
+    //need to find the one that has a flatten as false.
+    while (sceneGraph.flatten) {
+      //it means that we are only intrested of rendering parent
+      if (isChildEmpty(sceneGraph.child)) {
+        sceneGraph.renderThis = true;
+        break;
+      }
+
+      sceneGraph = sceneGraph.child;
+    }
 
     if (!sceneGraph) {
       throw new Error(`scene with path '${path}' not found`);
@@ -129,7 +137,13 @@ Scene.propTypes = {
   //the rest of props are only use in child scenes and they are ignored in root scene
   path: React.PropTypes.string,
   component: React.PropTypes.func,
-  loadingComponent: React.PropTypes.func
+  loadingComponent: React.PropTypes.func,
+  //flatten will be only apply to children not grand children.
+  flatten: React.PropTypes.bool
+};
+
+Scene.defaultProps = {
+  flatten: false
 };
 
 module.exports = Scene;

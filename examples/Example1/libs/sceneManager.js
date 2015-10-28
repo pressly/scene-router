@@ -212,14 +212,22 @@ class SceneManager extends Component {
     props.sceneDidMount = this._sceneDidMount.bind(this);
     props.sceneWillUnmount = this._sceneWillUnmount.bind(this);
 
-    const value = (
-      <CurrentComponent
-        params={params}
-        queryStrings={queryStrings}
-        {...props}>
-        {this.buildSceneFromSceneGraph(sceneGraph.child)}
-      </CurrentComponent>
-    );
+    let value;
+
+    //if flatten is true, it means that we don't need to wrap the child with
+    //parent's component.
+    if (sceneGraph.flatten && !sceneGraph.renderThis) {
+      value = this.buildSceneFromSceneGraph(sceneGraph.child);
+    } else {
+      value = (
+        <CurrentComponent
+          params={params}
+          queryStrings={queryStrings}
+          {...props}>
+          {this.buildSceneFromSceneGraph(sceneGraph.child)}
+        </CurrentComponent>
+      );
+    }
 
     return value;
   }
@@ -271,7 +279,7 @@ class SceneManager extends Component {
       scenes[scenes.length - 1] = this.currentScene;
     } else {
       this.prevScene = this.currentScene;
-
+      console.log(sceneGraph);
       this._findEmptyPosition(sceneGraph.side);
 
       sceneGraph.id = genId();
@@ -295,6 +303,8 @@ class SceneManager extends Component {
     if (this.state.scenes.length < 2) {
       return;
     }
+
+    console.log(this.currentScene);
 
     //we need to call willBlur on currentScene
     this._callWillBlur(this.currentScene.refs);

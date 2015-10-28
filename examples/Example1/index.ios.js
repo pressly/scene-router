@@ -16,6 +16,12 @@ const {
 
 const Scene = require('./libs');
 
+async function wait(delay) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay);
+  });
+}
+
 class FirstSceneLoading extends Component {
   constructor(props) {
     super(props);
@@ -149,24 +155,21 @@ class Example1 extends Component {
     super(props);
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.refs.scene.goto('/second/inner?enableBack=true', { withAnimation: true });
-      setTimeout(() => {
-        this.refs.scene.goto('/second?enableBack=false', { replace: true });
-        setTimeout(() => {
-          this.refs.scene.goback();
-        }, 2000)
-      }, 2000);
-    }, 3000);
+  async componentDidMount() {
+    await wait(2000);
+    this.refs.scene.goto('/second/10/inner/cool?enableBack=true', { side:'top', withAnimation: true });
+    await wait(2000);
+    this.refs.scene.goto('/second/20?enableBack=false', { replace: true });
+    await wait(2000);
+    this.refs.scene.goback();
   }
 
   render() {
     return (
       <Scene ref="scene" initialScenePath="/first/12?hello=12&bye=nice">
         <Scene path="first/:id" component={FirstScene}/>
-        <Scene path="second" component={SecondScene}>
-          <Scene path="inner" component={SecondInner}/>
+        <Scene path="second/:id" component={SecondScene} flatten={true}>
+          <Scene path="inner/:code" component={SecondInner}/>
         </Scene>
       </Scene>
     );
