@@ -148,17 +148,25 @@ class Example1 extends Component {
   }
 
   async componentDidMount() {
-    await wait(2000);
-    this.refs.scene.goto('/sign-up', { side:'right', withAnimation: true });
-    await wait(2000);
-    this.refs.scene.goto('/sign-up/intro', { side:'right', withAnimation: true });
-    await wait(2000);
-    this.refs.scene.goback();
+    try {
+      await wait(2000);
+      this.refs.scene.goto('/sign-up1', { side:'right', withAnimation: true });
+      await wait(2000);
+      this.refs.scene.goto('/login', { side:'right', withAnimation: true });
+      await wait(2000);
+      this.refs.scene.goback();
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  _onError(message) {
+    console.log(message);
   }
 
   render() {
     return (
-      <Scene ref="scene" initialPath="/sign-up/intro">
+      <Scene ref="scene" initialPath="/sign-up/intro" onPathNotMatched={this._onError}>
         <Scene path="login" component={Login}></Scene>
         <Scene path="sign-up" component={Signup} flatten={true}>
           <Scene path="intro" component={Intro}/>
