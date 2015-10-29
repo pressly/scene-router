@@ -6,6 +6,8 @@
     "start": "node_modules/react-native/packager/packager.sh"
   },
   "dependencies": {
-    "react-native": "^0.13.2"
+    "react-native": "^0.13.2",
+    "react-native-2-side-menus": "^0.2.1",
+    "scene-router": "../.."
   }
 }
