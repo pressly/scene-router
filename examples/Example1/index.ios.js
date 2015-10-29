@@ -22,129 +22,121 @@ async function wait(delay) {
   });
 }
 
-class FirstSceneLoading extends Component {
-  constructor(props) {
-    super(props);
-  }
 
-  render() {
-    return (
-      <Text>First Scene Loading</Text>
-    );
-  }
-}
-
-class FirstScene extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
   }
 
   sceneWillFocus() {
-    console.log('FirstScene sceneWillFocus');
+    console.log('Login sceneWillFocus');
   }
 
   sceneDidFocus() {
-    console.log('FirstScene sceneDidFocus');
+    console.log('Login sceneDidFocus');
   }
 
   sceneWillBlur() {
-    console.log('FirstScene sceneWillBlur');
+    console.log('Login sceneWillBlur');
   }
 
   sceneDidBlur() {
-    console.log('FirstScene sceneDidBlur');
+    console.log('Login sceneDidBlur');
   }
 
   componentDidMount() {
-    console.log('FirstScene componentDidMount');
+    console.log('Login componentDidMount');
   }
 
   componentWillUnmount() {
-    console.log('FirstScene componentWillUnmount');
+    console.log('Login componentWillUnmount');
   }
 
   render() {
     return (
       <View
         ref="root"
-        style={{ backgroundColor: 'red', flex: 1 }}></View>
+        style={{ backgroundColor: 'red', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Login</Text>
+      </View>
     );
   }
 }
 
-class SecondScene extends Component {
+class Signup extends Component {
   constructor(props) {
     super(props);
   }
 
   sceneWillFocus() {
-    console.log('SecondScene sceneWillFocus');
+    console.log('Signup sceneWillFocus');
   }
 
   sceneDidFocus() {
-    console.log('SecondScene sceneDidFocus');
+    console.log('Signup sceneDidFocus');
   }
 
   sceneWillBlur() {
-    console.log('SecondScene sceneWillBlur');
+    console.log('Signup sceneWillBlur');
   }
 
   sceneDidBlur() {
-    console.log('SecondScene sceneDidBlur');
+    console.log('Signup sceneDidBlur');
   }
 
   componentDidMount() {
-    console.log('SecondScene componentDidMount');
+    console.log('Signup componentDidMount');
   }
 
   componentWillUnmount() {
-    console.log('SecondScene componentWillUnmount');
+    console.log('Signup componentWillUnmount');
   }
 
   render() {
     return (
       <View
         ref="root"
-        style={{ backgroundColor: 'yellow', flex: 1 }}>
+        style={{ backgroundColor: 'yellow', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Signup</Text>
         {this.props.children}
       </View>
     );
   }
 }
 
-class SecondInner extends Component {
+class Intro extends Component {
   constructor(props) {
     super(props);
   }
 
   sceneWillFocus() {
-    console.log('SecondInner sceneWillFocus');
+    console.log('Intro sceneWillFocus');
   }
 
   sceneDidFocus() {
-    console.log('SecondInner sceneDidFocus');
+    console.log('Intro sceneDidFocus');
   }
 
   sceneWillBlur() {
-    console.log('SecondInner sceneWillBlur');
+    console.log('Intro sceneWillBlur');
   }
 
   sceneDidBlur() {
-    console.log('SecondInner sceneDidBlur');
+    console.log('Intro sceneDidBlur');
   }
 
   componentDidMount() {
-    console.log('SecondInner componentDidMount');
+    console.log('Intro componentDidMount');
   }
 
   componentWillUnmount() {
-    console.log('SecondInner componentWillUnmount');
+    console.log('Intro componentWillUnmount');
   }
 
   render() {
     return (
-      <View style={{ backgroundColor: 'blue', opacity: 0.4, flex: 1 }}>
-
+      <View style={{ backgroundColor: 'blue', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Intro</Text>
       </View>
     );
   }
@@ -157,19 +149,19 @@ class Example1 extends Component {
 
   async componentDidMount() {
     await wait(2000);
-    this.refs.scene.goto('/second/10/inner/cool?enableBack=true', { side:'top', withAnimation: true });
+    this.refs.scene.goto('/sign-up', { side:'right', withAnimation: true });
     await wait(2000);
-    this.refs.scene.goto('/second/20?enableBack=false', { side:'left', withAnimation: true, clearHistory: true });
+    this.refs.scene.goto('/sign-up/intro', { side:'right', withAnimation: true });
     await wait(2000);
     this.refs.scene.goback();
   }
 
   render() {
     return (
-      <Scene ref="scene" initialPath="/first/12?hello=12&bye=nice">
-        <Scene path="first/:id" component={FirstScene}/>
-        <Scene path="second/:id" component={SecondScene} flatten={true}>
-          <Scene path="inner/:code" component={SecondInner}/>
+      <Scene ref="scene" initialPath="/sign-up/intro">
+        <Scene path="login" component={Login}></Scene>
+        <Scene path="sign-up" component={Signup} flatten={true}>
+          <Scene path="intro" component={Intro}/>
         </Scene>
       </Scene>
     );
