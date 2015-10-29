@@ -56,7 +56,9 @@ class Login extends Component {
     return (
       <View
         ref="root"
-        style={{ backgroundColor: 'red', flex: 1 }}></View>
+        style={{ backgroundColor: 'red', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Login</Text>
+      </View>
     );
   }
 }
@@ -94,7 +96,8 @@ class Signup extends Component {
     return (
       <View
         ref="root"
-        style={{ backgroundColor: 'yellow', flex: 1 }}>
+        style={{ backgroundColor: 'yellow', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Signup</Text>
         {this.props.children}
       </View>
     );
@@ -132,8 +135,8 @@ class Intro extends Component {
 
   render() {
     return (
-      <View style={{ backgroundColor: 'blue', opacity: 0.4, flex: 1 }}>
-
+      <View style={{ backgroundColor: 'blue', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Intro</Text>
       </View>
     );
   }
@@ -155,7 +158,7 @@ class Example1 extends Component {
 
   render() {
     return (
-      <Scene ref="scene" initialPath="/login">
+      <Scene ref="scene" initialPath="/sign-up/intro">
         <Scene path="login" component={Login}></Scene>
         <Scene path="sign-up" component={Signup} flatten={true}>
           <Scene path="intro" component={Intro}/>
