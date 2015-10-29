@@ -23,10 +23,14 @@ class Content extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: this.props.color, justifyContent: 'center', alignItems: 'center' }}/>
+      <View style={{ flex: 1, opacity:this.props.opacity, backgroundColor: this.props.color, justifyContent: 'center', alignItems: 'center' }}/>
     );
   }
 }
+
+Content.defaultProps = {
+  opacity: 1
+};
 
 class Menu extends Component {
   constructor(props) {
@@ -58,29 +62,7 @@ class Login extends Component {
   }
 
   render() {
-    return <Content color="blue"/>
-  }
-}
-
-class App extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    const { menu, leftMenu, rightMenu } = this.refs;
-    menu.moreLifeCycles(leftMenu, rightMenu);
-  }
-
-  render() {
-    return (
-      <TwoSideMenus
-        ref="menu"
-        leftMenu={<Menu ref="leftMenu" color="yellow"/>}
-        rightMenu={<Menu ref="rightMenu" color="red"/>}>
-        {this.props.children}
-      </TwoSideMenus>
-    );
+    return <Content color="blue" opacity={1}/>
   }
 }
 
@@ -108,13 +90,15 @@ class Faq extends Component {
   }
 }
 
-class Main extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
   }
 
   async componentDidMount() {
-    const { scene } = this.refs;
+    const { menu, leftMenu, rightMenu, scene } = this.refs;
+
+    menu.moreLifeCycles(leftMenu, rightMenu);
 
     await wait(2000);
     scene.goto('/home/info', { side:'right', withAnimation: true });
@@ -125,15 +109,20 @@ class Main extends Component {
 
   render() {
     return (
-      <Scene ref="scene" initialPath="/login">
-        <Scene path="login" component={Login}/>
-        <Scene path="home" component={App} fresh={true}>
-          <Scene path="info" component={Intro}/>
-          <Scene path="faq" component={Faq}/>
+      <TwoSideMenus
+        ref="menu"
+        leftMenu={<Menu ref="leftMenu" color="yellow"/>}
+        rightMenu={<Menu ref="rightMenu" color="red"/>}>
+        <Scene ref="scene" initialPath="/login">
+          <Scene path="login" component={Login}/>
+          <Scene path="home" component={App} flatten={true}>
+            <Scene path="info" component={Intro}/>
+            <Scene path="faq" component={Faq}/>
+          </Scene>
         </Scene>
-      </Scene>
+      </TwoSideMenus>
     );
   }
 }
 
-AppRegistry.registerComponent('ExampleWith2SideMenus', () => Main);
+AppRegistry.registerComponent('ExampleWith2SideMenus', () => App);
