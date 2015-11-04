@@ -1,4 +1,5 @@
 const React = require('react-native');
+const SceneManager = require('../scene_manager');
 
 const {
   Component
@@ -66,7 +67,7 @@ Scene.propTypes = {
   //first child props only
   initialPath: React.PropTypes.string,
   initialProps: React.PropTypes.object,
-  camera: React.PropTypes.func
+  camera: React.PropTypes.func,
 
   //children only props
   path: React.PropTypes.string,
@@ -77,3 +78,5 @@ Scene.propTypes = {
 Scene.defaultProps = {
   flatten: true
 };
+
+module.exports = Scene;

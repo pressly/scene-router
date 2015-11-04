@@ -1,5 +1,5 @@
 const Scene = require('./scene');
-const Cameras = require('./camera's);
+const Cameras = require('./cameras');
 
 module.exports = {
   Scene: Scene,

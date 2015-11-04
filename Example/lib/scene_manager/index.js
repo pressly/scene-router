@@ -2,7 +2,7 @@ const React = require('react-native');
 const Cameras = require('../cameras');
 const InternalMath = require('../math');
 const sceneGraph = require('../scene_graph');
-const wrapComponent = require('./wrapComponent');
+const wrapComponent = require('./wrap_component');
 
 const {
   StyleSheet,
@@ -67,7 +67,10 @@ class SceneManager extends Component {
   constructor(props) {
     super(props);
 
-    const wrapScenes = props.scenes.map((scene) => wrapComponent(scene));
+    const wrapScenes = props.scenes.map((scene) => {
+      scene.component = wrapComponent(scene.component); 
+      return scene;
+    });
 
     this._buildSceneGraph = createSceneGraph(wrapScenes);
     this._currentScene = null;
@@ -77,7 +80,7 @@ class SceneManager extends Component {
       status: STATUS_IDEL,
       shouldCallLifeCycle: true,
       duration: 400,
-      cameraPosition = new Vector2D(0, 0),
+      cameraPosition: new Vector2D(0, 0),
       sceneGraphs: []
     };
   }
