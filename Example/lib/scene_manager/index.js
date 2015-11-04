@@ -28,6 +28,7 @@ const CAMERA_REF = 'CAMERA_REF';
 
 const STATUS_IDEL = 'idel';
 const STATUS_REQUEST_POP = 'pop';
+const STATUS_REQUEST_PUSH = 'push';
 
 const isObjectEmpty = (obj) => {
   return Object.getOwnPropertyNames(obj).length === 0;
@@ -80,18 +81,51 @@ class SceneManager extends Component {
     });
 
     this._buildSceneGraph = createSceneGraph(wrapScenes);
-    this._currentScene = null;
-    this._prevScene = null;
 
     const initialSceneGraph = this._buildSceneGraph(initialPath, initialProps, initialMeta);
 
+    console.log(initialSceneGraph);
+
+    this._currentScene = initialSceneGraph;
+    this._prevScene = null;
+
     this.state = {
-      status: STATUS_IDEL,
+      status: STATUS_REQUEST_PUSH,
       shouldCallLifeCycle: true,
       duration: 400,
       cameraPosition: new Vector2D(0, 0),
       sceneGraphs: [initialSceneGraph]
     };
+  }
+
+  _clearHistory() {
+    this.state.sceneGraphs = [this.currentScene];
+    this.setState(this.state);
+  }
+
+  _sceneDidMount(ref) {
+    if (!this._currentScene.refs) {
+      this._currentScene.refs = [];
+    }
+
+    this._currentScene.refs.push(ref);
+
+    //call life cycle on both current and prev scenes
+
+    //current scene
+    ref.willFocus();
+
+    //prev scene
+    //we need this condition because initial scene does not have a prev scene.
+    if (this._prevScene && this._prevScene.refs) {
+      this._prevScene.refs.forEach((ref) => {
+        ref.willBlur();
+      });
+    }
+  }
+
+  _sceneWillUnmount(ref) {
+
   }
 
   _buildSceneFromSceneGraph(sceneGraph) {
@@ -106,30 +140,69 @@ class SceneManager extends Component {
 
     //we are checking if path is flatten and it has at least a child.
     //now if you trying to get into the actuall path, this prevent the null component.
-    if (meta.flatten && !isObjectEmpty(sceneGraph.child)) {
+    if (meta.flatten && !isObjectEmpty(child)) {
       renderedScene = this._buildSceneFromSceneGraph(child);
     } else {
       renderedScene = (
-        <Component key={payload.id}/>
+        <Component
+          key={payload.id}
+          wrappedProps={{
+            position: meta.position,
+            sceneDidMount: this._sceneDidMount.bind(this),
+            sceneWillUnmount: this._sceneWillUnmount.bind(this),
+          }}
+          sceneProps={{
+            params: payload.params,
+            queryStrings: payload.queryStrings || {},
+            ...payload.props
+          }}>
+          {this._buildSceneFromSceneGraph(child)}
+        </Component>
       );
     }
 
     return renderedScene;
   }
 
-  _onSceneTransitionStart() {
+  _onCameraTransitionStart() {
 
   }
 
-  _onSceneTransitionEnd() {
+  _onCameraTransitionEnd() {
     //we need this to remove an item from sceneGraph which causes componentWillUnmount
-    if (this.state.status === STATUS_REQUEST_POP) {
-      this.state.status = STATUS_IDEL;
-      //since this happens when item is poped, we don't want to get a callback anymore
-      this.state.shouldCallLifeCycle = false;
+    const { status } = this.state;
 
-      this.state.sceneGraphs.pop();
-      this.setState(this.state);
+    switch (this.state.status) {
+      case STATUS_REQUEST_POP:
+        this.state.status = STATUS_IDEL;
+        //since this happens when item is poped out, we don't want to get a callback anymore
+        this.state.shouldCallLifeCycle = false;
+
+        this.state.sceneGraphs.pop();
+        this.setState(this.state);
+        break;
+      case STATUS_REQUEST_PUSH:
+
+        //we need to start calling on didFocus and didBlur
+        if (this._prevScene && this._prevScene.refs) {
+          this._prevScene.refs.forEach((ref) => {
+            ref.didBlur();
+          });
+        }
+
+        if (this._currentScene.refs) {
+          this._currentScene.refs.forEach((ref) => {
+            ref.didFocus();
+          });
+        }
+
+        this.state.status = STATUS_IDEL;
+        //since this happens when item is poped out, we don't want to get a callback anymore
+        this.state.shouldCallLifeCycle = false;
+        this.setState(this.state);
+        break;
+      default:
+        //do nothing
     }
   }
 
@@ -170,7 +243,7 @@ class SceneManager extends Component {
     this._currentScene = sceneGraph;
 
     this.state.sceneGraphs.push(sceneGraph);
-    this.state.cameraPosition.assign(meta.animation.x, meta.animation.y);
+    this.state.cameraPosition.assign(meta.position.x, meta.position.y);
     this.state.shouldCallLifeCycle = true;
 
     this.setState(this.state);
@@ -209,8 +282,8 @@ class SceneManager extends Component {
         duration={duration}
         scenes={scenes}
         shouldCallLifeCycle={shouldCallLifeCycle}
-        onSceneTransitionStart={this._onSceneTransitionStart.bind(this)}
-        onSceneTransitionEnd={this._onSceneTransitionEnd.bind(this)}/>
+        onSceneTransitionStart={this._onCameraTransitionStart.bind(this)}
+        onSceneTransitionEnd={this._onCameraTransitionEnd.bind(this)}/>
     )
   }
 }

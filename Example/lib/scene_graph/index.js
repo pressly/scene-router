@@ -17,6 +17,8 @@ const createSceneGraphBuilder = (scenes) => {
     const id = `scene:${index}`;
 
     router.path(path, (params, queryStrings, context) => {
+      console.log(internalMeta);
+
       context.meta = {
         ...internalMeta,
         flatten: flatten
@@ -37,9 +39,9 @@ const createSceneGraphBuilder = (scenes) => {
   });
 
   return (path, props, meta) => {
+    internalMeta = meta;
     const sceneGraph = router.capture(path);
 
-    internalMeta = meta;
 
     if (isObjectEmpty(sceneGraph)) {
       throw new Error(`scene for path '${path}' not found.`);

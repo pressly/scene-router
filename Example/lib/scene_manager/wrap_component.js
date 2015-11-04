@@ -9,6 +9,10 @@ const {
 
 const window = Dimensions.get('window');
 
+const getDisplayName = (WrappedComponent) => {
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+};
+
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
@@ -17,21 +21,60 @@ const styles = StyleSheet.create({
   }
 });
 
-const getDisplayName = (WrappedComponent) => {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-};
-
 const wrapComponent = (SceneComponent) => {
   class WrapComponent extends Component {
     constructor(props, context) {
       super(props, context);
     }
 
+    _getSceneRef() {
+      const { scene } = this.refs;
+      if (scene && scene.getWrappedInstance) {
+        return scene.getWrappedInstance();
+      }
+
+      return scene;
+    }
+
+    _callMethod(name) {
+      const scene = this._getSceneRef();
+      if (scene && scene[name]) {
+        scene[name]();
+      }
+    }
+
+    componentDidMount() {
+      const { wrappedProps: { sceneDidMount } } = this.props;
+      sceneDidMount(this);
+    }
+
+    componentWillUnmount() {
+      const { wrappedProps: { sceneWillUnmount } } = this.props;
+      sceneWillUnmount(this);
+    }
+
+    willBlur() {
+      this._callMethod('sceneWillBlur');
+    }
+
+    didBlur() {
+      this._callMethod('sceneDidBlur');
+    }
+
+    willFocus() {
+      this._callMethod('sceneWillFocus');
+    }
+
+    didFocus() {
+      this._callMethod('sceneDidFocus');
+    }
+
     render() {
-      const props = {};
+      const { sceneProps, wrappedProps: { position } } = this.props;
+
       return (
-        <Animated.View>
-          <SceneComponent ref="scene" {...props}/>
+        <Animated.View style={[styles.container, { top: position.y, left: position.x }]}>
+          <SceneComponent ref="scene" {...sceneProps}/>
         </Animated.View>
       );
     }

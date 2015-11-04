@@ -35,8 +35,9 @@ class Scene extends Component {
     };
   }
 
-  goto() {
-
+  goto(path, props, options) {
+    const { sceneManager } = this.refs;
+    sceneManager.push(path, props, options);
   }
 
   goback() {
@@ -56,6 +57,7 @@ class Scene extends Component {
 
     return (
       <SceneManager
+        ref="sceneManager"
         initialPath={initialPath}
         initialProps={initialProps}
         camera={camera}
