@@ -5,7 +5,7 @@ const {
   Component
 } = React;
 
-const parseScenes = (children, arr, parentPath) => {
+const _parseScenes = (children, arr, parentPath) => {
   React.Children.forEach(children, (child) => {
     const { children, path, component, flatten } = child.props;
     const childPath = parentPath + '/' + path;
@@ -16,23 +16,22 @@ const parseScenes = (children, arr, parentPath) => {
       flatten: flatten
     });
 
-    parseScenes(children, arr, childPath);
+    _parseScenes(children, arr, childPath);
   });
 };
 
+const parseScenes = (children) => {
+  let scenes = [];
+  _parseScenes(children, scenes, '');
+  return scenes;
+};
+
 class Scene extends Component {
-  constructor(baseProps, context) {
-    super(baseProps, context);
-
-    const { initialPath, initialProps, children } = baseProps;
-
-    let scenes = [];
-    parseScenes(children, scenes, '');
+  constructor(props, context) {
+    super(props, context);
 
     this.state = {
-      initialPath: initialPath,
-      initialProps: initialProps,
-      scenes: scenes
+      scenes: parseScenes(props.children)
     };
   }
 
@@ -45,11 +44,13 @@ class Scene extends Component {
   }
 
   render() {
-    const { camera } = this.props;
-
     const {
       initialPath,
       initialProps,
+      camera
+    } = this.props;
+
+    const {
       scenes
     } = this.state;
 

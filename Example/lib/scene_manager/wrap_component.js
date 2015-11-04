@@ -17,13 +17,18 @@ const styles = StyleSheet.create({
   }
 });
 
-const wrapComponent = (SceneComponent) =>
+const getDisplayName = (WrappedComponent) => {
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+};
+
+const wrapComponent = (SceneComponent) => {
   class WrapComponent extends Component {
     constructor(props, context) {
       super(props, context);
     }
 
     render() {
+      const props = {};
       return (
         <Animated.View>
           <SceneComponent ref="scene" {...props}/>
@@ -31,5 +36,10 @@ const wrapComponent = (SceneComponent) =>
       );
     }
   }
+
+  WrapComponent.displayName = `Scene(${getDisplayName(SceneComponent)})`;
+
+  return WrapComponent;
+};
 
 module.exports = wrapComponent;

@@ -13,6 +13,22 @@ const {
   Scene
 } = SceneRouter;
 
+class Home extends Component {
+  constructor(props, context) {
+    super(props, context);
+  }
+
+  componentDidMount() {
+    console.log('Home is mounted');
+  }
+
+  render() {
+    return (
+      <View></View>
+    );
+  }
+}
+
 class Example extends Component {
   constructor(props, context) {
     super(props, context)
@@ -21,7 +37,7 @@ class Example extends Component {
   render() {
     return (
       <Scene initialPath="/home">
-        <Scene path="home" component={View}/>
+        <Scene path="home" component={Home}/>
       </Scene>
     );
   }

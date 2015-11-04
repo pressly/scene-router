@@ -67,6 +67,13 @@ class SceneManager extends Component {
   constructor(props) {
     super(props);
 
+    const { initialPath, initialProps } = props;
+    //initial configuration
+    const initialMeta = {
+      withAnimation: false,
+      position: { x: 0, y: 0 }
+    };
+
     const wrapScenes = props.scenes.map((scene) => {
       scene.component = wrapComponent(scene.component);
       return scene;
@@ -76,12 +83,14 @@ class SceneManager extends Component {
     this._currentScene = null;
     this._prevScene = null;
 
+    const initialSceneGraph = this._buildSceneGraph(initialPath, initialProps, initialMeta);
+
     this.state = {
       status: STATUS_IDEL,
       shouldCallLifeCycle: true,
       duration: 400,
       cameraPosition: new Vector2D(0, 0),
-      sceneGraphs: []
+      sceneGraphs: [initialSceneGraph]
     };
   }
 
@@ -95,11 +104,13 @@ class SceneManager extends Component {
 
     let renderedScene;
 
-    if (meta.flatten) {
+    //we are checking if path is flatten and it has at least a child.
+    //now if you trying to get into the actuall path, this prevent the null component.
+    if (meta.flatten && !isObjectEmpty(sceneGraph.child)) {
       renderedScene = this._buildSceneFromSceneGraph(child);
     } else {
       renderedScene = (
-        <Component />
+        <Component key={payload.id}/>
       );
     }
 
@@ -205,6 +216,8 @@ class SceneManager extends Component {
 }
 
 SceneManager.propTypes = {
+  initialPath: React.PropTypes.string,
+  initialProps: React.PropTypes.string,
   scenes: React.PropTypes.arrayOf(
     React.PropTypes.shape(
       {

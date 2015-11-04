@@ -42,7 +42,7 @@ const createSceneGraphBuilder = (scenes) => {
     internalMeta = meta;
 
     if (isObjectEmpty(sceneGraph)) {
-      throw new Error(`scen for path '${path}' not found.`);
+      throw new Error(`scene for path '${path}' not found.`);
     }
 
     //we need to assign the props to last child of scene graph.
