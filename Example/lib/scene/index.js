@@ -11,7 +11,7 @@ const parseScenes = (children, arr, parentPath) => {
 
     arr.push({
       path: childPath,
-      component: sceneWrapper(component),
+      component: component,
       flatten: flatten
     });
 

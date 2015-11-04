@@ -18,7 +18,8 @@ const createSceneGraphBuilder = (scenes) => {
 
     router.path(path, (params, queryStrings, context) => {
       context.meta = {
-        ...internalMeta
+        ...internalMeta,
+        flatten: flatten
       };
 
       context.payload = {
@@ -26,8 +27,7 @@ const createSceneGraphBuilder = (scenes) => {
         component: component,
         props: {},
         params: params,
-        queryStrings: queryStrings,
-        flatten: flatten
+        queryStrings: queryStrings
       };
 
       context.child = {};

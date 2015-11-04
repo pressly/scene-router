@@ -2,6 +2,7 @@ const React = require('react-native');
 const Camera = require('../camera');
 const InternalMath = require('../math');
 const sceneGraph = require('../scene_graph');
+const wrapComponent = require('./wrapComponent');
 
 const {
   StyleSheet,
@@ -66,7 +67,9 @@ class SceneManager extends Component {
   constructor(props) {
     super(props);
 
-    this._buildSceneGraph = createSceneGraph(props.scenes);
+    const wrapScenes = props.scenes.map((scene) => wrapComponent(scene));
+
+    this._buildSceneGraph = createSceneGraph(wrapScenes);
     this._currentScene = null;
     this._prevScene = null;
 
