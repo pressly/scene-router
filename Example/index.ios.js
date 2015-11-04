@@ -37,7 +37,6 @@ class MyCamera extends Component {
 
 var MyCameraAnimated = Animated.createAnimatedComponent(MyCamera);
 
-
 class Scene1 extends Component {
   constructor(props) {
     super(props);
@@ -73,9 +72,6 @@ var Example = React.createClass({
   }
 });
 
-
-
-
 var styles = StyleSheet.create({
   camera: {
     flex: 1,
@@ -86,8 +82,6 @@ var styles = StyleSheet.create({
     width: window.width,
     height: window.height
   },
-
-
   child1: {
     position: 'absolute',
     top: 0,

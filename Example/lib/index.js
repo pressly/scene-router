@@ -1,5 +1,5 @@
-var SceneManager = require('./scene_manager');
+var Scene = require('./scene');
 
 module.exports = {
-  SceneManager: SceneManager
+  Scene: Scene
 };

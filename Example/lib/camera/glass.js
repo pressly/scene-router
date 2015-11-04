@@ -1,14 +1,14 @@
-var React = require('react-native');
-var {
+const React = require('react-native');
+const {
   Dimensions,
   StyleSheet,
   Component,
   View
 } = React;
 
-var window = Dimensions.get('window');
+const window = Dimensions.get('window');
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     opacity: 0,
