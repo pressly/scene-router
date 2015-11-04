@@ -1,5 +1,5 @@
 const React = require('react-native');
-const Camera = require('../camera');
+const Cameras = require('../cameras');
 const InternalMath = require('../math');
 const sceneGraph = require('../scene_graph');
 const wrapComponent = require('./wrapComponent');
@@ -215,7 +215,7 @@ SceneManager.propTypes = {
 };
 
 SceneManager.defaultProps = {
-  camera: Camera
+  camera: Cameras.Base
 };
 
 module.exports = SceneManager;

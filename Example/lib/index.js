@@ -1,5 +1,7 @@
-var Scene = require('./scene');
+const Scene = require('./scene');
+const Cameras = require('./camera's);
 
 module.exports = {
-  Scene: Scene
+  Scene: Scene,
+  Cameras: Cameras
 };
