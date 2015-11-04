@@ -72,7 +72,7 @@ class Camera extends Component {
       <View style={styles.container}>
         {this.renderBack()}
         <Animated.View style={{ transform: this._position.getTranslateTransform() }}>
-          this.renderScenes(scenes)
+          {this.renderScenes(scenes)}
         </Animated.View>
         {this.renderGlass()}
       </View>

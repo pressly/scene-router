@@ -68,7 +68,7 @@ class SceneManager extends Component {
     super(props);
 
     const wrapScenes = props.scenes.map((scene) => {
-      scene.component = wrapComponent(scene.component); 
+      scene.component = wrapComponent(scene.component);
       return scene;
     });
 
