@@ -10,7 +10,8 @@ const {
 } = React;
 
 const {
-  Scene
+  Scene,
+  Cameras
 } = SceneRouter;
 
 function wait(delay) {
@@ -154,7 +155,7 @@ class Example extends Component {
 
   render() {
     return (
-      <Scene ref="scene" initialPath="/home">
+      <Scene ref="scene" initialPath="/home" camera={Cameras.With2SideMenus}>
         <Scene path="home" component={Home}/>
         <Scene path="about" component={About}/>
         <Scene path="contact" component={Contact}/>
