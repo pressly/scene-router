@@ -98,8 +98,42 @@ class SceneManager extends Component {
     };
   }
 
+  _getLastSceneGraph() {
+    const sceneGraphs = this.state.sceneGraphs
+    const lastItemIndex = sceneGraphs.length - 1;
+    if (lastItemIndex > -1) {
+      return sceneGraphs[lastItemIndex];
+    }
+    return null;
+  }
+
+  _getOneBeforeLastSceneGraph() {
+    const sceneGraphs = this.state.sceneGraphs
+    const lastItemIndex = sceneGraphs.length - 1;
+    if (lastItemIndex > 0) {
+      return sceneGraphs[lastItemIndex - 1];
+    }
+    return null;
+  }
+
+  _replaceLastSceneGraphWith(sceneGraph) {
+    const lastItemIndex = this.state.sceneGraphs.length - 1;
+    this.state.sceneGraphs[lastItemIndex] = sceneGraph;
+  }
+
   _clearHistory() {
-    this.state.sceneGraphs = [this.currentScene];
+    //we need to call all will and did blur for all the child;
+    const sceneGraphs = this.state.sceneGraphs;
+    sceneGraphs.forEach((sceneGraph) => {
+      if (sceneGraph !== this._currentScene) {
+        sceneGraph.refs.forEach((ref) => {
+          ref.willBlur();
+          ref.didBlur();
+        });
+      }
+    })
+
+    this.state.sceneGraphs = [this._currentScene];
     this.setState(this.state);
   }
 
@@ -117,10 +151,12 @@ class SceneManager extends Component {
 
     //prev scene
     //we need this condition because initial scene does not have a prev scene.
-    if (this._prevScene && this._prevScene.refs) {
-      this._prevScene.refs.forEach((ref) => {
-        ref.willBlur();
-      });
+    if (!this._currentScene.meta.clearHistory) {
+      if (this._prevScene && this._prevScene.refs) {
+        this._prevScene.refs.forEach((ref) => {
+          ref.willBlur();
+        });
+      }
     }
   }
 
@@ -174,19 +210,39 @@ class SceneManager extends Component {
 
     switch (this.state.status) {
       case STATUS_REQUEST_POP:
+
+        if (this._currentScene.refs) {
+          this._currentScene.refs.forEach((ref) => {
+            ref.didBlur();
+          });
+        }
+
+        if (this._prevScene && this._prevScene.refs) {
+          this._prevScene.refs.forEach((ref) => {
+            ref.didFocus();
+          });
+        }
+
         this.state.status = STATUS_IDEL;
         //since this happens when item is poped out, we don't want to get a callback anymore
         this.state.shouldCallLifeCycle = false;
 
         this.state.sceneGraphs.pop();
+
+        this._currentScene = this._prevScene;
+        this._prevScene = this._getOneBeforeLastSceneGraph();
+
         this.setState(this.state);
         break;
+
       case STATUS_REQUEST_PUSH:
         //we need to start calling on didFocus and didBlur
-        if (this._prevScene && this._prevScene.refs) {
-          this._prevScene.refs.forEach((ref) => {
-            ref.didBlur();
-          });
+        if (!this._currentScene.meta.clearHistory) {
+          if (this._prevScene && this._prevScene.refs) {
+            this._prevScene.refs.forEach((ref) => {
+              ref.didBlur();
+            });
+          }
         }
 
         if (this._currentScene.refs) {
@@ -199,8 +255,12 @@ class SceneManager extends Component {
         //in such a way that only unmounted lifecyle needs to be called.
         if (this._currentScene.meta.replace) {
           this.state.sceneGraphs.pop();
-          const lastItemIndex = this.state.sceneGraphs.length - 1;
-          this.state.sceneGraphs[lastItemIndex] = this._currentScene;
+          this._replaceLastSceneGraphWith(this._currentScene);
+          this._prevScene = this._getOneBeforeLastSceneGraph();
+        }
+
+        if (this._currentScene.meta.clearHistory) {
+          this._clearHistory();
         }
 
         this.state.status = STATUS_IDEL;
@@ -208,6 +268,7 @@ class SceneManager extends Component {
         this.state.shouldCallLifeCycle = false;
         this.setState(this.state);
         break;
+
       default:
         //do nothing
     }
@@ -261,6 +322,18 @@ class SceneManager extends Component {
     if (this.state.sceneGraphs.length < 2) {
       console.log('nothing to pop');
       return;
+    }
+
+    if (this._currentScene.refs) {
+      this._currentScene.refs.forEach((ref) => {
+        ref.willBlur();
+      });
+    }
+
+    if (this._prevScene.refs) {
+      this._prevScene.refs.forEach((ref) => {
+        ref.willFocus();
+      });
     }
 
     //we need to set camera position to prev scene

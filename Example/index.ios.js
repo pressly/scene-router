@@ -91,6 +91,42 @@ class About extends Component {
   }
 }
 
+class Contact extends Component {
+  constructor(props, context) {
+    super(props, context);
+  }
+
+  componentDidMount() {
+    console.log('Contact is mounted');
+  }
+
+  sceneWillFocus() {
+    console.log('Contact will be focused');
+  }
+
+  sceneWillBlur() {
+    console.log('Contact will be Blured');
+  }
+
+  sceneDidBlur() {
+    console.log('Contact did Blur');
+  }
+
+  sceneDidFocus() {
+    console.log('Contact did focuse');
+  }
+
+  componentWillUnmount() {
+    console.log('Contact will be unmounted');
+  }
+
+  render() {
+    return (
+      <View style={{ flex: 1, backgroundColor: 'yellow' }}></View>
+    );
+  }
+}
+
 class Example extends Component {
   constructor(props, context) {
     super(props, context)
@@ -100,9 +136,16 @@ class Example extends Component {
     const sceneRef = this.refs.scene;
 
     await wait(2000);
+    console.log('');
     sceneRef.goto('/about', {}, { replace: false });
+
     await wait(2000);
-    sceneRef.goback();
+    console.log('');
+    sceneRef.goto('/contact', {}, { replace: false });
+
+    await wait(2000);
+    console.log('');
+    sceneRef.goto('/home', {}, { clearHistory: true });
   }
 
   componentDidMount() {
@@ -114,6 +157,7 @@ class Example extends Component {
       <Scene ref="scene" initialPath="/home">
         <Scene path="home" component={Home}/>
         <Scene path="about" component={About}/>
+        <Scene path="contact" component={Contact}/>
       </Scene>
     );
   }

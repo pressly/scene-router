@@ -10,11 +10,12 @@ const createSceneGraphBuilder = (scenes) => {
   const router = route.create();
 
   let internalMeta;
+  let idCounter = 0;
 
   //construct route registray
   scenes.forEach((scene, index) => {
     const { component, path, flatten } = scene;
-    const id = `scene:${index}`;
+    const sceneName = `scene:${index}`;
 
     router.path(path, (params, queryStrings, context) => {
       context.meta = {
@@ -23,7 +24,7 @@ const createSceneGraphBuilder = (scenes) => {
       };
 
       context.payload = {
-        id: id,
+        id: `${sceneName}:${++idCounter}`,
         component: component,
         props: {},
         params: params,
