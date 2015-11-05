@@ -71,6 +71,8 @@ class SceneManager extends Component {
     const { initialPath, initialProps } = props;
     //initial configuration
     const initialMeta = {
+      replace: false,
+      clearHistory: false,
       withAnimation: false,
       position: { x: 0, y: 0 }
     };
@@ -191,6 +193,14 @@ class SceneManager extends Component {
           this._currentScene.refs.forEach((ref) => {
             ref.didFocus();
           });
+        }
+
+        //this condition is used to replace current scen with prev scene.
+        //in such a way that only unmounted lifecyle needs to be called.
+        if (this._currentScene.meta.replace) {
+          this.state.sceneGraphs.pop();
+          const lastItemIndex = this.state.sceneGraphs.length - 1;
+          this.state.sceneGraphs[lastItemIndex] = this._currentScene;
         }
 
         this.state.status = STATUS_IDEL;

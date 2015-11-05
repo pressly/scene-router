@@ -92,7 +92,7 @@ class Example extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-      this.refs.scene.goto('/about', {})
+      this.refs.scene.goto('/about', {}, { replace: false })
     }, 1000);
   }
 
