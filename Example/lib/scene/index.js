@@ -43,7 +43,8 @@ class Scene extends Component {
   }
 
   goback() {
-
+    const sceneManager = this.refs[SCENE_MANAGER_REF];
+    sceneManager.pop();
   }
 
   render() {
