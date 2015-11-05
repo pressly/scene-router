@@ -17,8 +17,6 @@ const createSceneGraphBuilder = (scenes) => {
     const id = `scene:${index}`;
 
     router.path(path, (params, queryStrings, context) => {
-      console.log(internalMeta);
-
       context.meta = {
         ...internalMeta,
         flatten: flatten

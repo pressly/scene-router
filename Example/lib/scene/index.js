@@ -5,6 +5,8 @@ const {
   Component
 } = React;
 
+const SCENE_MANAGER_REF = 'SCENE_MANAGER_REF';
+
 const _parseScenes = (children, arr, parentPath) => {
   React.Children.forEach(children, (child) => {
     const { children, path, component, flatten } = child.props;
@@ -36,7 +38,7 @@ class Scene extends Component {
   }
 
   goto(path, props, options) {
-    const { sceneManager } = this.refs;
+    const sceneManager = this.refs[SCENE_MANAGER_REF];
     sceneManager.push(path, props, options);
   }
 
@@ -57,7 +59,7 @@ class Scene extends Component {
 
     return (
       <SceneManager
-        ref="sceneManager"
+        ref={SCENE_MANAGER_REF}
         initialPath={initialPath}
         initialProps={initialProps}
         camera={camera}

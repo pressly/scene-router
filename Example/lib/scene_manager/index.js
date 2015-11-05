@@ -84,8 +84,6 @@ class SceneManager extends Component {
 
     const initialSceneGraph = this._buildSceneGraph(initialPath, initialProps, initialMeta);
 
-    console.log(initialSceneGraph);
-
     this._currentScene = initialSceneGraph;
     this._prevScene = null;
 
