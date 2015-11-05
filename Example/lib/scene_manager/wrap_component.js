@@ -30,12 +30,12 @@ const wrapComponent = (SceneComponent) => {
     }
 
     _getSceneRef() {
-      const { scene } = this.refs;
-      if (scene && scene.getWrappedInstance) {
-        return scene.getWrappedInstance();
+      const sceneRef = this.refs[SCENE_REF];
+      if (sceneRef && sceneRef.getWrappedInstance) {
+        return sceneRef.getWrappedInstance();
       }
 
-      return scene;
+      return sceneRef;
     }
 
     _callMethod(name) {
