@@ -222,7 +222,7 @@ class SceneManager extends Component {
     };
 
     //if you are replacing current scene with new scene, animation needs to be false
-    if (meta.repalce) {
+    if (meta.replace) {
       meta.withAnimation = false;
       meta.position = { x: cameraPosition.x, y: cameraPosition.y };
     }
