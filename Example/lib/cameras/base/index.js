@@ -11,6 +11,14 @@ const {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  camera: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: window.width,
+    height: window.height,
+    backgroundColor: 'transparent'
   }
 });
 
@@ -71,7 +79,7 @@ class Camera extends Component {
     return (
       <View style={styles.container}>
         {this.renderBack()}
-        <Animated.View style={{ transform: this._position.getTranslateTransform() }}>
+        <Animated.View style={[styles.camera, { transform: this._position.getTranslateTransform() }]}>
           {this.renderScenes(scenes)}
         </Animated.View>
         {this.renderGlass()}
