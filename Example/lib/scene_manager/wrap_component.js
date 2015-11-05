@@ -9,6 +9,8 @@ const {
 
 const window = Dimensions.get('window');
 
+const SCENE_REF = 'SCENE_REF';
+
 const getDisplayName = (WrappedComponent) => {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 };
@@ -71,10 +73,13 @@ const wrapComponent = (SceneComponent) => {
 
     render() {
       const { sceneProps, wrappedProps: { position } } = this.props;
+      const scenePosition = { top: position.y, left: position.x };
 
       return (
-        <Animated.View style={[styles.container, { top: position.y, left: position.x }]}>
-          <SceneComponent ref="scene" {...sceneProps}/>
+        <Animated.View style={[styles.container, scenePosition]}>
+          <SceneComponent
+            ref={SCENE_REF}
+            {...sceneProps}/>
         </Animated.View>
       );
     }
