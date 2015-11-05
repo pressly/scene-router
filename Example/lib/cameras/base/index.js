@@ -107,7 +107,8 @@ Camera.propTypes = {
   duration: React.PropTypes.number,
   onSceneTransitionStart: React.PropTypes.func,
   onSceneTransitionEnd: React.PropTypes.func,
-  shouldCallLifeCycle: React.PropTypes.bool
+  shouldCallLifeCycle: React.PropTypes.bool,
+  userProps: React.PropTypes.object
 };
 
 Camera.defaultProps = {
@@ -117,7 +118,8 @@ Camera.defaultProps = {
   duration: 400,
   onSceneTransitionStart: () => {},
   onSceneTransitionEnd: () => {},
-  shouldCallLifeCycle: true
+  shouldCallLifeCycle: true,
+  userProps: {}
 };
 
 module.exports = Camera;

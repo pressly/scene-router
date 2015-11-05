@@ -6,7 +6,8 @@ const {
   StyleSheet,
   Text,
   View,
-  Component
+  Component,
+  Dimensions
 } = React;
 
 const {
@@ -14,10 +15,36 @@ const {
   Cameras
 } = SceneRouter;
 
+const window = Dimensions.get('window');
+
 function wait(delay) {
   return new Promise((resolve) => {
     setTimeout(resolve, delay);
   });
+}
+
+class LeftMenu extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <View style={{ position: 'absolute', top: 0, left: 0, width: window.width, height: window.height, backgroundColor: 'brown' }}/>
+    );
+  }
+}
+
+class RightMenu extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <View style={{ position: 'absolute', top: 0, left: 0, width: window.width, height: window.height, backgroundColor: 'black' }}/>
+    );
+  }
 }
 
 class Home extends Component {
@@ -154,8 +181,13 @@ class Example extends Component {
   }
 
   render() {
+    const cameraProps = {
+      LeftMenu: LeftMenu,
+      RightMenu: RightMenu
+    };
+
     return (
-      <Scene ref="scene" initialPath="/home" camera={Cameras.With2SideMenus}>
+      <Scene ref="scene" initialPath="/home" camera={Cameras.With2SideMenus} cameraProps={cameraProps}>
         <Scene path="home" component={Home}/>
         <Scene path="about" component={About}/>
         <Scene path="contact" component={Contact}/>

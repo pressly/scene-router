@@ -55,7 +55,8 @@ class Scene extends Component {
     const {
       initialPath,
       initialProps,
-      camera
+      camera,
+      cameraProps
     } = this.props;
 
     const {
@@ -68,7 +69,8 @@ class Scene extends Component {
         initialPath={initialPath}
         initialProps={initialProps}
         camera={camera}
-        scenes={scenes}/>
+        scenes={scenes}
+        cameraProps={cameraProps}/>
     );
   }
 }
@@ -78,6 +80,7 @@ Scene.propTypes = {
   initialPath: React.PropTypes.string,
   initialProps: React.PropTypes.object,
   camera: React.PropTypes.func,
+  cameraProps: React.PropTypes.object,
 
   //children only props
   path: React.PropTypes.string,

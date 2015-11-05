@@ -348,7 +348,8 @@ class SceneManager extends Component {
   }
 
   render() {
-    const Camera = this.props.camera;
+    const { camera, cameraProps } = this.props;
+    const Camera = camera;
     const { shouldCallLifeCycle, duration, cameraPosition, sceneGraphs } = this.state;
 
     const scenes = this.state.sceneGraphs.map((sceneGraph) => {
@@ -364,7 +365,8 @@ class SceneManager extends Component {
         scenes={scenes}
         shouldCallLifeCycle={shouldCallLifeCycle}
         onSceneTransitionStart={this._onCameraTransitionStart.bind(this)}
-        onSceneTransitionEnd={this._onCameraTransitionEnd.bind(this)}/>
+        onSceneTransitionEnd={this._onCameraTransitionEnd.bind(this)}
+        userProps={cameraProps}/>
     )
   }
 }
