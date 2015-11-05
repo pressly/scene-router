@@ -180,7 +180,6 @@ class SceneManager extends Component {
         this.setState(this.state);
         break;
       case STATUS_REQUEST_PUSH:
-
         //we need to start calling on didFocus and didBlur
         if (this._prevScene && this._prevScene.refs) {
           this._prevScene.refs.forEach((ref) => {
@@ -243,6 +242,7 @@ class SceneManager extends Component {
     this.state.sceneGraphs.push(sceneGraph);
     this.state.cameraPosition.assign(meta.position.x, meta.position.y);
     this.state.shouldCallLifeCycle = true;
+    this.state.status = STATUS_REQUEST_PUSH;
 
     this.setState(this.state);
   }
