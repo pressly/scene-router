@@ -47,6 +47,10 @@ class Scene extends Component {
     sceneManager.pop();
   }
 
+  shouldComponentUpdate() {
+    return false;
+  }
+
   render() {
     const {
       initialPath,
