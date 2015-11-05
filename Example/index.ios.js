@@ -13,6 +13,12 @@ const {
   Scene
 } = SceneRouter;
 
+function wait(delay) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay);
+  });
+}
+
 class Home extends Component {
   constructor(props, context) {
     super(props, context);
@@ -90,10 +96,17 @@ class Example extends Component {
     super(props, context)
   }
 
+  async tests() {
+    const sceneRef = this.refs.scene;
+
+    await wait(2000);
+    sceneRef.goto('/about', {}, { replace: false });
+    await wait(2000);
+    sceneRef.goback();
+  }
+
   componentDidMount() {
-    setTimeout(() => {
-      this.refs.scene.goto('/about', {}, { replace: false })
-    }, 1000);
+    this.tests();
   }
 
   render() {
