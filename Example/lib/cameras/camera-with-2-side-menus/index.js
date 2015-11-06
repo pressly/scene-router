@@ -244,8 +244,12 @@ class CameraWith2SideMenus extends Camera {
 
     return (
       <View style={styles.menuWrapper}>
-        <LeftMenu key="leftMenu" ref="leftMenu"/>
-        <RightMenu key="rightMenu" ref="rightMenu"/>
+        <Animated.View style={{ opacity: this._leftMenuOpacity }}>
+          <LeftMenu key="leftMenu" ref="leftMenu"/>
+        </Animated.View>
+        <Animated.View style={{ opacity: this._rightMenuOpacity }}>
+          <RightMenu key="rightMenu" ref="rightMenu"/>
+        </Animated.View>
       </View>
     );
   }
