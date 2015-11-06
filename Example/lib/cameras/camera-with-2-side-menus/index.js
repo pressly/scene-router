@@ -78,6 +78,8 @@ class CameraWith2SideMenus extends Camera {
     this._enabledLeftMenu = true;
     this._enabledRightMenu = true;
 
+    this._whichSide = null;
+
     this._isOpen = false;
   }
 
@@ -118,10 +120,24 @@ class CameraWith2SideMenus extends Camera {
     } = this.props;
     let value = this._prevValue + gesture.dx;
 
+    if (!this._whichSide) {
+      if (value > 0) {
+        this._whichSide = 'left';
+      } else {
+        this._whichSide = 'right';
+      }
+    } else {
+      if (value > 0 && this._whichSide == 'right') {
+        value = 0;
+      } else if (value < 0 && this._whichSide == 'left') {
+        value = 0;
+      }
+    }
+
     if (value > 0) {
       value = value < openLeftMenuOffset? value : openLeftMenuOffset;
       this._showMenu('left');
-    } else {
+    } else if (value < 0) {
       value = value > openRightMenuOffset? value : openRightMenuOffset;
       this._showMenu('right');
     }
@@ -136,14 +152,16 @@ class CameraWith2SideMenus extends Camera {
     const absDx = Math.abs(dx);
 
     if (absDx > offsetUntilOpen && !this._isOpen) {
-      if (dx < 0) {
+      if (dx < 0 && this._whichSide == 'right') {
         this.openMenu('right');
-      } else {
+      } else if (dx > 0 && this._whichSide == 'left') {
         this.openMenu('left');
       }
     } else {
       this.closeMenu();
     }
+
+    this._whichSide = null;
   }
 
   _wrappedMenuController(sceneAsChild) {
