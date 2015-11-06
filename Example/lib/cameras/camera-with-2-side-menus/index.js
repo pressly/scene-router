@@ -81,6 +81,90 @@ class CameraWith2SideMenus extends Camera {
     this._whichSide = null;
 
     this._isOpen = false;
+
+    //Menus Lifecylce variables
+    this._lifecyles = {
+      rightMightOpen: false,
+      leftMightOpen: false
+    };
+    this._value.addListener(this._updateLifeCyles.bind(this));
+  }
+
+  //we use this function to make sure we are getting the right ref
+  //whether it's wrapped by redux or not.
+  _getMenuRef(side) {
+    const refName = side == 'left'? 'leftMenuRef' : 'rightMenuRef';
+    const ref = this.refs[refName];
+
+    if (ref && ref.getWrappedInstance) {
+      return ref.getWrappedInstance();
+    }
+
+    return ref;
+  }
+
+  _callMenuMightOpen(side) {
+    const ref = this._getMenuRef(side);
+    if (ref && ref.menuMightOpen) {
+      ref.menuMightOpen();
+    }
+  }
+
+  _callMenuDidOpen(side) {
+    const ref = this._getMenuRef(side);
+    if (ref && ref.menuDidOpen) {
+      ref.menuDidOpen();
+    }
+  }
+
+  _callMenuDidClose(side) {
+    const ref = this._getMenuRef(side);
+    if (ref && ref.menuDidClose) {
+      ref.menuDidClose();
+    }
+  }
+
+  _updateLifeCyles(event) {
+    const { value } = event;
+    const {
+      userProps: {
+        openLeftMenuOffset,
+        openRightMenuOffset
+      }
+    } = this.props;
+
+    if (value < 0) {
+      //right menu is opening
+      if (!this._lifecyles.rightMightOpen && !this._isOpen) {
+        this._lifecyles.rightMightOpen = true;
+        this._callMenuMightOpen('right');
+      }
+
+      if (!this._isOpen && this._lifecyles.rightMightOpen && value == openRightMenuOffset) {
+        this._callMenuDidOpen('right');
+      }
+
+    } else if (value > 0) {
+      //left menu is opening
+      if (!this._lifecyles.leftMightOpen && !this._isOpen) {
+        this._lifecyles.leftMightOpen = true;
+        this._callMenuMightOpen('left');
+      }
+
+      if (!this._isOpen && this._lifecyles.leftMightOpen && value == openLeftMenuOffset) {
+        this._callMenuDidOpen('left');
+      }
+
+    } else {
+      //something is closed let's find out which one
+      if (this._lifecyles.rightMightOpen) {
+        this._callMenuDidClose('right');
+        this._lifecyles.rightMightOpen = false;
+      } else if (this._lifecyles.leftMightOpen) {
+        this._callMenuDidClose('left');
+        this._lifecyles.leftMightOpen = false;
+      }
+    }
   }
 
   _handleMoveShouldSetPanResponder(e, gesture) {
@@ -274,10 +358,10 @@ class CameraWith2SideMenus extends Camera {
     return (
       <View style={styles.menuWrapper}>
         <Animated.View style={{ opacity: this._leftMenuOpacity }}>
-          <LeftMenu key="leftMenu" ref="leftMenu"/>
+          <LeftMenu key="leftMenu" ref="leftMenuRef"/>
         </Animated.View>
         <Animated.View style={{ opacity: this._rightMenuOpacity }}>
-          <RightMenu key="rightMenu" ref="rightMenu"/>
+          <RightMenu key="rightMenu" ref="rightMenuRef"/>
         </Animated.View>
       </View>
     );

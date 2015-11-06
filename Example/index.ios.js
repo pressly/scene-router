@@ -30,6 +30,18 @@ class LeftMenu extends Component {
     super(props);
   }
 
+  menuMightOpen() {
+    console.log('LeftMenu might open');
+  }
+
+  menuDidOpen() {
+    console.log('LeftMenu did open');
+  }
+
+  menuDidClose() {
+    console.log('LeftMenu did close');
+  }
+
   render() {
     return (
       <View style={{ position: 'absolute', top: 0, left: 0, width: window.width, height: window.height, backgroundColor: 'brown' }}/>
@@ -40,6 +52,18 @@ class LeftMenu extends Component {
 class RightMenu extends Component {
   constructor(props) {
     super(props);
+  }
+
+  menuMightOpen() {
+    console.log('RightMenu might open');
+  }
+
+  menuDidOpen() {
+    console.log('RightMenu did open');
+  }
+
+  menuDidClose() {
+    console.log('RightMenu did close');
   }
 
   render() {
