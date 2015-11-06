@@ -16,6 +16,8 @@ const {
 } = SceneRouter;
 
 const window = Dimensions.get('window');
+const openLeftMenuOffset = window.width * 2 / 3;
+const openRightMenuOffset = -openLeftMenuOffset;
 
 function wait(delay) {
   return new Promise((resolve) => {
@@ -163,17 +165,17 @@ class Example extends Component {
   async tests() {
     const sceneRef = this.refs.scene;
 
-    await wait(2000);
-    console.log('');
-    sceneRef.goto('/about', {}, { replace: false });
-
-    await wait(2000);
-    console.log('');
-    sceneRef.goto('/contact', {}, { replace: false });
-
-    await wait(2000);
-    console.log('');
-    sceneRef.goto('/home', {}, { clearHistory: true });
+    // await wait(2000);
+    // console.log('');
+    // sceneRef.goto('/about', {}, { replace: false });
+    //
+    // await wait(2000);
+    // console.log('');
+    // sceneRef.goto('/contact', {}, { replace: false });
+    //
+    // await wait(2000);
+    // console.log('');
+    // sceneRef.goto('/home', {}, { clearHistory: true });
   }
 
   componentDidMount() {
@@ -183,7 +185,14 @@ class Example extends Component {
   render() {
     const cameraProps = {
       LeftMenu: LeftMenu,
-      RightMenu: RightMenu
+      RightMenu: RightMenu,
+
+      gestures: true,
+      toleranceX: 10,
+      toleranceY: 10,
+      openLeftMenuOffset: openLeftMenuOffset,
+      openRightMenuOffset: openRightMenuOffset,
+      offsetUntilOpen: 50
     };
 
     return (
