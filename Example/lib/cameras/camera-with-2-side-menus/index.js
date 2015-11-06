@@ -167,11 +167,24 @@ class CameraWith2SideMenus extends Camera {
   _wrappedMenuController(sceneAsChild) {
     const { userProps: { gestures } } = this.props;
     const panHandlers = gestures? this._responder.panHandlers : {};
+
+    let sceneProps = sceneAsChild.props.sceneProps;
+    sceneProps.menu = {
+      open: this.openMenu.bind(this),
+      close: this.closeMenu.bind(this),
+      enable: (side) => { this.enableMenu(side, true); },
+      disable: (side) => { this.enableMenu(side, false); }
+    };
+
+    const scene = React.cloneElement(sceneAsChild, {
+      sceneProps: sceneProps
+    });
+
     return (
       <Animated.View
         style={[styles.view, animationStyle(this._value)]}
         {...panHandlers}>
-        {sceneAsChild}
+        {scene}
         {this._renderOverlay()}
       </Animated.View>
     );

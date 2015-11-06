@@ -62,8 +62,18 @@ class Home extends Component {
     console.log('Home will be focused');
   }
 
-  sceneDidFocus() {
+  async sceneDidFocus() {
     console.log('Home did focuse');
+
+    const { menu } = this.props;
+    await wait(1000);
+    menu.open('right');
+
+    await wait(1000);
+    menu.close();
+
+    await wait(1000);
+    menu.open('left');
   }
 
   sceneWillBlur() {
