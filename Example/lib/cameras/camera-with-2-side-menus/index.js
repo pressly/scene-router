@@ -260,10 +260,6 @@ class CameraWith2SideMenus extends Camera {
     });
   }
 
-  renderGlass() {
-    return null;
-  }
-
   componentWillMount() {
     this._responder = PanResponder.create({
       onStartShouldSetResponderCapture: () => true,
