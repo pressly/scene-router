@@ -1,5 +1,5 @@
 const React = require('react-native');
-const SceneRouter = require('./lib');
+const SceneRouter = require('scene-router');
 
 const {
   AppRegistry,

@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "react-native": "^0.13.2",
-    "trie-route": "0.0.3"
+    "scene-router": "../"
   }
 }
