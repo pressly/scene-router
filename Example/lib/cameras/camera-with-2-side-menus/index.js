@@ -22,6 +22,22 @@ const styles = StyleSheet.create({
     width: window.width,
     height: window.height,
     backgroundColor: 'transparent'
+  },
+  view: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    backgroundColor: 'transparent',
+    width: window.width,
+    height: window.height
+  },
+  overlay: {
+    position: 'absolute',
+    left: 0, // this value will be modified by this._position in base canera class
+    top: 0, // this value will be modified by this._position in base canera class
+    backgroundColor: 'transparent',
+    width: window.width,
+    height: window.height
   }
 });
 
@@ -140,13 +156,15 @@ class CameraWith2SideMenus extends Camera {
         style={[styles.view, animationStyle(this._value)]}
         {...panHandlers}>
         {sceneAsChild}
+        {this._renderOverlay()}
       </Animated.View>
     );
   }
 
   _renderOverlay() {
+    const value = this._position.__getValue();
     return (
-      <Animated.View style={[styles.view, { opacity: this._overlayOpacity }]}>
+      <Animated.View style={[styles.overlay, { opacity: this._overlayOpacity, top: -value.y, left: -value.x }]}>
         <TouchableWithoutFeedback onPress={() => { this.closeMenu() }}>
           <View style={{ flex: 1, backgroundColor: 'transparent' }}/>
         </TouchableWithoutFeedback>

@@ -168,6 +168,10 @@ class Example extends Component {
     // await wait(2000);
     // console.log('');
     // sceneRef.goto('/about', {}, { replace: false });
+
+    // await wait(1000);
+    // sceneRef.goback();
+
     //
     // await wait(2000);
     // console.log('');
