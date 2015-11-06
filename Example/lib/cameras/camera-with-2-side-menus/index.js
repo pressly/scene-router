@@ -97,11 +97,9 @@ class CameraWith2SideMenus extends Camera {
     // - has some one disable the menu by calling enableMenu
     if (dx > 0 && (!LeftMenu || !this._enabledLeftMenu)) {
       //we are not letting slider over to left if left menu doesn't pass
-      console.log(`${dx} > 0 && (!${LeftMenu} || !${this._enabledLeftMenu})`);
       return false;
     } else if (dx < 0 && (!RightMenu || !this._enabledRightMenu)) {
       //we are not letting slider over to right if right menu doesn't pass
-      console.log('wow2');
       return false;
     }
 

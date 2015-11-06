@@ -165,9 +165,9 @@ class Example extends Component {
   async tests() {
     const sceneRef = this.refs.scene;
 
-    await wait(2000);
-    console.log('');
-    sceneRef.goto('/about', {}, { replace: false });
+    // await wait(2000);
+    // console.log('');
+    // sceneRef.goto('/about', {}, { replace: false });
 
     // await wait(2000);
     // console.log('');
