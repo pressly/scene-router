@@ -10,9 +10,6 @@
     "type": "git",
     "url": "https://github.com/pressly/scene-router.git"
   },
-  "peerDependencies": {
-    "react-native": "*"
-  },
   "dependencies": {
     "trie-route": "0.0.3"
   },
