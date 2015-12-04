@@ -48,7 +48,7 @@ class LeftMenu extends Component {
       <View style={{flex: 1}}>
         <View style={{ height: 20 }}></View>
         <ScrollView automaticallyAdjustContentInsets={false} style={{ flex:1, backgroundColor: 'brown' }}>
-          <Text>Hello</Text>
+          <Text onPress={() => console.log('bobo')}>Hello</Text>
         </ScrollView>
       </View>
     );
@@ -74,8 +74,12 @@ class RightMenu extends Component {
 
   render() {
     return (
-      <View style={{ position: 'absolute', top: 0, left: 0, width: window.width, height: window.height, backgroundColor: 'black' }}/>
-    );
+      <View style={{flex: 1}}>
+        <View style={{ height: 20 }}></View>
+        <ScrollView automaticallyAdjustContentInsets={false} style={{ flex:1, backgroundColor: 'white' }} contentContainerStyle={{ alignItems: 'flex-end' }}>
+          <Text onPress={() => console.log('bobo')}>Hello</Text>
+        </ScrollView>
+      </View>    );
   }
 }
 
@@ -207,14 +211,18 @@ class Example extends Component {
 
     await wait(2000);
     console.log('');
-    sceneRef.goto('/about', {}, { replace: false });
+    try {
+      sceneRef.goto('/about', {}, { replace: false });
+    } catch(e) {
+      console.log(e)
+    }
 
-    await wait(2000);
-    console.log('');
-    sceneRef.goto('/contact', {}, { replace: false });
-    
-    await wait(1000);
-    sceneRef.goback();
+    // await wait(2000);
+    // console.log('');
+    // sceneRef.goto('/contact', {}, { replace: false });
+    //
+    // await wait(1000);
+    // sceneRef.goback();
 
 
     // await wait(2000);
