@@ -17,7 +17,7 @@ var {
 
 var window = Dimensions.get('window');
 
-class Example extends Component {
+class Example2 extends Component {
   constructor(props, context) {
     super(props, context);
 
@@ -76,4 +76,4 @@ var styles = StyleSheet.create({
   }
 });
 
-AppRegistry.registerComponent('Example', () => Example);
+AppRegistry.registerComponent('Example2', () => Example2);
