@@ -188,6 +188,9 @@ class Camera extends Component {
   }
 
   addScene(sceneComponent, id, props, side, withAnimation = true) {
+    if (side == Camera.AnimatedTo.RIGHT || side == Camera.AnimatedTo.BOTTOM) {
+      throw new Error(`Animating to '${side}' is not supported`);
+    }
     const sceneObj = this._buildSceneObj(id,
                                          sceneComponent,
                                          props,
