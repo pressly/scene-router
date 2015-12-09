@@ -27,7 +27,7 @@ class Example2 extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-      this.refs.camera.addScene(Scene, "2", { color: 'blue' }, Camera.Sides.RIGHT, true);
+      this.refs.camera.addScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.LEFT, true);
     }, 2000);
   }
 

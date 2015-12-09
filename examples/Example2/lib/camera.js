@@ -7,6 +7,7 @@ import React, {
 } from 'react-native';
 
 import * as util from './util';
+import Vector2D from './vector2d';
 
 const window = Dimensions.get('window');
 
@@ -61,7 +62,7 @@ class Camera extends Component {
 
     //we need this varibale because overflow: 'hidden' will be applied to all
     //scenes in android and it can not be changed.
-    this._sceneArea = { width: window.width, height: window.height };
+    this._sceneArea = new Vector2D(window.width, window.height);
 
     this._ready = false; //this variable is used to make sure that we are
                          //not animating until Camera component is mounted
@@ -70,7 +71,7 @@ class Camera extends Component {
     const initialSceneObj = this._buildSceneObj(initialScene.id,
                                                 initialScene.sceneComponent,
                                                 initialScene.props,
-                                                Camera.Sides.INITIAL,
+                                                Camera.AnimatedTo.INITIAL,
                                                 false)
 
     //holds all the sceneObjects.
@@ -113,12 +114,12 @@ class Camera extends Component {
   }
 
   //heler method to return next camera position or an empty spot
-  _findSidePosition(side, negate = false) {
+  _findSidePosition(side) {
     const { x, y } = this._getCameraPosition();
     const { width, height } = window;
-    const { LEFT, RIGHT, TOP, BOTTOM, INITIAL } = Camera.Sides;
+    const { LEFT, RIGHT, TOP, BOTTOM, INITIAL } = Camera.AnimatedTo;
 
-    let result = {x: 0, y:0};
+    let result = new Vector2D();
 
     switch (side) {
       case LEFT:
@@ -148,17 +149,13 @@ class Camera extends Component {
         throw new Error(`undefined side type '${side}'`);
     }
 
-    if (negate) {
-      result.x = -result.x;
-      result.y = -result.y;
-    }
-
     return result;
   }
 
   _move(side, withAnimation) {
     if (!this._ready) return;
-    const nextCameraPosition = this._findSidePosition(side, true);
+    const nextCameraPosition = this._findSidePosition(side);
+    nextCameraPosition.reverse();
     if (withAnimation) {
       Animated.timing(this._position, {
         duration: 2000,
@@ -190,10 +187,6 @@ class Camera extends Component {
     return sceneObj;
   }
 
-  _scaleScene(side, position, isExpanding) {
-
-  }
-
   addScene(sceneComponent, id, props, side, withAnimation = true) {
     const sceneObj = this._buildSceneObj(id,
                                          sceneComponent,
@@ -201,11 +194,8 @@ class Camera extends Component {
                                          side,
                                          withAnimation);
 
-    console.log(sceneObj);
-
-    this._scaleScene(side, sceneObj.internalProps.position, true);
-
     this.state.scenes.push(sceneObj);
+    this._sceneArea = util.getSceneAreaSize(this.state.scenes, window);
     this.setState(this.state);
   }
 
@@ -215,21 +205,20 @@ class Camera extends Component {
 
   render() {
     return(
-      <View>
-        <Animated.View
-          style={[styles.view, { transform: this._position.getTranslateTransform() }]}>
-            { this._renderScenes() }
-        </Animated.View>
-      </View>
+      <Animated.View
+        style={[styles.view, { width: this._sceneArea.x, height: this._sceneArea.y, transform: this._position.getTranslateTransform() }]}>
+          { this._renderScenes() }
+      </Animated.View>
     );
   }
 }
 
-Camera.Sides = {
+//Animated to. for example, LEFT means animate the scene to Left. <-x
+Camera.AnimatedTo = {
   LEFT:    0,
-  RIGHT:   1,
+  RIGHT:   1, //not supported
   TOP:     2,
-  BOTTOM:  3,
+  BOTTOM:  3, //not supported
   INITIAL: 4,
 };
 
@@ -242,13 +231,6 @@ Camera.propTypes = {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top:0,
-    left: 0,
-    // width: window.width * 2,
-    // height: window.height
-  },
   view: {
     overflow: 'hidden',
     position: 'absolute',
