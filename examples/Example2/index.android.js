@@ -27,11 +27,11 @@ class Example2 extends Component {
 
   async componentDidMount() {
     await util.wait(3000);
-    this.refs.camera.addScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, true);
+    this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.LEFT, true);
     await util.wait(3000);
     this.refs.camera.popScene();
     await util.wait(3000);
-    this.refs.camera.addScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, true);
+    this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, false);
     await util.wait(3000);
     this.refs.camera.popScene();
   }
