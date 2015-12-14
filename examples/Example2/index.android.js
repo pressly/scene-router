@@ -30,10 +30,10 @@ class Example2 extends Component {
     this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.LEFT, true);
     await util.wait(3000);
     this.refs.camera.popScene();
-    await util.wait(3000);
-    this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, false);
-    await util.wait(3000);
-    this.refs.camera.popScene();
+    // await util.wait(3000);
+    // this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, false);
+    // await util.wait(3000);
+    // this.refs.camera.popScene();
   }
 
   render() {
@@ -52,6 +52,22 @@ class Example2 extends Component {
 class Scene extends Component {
   constructor(props, context) {
     super(props, context);
+  }
+
+  sceneWillFocus() {
+    console.log(`scene with color '${this.props.color}' will focus.`);
+  }
+
+  sceneDidFocus() {
+    console.log(`scene with color '${this.props.color}' did focus.`);
+  }
+
+  sceneWillBlur() {
+    console.log(`scene with color '${this.props.color}' will blur.`);
+  }
+
+  sceneDidBlur() {
+    console.log(`scene with color '${this.props.color}' did blur.`);
   }
 
   render() {

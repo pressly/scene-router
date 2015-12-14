@@ -11,58 +11,81 @@ import Vector2D from './vector2d';
 
 const window = Dimensions.get('window');
 
+const SCENE_REF = 'SCENE_REF';
+
 //Todo: we should clean this function. it must delay calling resolve
 //resolve can return promise which needs to be sent back to caller.
 //I don't know whether this approach is correct or not.
-const delayCall = (resolve) => {
-  return async () => {
-    await util.wait(20);
-    return resolve();
-  }
+const delayCall = async (resolve) => {
+  await util.wait(20);
+  return resolve();
 };
 
-const makeScene = (sceneObj) => {
-  class SceneWrapper extends Component {
-    constructor(props, context) {
-      super(props, context);
+class Scene extends Component {
+  constructor(props, context) {
+    super(props, context);
+  }
+
+  _getSceneRef() {
+    const sceneRef = this.refs[SCENE_REF];
+    if (sceneRef && sceneRef.getWrappedInstance) {
+      return sceneRef.getWrappedInstance();
     }
 
-    async componentDidMount() {
-      const {
-        internalProps: { startTransition }
-      } = sceneObj;
+    return sceneRef;
+  }
 
-      //TODO: it is a good idea to pass the ref to this function
-      //so camera can start calling the scene life cyles.
-      await startTransition();
-
-      //here sceneDidFocus should be called.
-    }
-
-    render() {
-      const {
-        id,
-        SceneComponent,
-        props,
-        internalProps: {
-          position
-        }
-      } = sceneObj;
-
-      return (
-        <View style={[styles.view, { top: position.y, left: position.x }]}>
-          <SceneComponent id={id} {...props}/>
-        </View>
-      );
+  _callMethod(name) {
+    const scene = this._getSceneRef();
+    if (scene && scene[name]) {
+      scene[name]();
     }
   }
 
-  //adding more info for debugging purposes.
-  const component = sceneObj.SceneComponent;
-  SceneWrapper.displayName = `Scene(${util.getDisplayName(sceneObj.SceneComponent)})`;
+  willBlur() {
+    this._callMethod('sceneWillBlur');
+  }
 
-  return SceneWrapper;
-};
+  didBlur() {
+    this._callMethod('sceneDidBlur');
+  }
+
+  willFocus() {
+    this._callMethod('sceneWillFocus');
+  }
+
+  didFocus() {
+    this._callMethod('sceneDidFocus');
+  }
+
+  componentDidMount() {
+    const {
+      internalProps: { startTransition }
+    } = this.props;
+    startTransition(this);
+  }
+
+  componentWillUnmount() {
+
+  }
+
+  render() {
+    const {
+      id,
+      SceneComponent,
+      props,
+      internalProps: {
+        position
+      }
+    } = this.props;
+
+    return (
+      <View style={[styles.view, { top: position.y, left: position.x }]}>
+        <SceneComponent ref={SCENE_REF} id={id} {...props}/>
+      </View>
+    );
+  }
+}
 
 class Camera extends Component {
   constructor(props, context) {
@@ -185,10 +208,11 @@ class Camera extends Component {
 
   _move(side, withAnimation) {
     return new Promise((resolve, reject) => {
+      //this only happens during initialScene. since initial scene has no animation
+      //we will resolve it rigth away.
       if (!this._ready) {
-        //we need this becuase if camera is not ready, we are calling dealy
-        //and wait 20 milliseconds. and call the move again.
-        return delayCall(() => this.move(side, withAnimation));
+        resolve();
+        return;
       }
 
       const nextCameraPosition = this._findSidePosition(side);
@@ -208,19 +232,28 @@ class Camera extends Component {
 
   _renderScenes() {
     const { scenes } = this.state;
+    return scenes.map((sceneObj) =>
 
-    return scenes.map((sceneObj) => {
-      const SceneComponent = makeScene(sceneObj);
-      return (
-        <SceneComponent
-          key={sceneObj.id} />
-      );
-    });
+      //adding id to ref, so we can find it and call the lifecyle methods
+      <Scene
+        key={sceneObj.id}
+        ref={sceneObj.id}
+        {...sceneObj}/>
+    );
   }
 
   _buildSceneObj(id, sceneComponent, props, side, withAnimation) {
     const nextScenePosition = this._findSidePosition(side);
-    const startTransition = () => this._move(side, withAnimation);
+    const startTransition = async (sceneRef) => {
+      try {
+        sceneRef.willFocus();
+        await this._move(side, withAnimation)
+        sceneRef.didFocus();
+      } catch(e) {
+        console.log(e);
+      }
+    };
+
     const internalProps = this._makeInternalProps(side, nextScenePosition, startTransition, withAnimation);
     const sceneObj = this._makeSceneObj(id, sceneComponent, props, internalProps);
 
@@ -244,7 +277,7 @@ class Camera extends Component {
 
   async popScene() {
     const { scenes } = this.state;
-    if (scenes.length <=1 ) {
+    if (scenes.length <= 1 ) {
       //nothing to pop;
       return;
     }
@@ -262,6 +295,14 @@ class Camera extends Component {
 
   componentDidMount() {
     this._ready = true;
+  }
+
+  componentWillUpdate() {
+    //console.log(this.state.scenes[1]);
+  }
+
+  componentDidUpdate() {
+    //console.log(this.state.scenes);
   }
 
   render() {
