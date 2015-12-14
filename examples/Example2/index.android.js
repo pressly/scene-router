@@ -29,7 +29,9 @@ class Example2 extends Component {
     await util.wait(3000);
     this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.LEFT, true);
     await util.wait(3000);
-    this.refs.camera.popScene();
+    this.refs.camera.pushScene(Scene, "3", { color: 'yellow' }, Camera.AnimatedTo.LEFT, true);
+    // await util.wait(3000);
+    // this.refs.camera.popScene();
     // await util.wait(3000);
     // this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, false);
     // await util.wait(3000);

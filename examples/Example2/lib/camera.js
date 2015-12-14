@@ -62,11 +62,7 @@ class Scene extends Component {
     const {
       internalProps: { startTransition }
     } = this.props;
-    startTransition(this);
-  }
-
-  componentWillUnmount() {
-
+    startTransition();
   }
 
   render() {
@@ -244,11 +240,22 @@ class Camera extends Component {
 
   _buildSceneObj(id, sceneComponent, props, side, withAnimation) {
     const nextScenePosition = this._findSidePosition(side);
-    const startTransition = async (sceneRef) => {
+    const startTransition = async () => {
       try {
-        sceneRef.willFocus();
+        await util.wait(100);
+
+        const currentScene = this._getCurrentScene();
+        const prevScene = this._getPrevScene();
+
+        if (prevScene) {
+          this.refs[prevScene.id].willBlur();
+        }
+        this.refs[currentScene.id].willFocus();
         await this._move(side, withAnimation)
-        sceneRef.didFocus();
+        this.refs[currentScene.id].didFocus();
+        if (prevScene) {
+          this.refs[prevScene.id].didBlur();
+        }
       } catch(e) {
         console.log(e);
       }
@@ -258,6 +265,21 @@ class Camera extends Component {
     const sceneObj = this._makeSceneObj(id, sceneComponent, props, internalProps);
 
     return sceneObj;
+  }
+
+  _getCurrentScene() {
+    const { scenes } = this.state;
+    const length = scenes.length;
+    return scenes[length - 1];
+  }
+
+  _getPrevScene() {
+    const { scenes } = this.state;
+    const length = scenes.length;
+    if (length < 2) {
+      return null;
+    }
+    return scenes[length - 2];
   }
 
   pushScene(sceneComponent, id, props, side, withAnimation = true) {
@@ -282,11 +304,20 @@ class Camera extends Component {
       return;
     }
 
-    const { internalProps } = scenes[scenes.length - 1];
+    const currentScene = this._getCurrentScene();
+    const nextScene = this._getPrevScene();
+
+    const { internalProps } = currentScene;
+
+    this.refs[currentScene.id].willBlur();
+    this.refs[nextScene.id].willFocus();
 
     //we need to make sure that animation has been done before removing previous
     //scene from scenes array.
     await this._move(this._reverseSide(internalProps.side), internalProps.withAnimation);
+
+    this.refs[currentScene.id].didBlur();
+    this.refs[nextScene.id].didFocus();
 
     //removing previous scene from senecs array
     this.state.scenes.pop();
@@ -295,14 +326,6 @@ class Camera extends Component {
 
   componentDidMount() {
     this._ready = true;
-  }
-
-  componentWillUpdate() {
-    //console.log(this.state.scenes[1]);
-  }
-
-  componentDidUpdate() {
-    //console.log(this.state.scenes);
   }
 
   render() {
