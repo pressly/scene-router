@@ -11,6 +11,16 @@ import Vector2D from './vector2d';
 
 const window = Dimensions.get('window');
 
+//Todo: we should clean this function. it must delay calling resolve
+//resolve can return promise which needs to be sent back to caller.
+//I don't know whether this approach is correct or not.
+const delayCall = (resolve) => {
+  return async () => {
+    await util.wait(20);
+    return resolve();
+  }
+};
+
 const makeScene = (sceneObj) => {
   class SceneWrapper extends Component {
     constructor(props, context) {
@@ -174,15 +184,11 @@ class Camera extends Component {
   }
 
   _move(side, withAnimation) {
-    const resolveWithDelay = async function () {
-      await util.wait(20);
-      resolve();
-    };
-
     return new Promise((resolve, reject) => {
       if (!this._ready) {
-        resolveWithDelay();
-        return;
+        //we need this becuase if camera is not ready, we are calling dealy
+        //and wait 20 milliseconds. and call the move again.
+        return delayCall(() => this.move(side, withAnimation));
       }
 
       const nextCameraPosition = this._findSidePosition(side);
@@ -195,7 +201,7 @@ class Camera extends Component {
         }).start(resolve);
       } else {
         this._position.setValue(nextCameraPosition);
-        resolveWithDelay();
+        delayCall(resolve);
       }
     });
   }
