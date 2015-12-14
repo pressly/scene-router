@@ -18,17 +18,22 @@ var {
 var window = Dimensions.get('window');
 
 import Camera from './lib/camera';
-
+import * as util from './lib/util';
 
 class Example2 extends Component {
   constructor(props, context) {
     super(props, context);
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.refs.camera.addScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.LEFT, true);
-    }, 2000);
+  async componentDidMount() {
+    await util.wait(3000);
+    this.refs.camera.addScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, true);
+    await util.wait(3000);
+    this.refs.camera.popScene();
+    await util.wait(3000);
+    this.refs.camera.addScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, true);
+    await util.wait(3000);
+    this.refs.camera.popScene();
   }
 
   render() {

@@ -17,14 +17,16 @@ const makeScene = (sceneObj) => {
       super(props, context);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
       const {
         internalProps: { startTransition }
       } = sceneObj;
 
       //TODO: it is a good idea to pass the ref to this function
       //so camera can start calling the scene life cyles.
-      startTransition();
+      await startTransition();
+
+      //here sceneDidFocus should be called.
     }
 
     render() {
@@ -107,10 +109,7 @@ class Camera extends Component {
   //it is reasonable to put it into its own method.
   _getCameraPosition() {
     const { x, y } = this._position;
-    return {
-      x: x.__getValue(),
-      y: y.__getValue()
-    };
+    return new Vector2D(x.__getValue(), y.__getValue());
   }
 
   //heler method to return next camera position or an empty spot
@@ -128,7 +127,7 @@ class Camera extends Component {
         break;
 
       case RIGHT:
-        result.x = x - width;
+        result.x = x + width;
         result.y = y;
         break;
 
@@ -139,7 +138,7 @@ class Camera extends Component {
 
       case BOTTOM:
         result.x = x;
-        result.y = y - height;
+        result.y = y + height;
         break;
 
       case INITIAL:
@@ -152,18 +151,53 @@ class Camera extends Component {
     return result;
   }
 
-  _move(side, withAnimation) {
-    if (!this._ready) return;
-    const nextCameraPosition = this._findSidePosition(side);
-    nextCameraPosition.reverse();
-    if (withAnimation) {
-      Animated.timing(this._position, {
-        duration: 2000,
-        toValue: nextCameraPosition
-      }).start()
-    } else {
-      this._position.setValue(nextCameraPosition);
+  //when we popScene, we need to revert the animation.
+  //this method is a helper to covnert and reverse the side.
+  _reverseSide(side) {
+    const { LEFT, RIGHT, TOP, BOTTOM } = Camera.AnimatedTo;
+    switch (side) {
+      case LEFT:
+        return RIGHT;
+
+      case RIGHT:
+        return LEFT;
+
+      case TOP:
+        return BOTTOM;
+
+      case BOTTOM:
+        return TOP;
+
+      default:
+        throw new Error(`type '${side}' is not defined`);
     }
+  }
+
+  _move(side, withAnimation) {
+    const resolveWithDelay = async function () {
+      await util.wait(20);
+      resolve();
+    };
+
+    return new Promise((resolve, reject) => {
+      if (!this._ready) {
+        resolveWithDelay();
+        return;
+      }
+
+      const nextCameraPosition = this._findSidePosition(side);
+      nextCameraPosition.reverse();
+
+      if (withAnimation) {
+        Animated.timing(this._position, {
+          duration: 2000,
+          toValue: nextCameraPosition
+        }).start(resolve);
+      } else {
+        this._position.setValue(nextCameraPosition);
+        resolveWithDelay();
+      }
+    });
   }
 
   _renderScenes() {
@@ -202,14 +236,38 @@ class Camera extends Component {
     this.setState(this.state);
   }
 
+  async popScene() {
+    const { scenes } = this.state;
+    if (scenes.length <=1 ) {
+      //nothing to pop;
+      return;
+    }
+
+    const { internalProps } = scenes[scenes.length - 1];
+
+    //we need to make sure that animation has been done before removing previous
+    //scene from scenes array.
+    await this._move(this._reverseSide(internalProps.side), internalProps.withAnimation);
+
+    //removing previous scene from senecs array
+    this.state.scenes.pop();
+    this.setState(this.state);
+  }
+
   componentDidMount() {
     this._ready = true;
   }
 
   render() {
+    const cameraStyle = {
+      width: this._sceneArea.x,
+      height: this._sceneArea.y,
+      transform: this._position.getTranslateTransform()
+    };
+
     return(
       <Animated.View
-        style={[styles.view, { width: this._sceneArea.x, height: this._sceneArea.y, transform: this._position.getTranslateTransform() }]}>
+        style={[styles.view, cameraStyle]}>
           { this._renderScenes() }
       </Animated.View>
     );

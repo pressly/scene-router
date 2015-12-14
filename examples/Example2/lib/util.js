@@ -1,5 +1,11 @@
 import Vector2D from './vector2d';
 
+export const wait = (delay) => {
+  return new Promise((resolve, _) => {
+    setTimeout(resolve, delay)
+  });
+};
+
 export const getDisplayName = (WrappedComponent) => {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 };
