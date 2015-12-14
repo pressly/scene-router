@@ -143,7 +143,7 @@ class Camera extends Component {
 
   //heler method to return next camera position or an empty spot
   _findSidePosition(side) {
-    const { x, y } = this._getCameraPosition();
+    const { x, y } = this._getCameraPosition().reverse();
     const { width, height } = window;
     const { LEFT, RIGHT, TOP, BOTTOM, INITIAL } = Camera.AnimatedTo;
 
@@ -156,7 +156,7 @@ class Camera extends Component {
         break;
 
       case RIGHT:
-        result.x = x + width;
+        result.x = x - width;
         result.y = y;
         break;
 
@@ -167,7 +167,7 @@ class Camera extends Component {
 
       case BOTTOM:
         result.x = x;
-        result.y = y + height;
+        result.y = y - height;
         break;
 
       case INITIAL:
