@@ -17,7 +17,7 @@ var {
 
 var window = Dimensions.get('window');
 
-import { Scene, SceneSide } from './lib';
+import { Scene, SceneSide } from '../..';
 
 const wait = (delay) => {
   return new Promise((resolve, _) => {

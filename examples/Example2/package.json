@@ -6,7 +6,6 @@
     "start": "node_modules/react-native/packager/packager.sh"
   },
   "dependencies": {
-    "react-native": "^0.16.0",
-    "trie-route": "0.0.3"
+    "react-native": "^0.16.0"
   }
 }
