@@ -8,6 +8,7 @@ import React, {
 
 import * as util from './util';
 import Vector2D from './vector2d';
+import SceneSide from './scene_side';
 
 const window = Dimensions.get('window');
 
@@ -102,7 +103,7 @@ class Camera extends Component {
     const initialSceneObj = this._buildSceneObj(initialScene.id,
                                                 initialScene.sceneComponent,
                                                 initialScene.props,
-                                                Camera.AnimatedTo.INITIAL,
+                                                SceneSide.INITIAL,
                                                 false)
 
     //holds all the sceneObjects.
@@ -145,7 +146,7 @@ class Camera extends Component {
   _findSidePosition(side) {
     const { x, y } = this._getCameraPosition().reverse();
     const { width, height } = window;
-    const { LEFT, RIGHT, TOP, BOTTOM, INITIAL } = Camera.AnimatedTo;
+    const { LEFT, RIGHT, TOP, BOTTOM, INITIAL } = SceneSide;
 
     let result = new Vector2D();
 
@@ -183,7 +184,7 @@ class Camera extends Component {
   //when we popScene, we need to revert the animation.
   //this method is a helper to covnert and reverse the side.
   _reverseSide(side) {
-    const { LEFT, RIGHT, TOP, BOTTOM } = Camera.AnimatedTo;
+    const { LEFT, RIGHT, TOP, BOTTOM } = SceneSide;
     switch (side) {
       case LEFT:
         return RIGHT;
@@ -283,7 +284,7 @@ class Camera extends Component {
   }
 
   pushScene(sceneComponent, id, props, side, withAnimation = true) {
-    if (side == Camera.AnimatedTo.RIGHT || side == Camera.AnimatedTo.BOTTOM) {
+    if (side == SceneSide.RIGHT || side == SceneSide.BOTTOM) {
       throw new Error(`Animating to '${side}' is not supported`);
     }
     const sceneObj = this._buildSceneObj(id,
@@ -344,22 +345,13 @@ class Camera extends Component {
   }
 }
 
-//Animated to. for example, LEFT means animate the scene to Left. <-x
-Camera.AnimatedTo = {
-  LEFT:    0,
-  RIGHT:   1, //not supported
-  TOP:     2,
-  BOTTOM:  3, //not supported
-  INITIAL: 4,
-};
-
 Camera.propTypes = {
   initialScene: React.PropTypes.shape({
     id: React.PropTypes.string.isRequired,
     sceneComponent: React.PropTypes.func.isRequired,
     props: React.PropTypes.object.isRequired
   }).isRequired
-}
+};
 
 const styles = StyleSheet.create({
   view: {

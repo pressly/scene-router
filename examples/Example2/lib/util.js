@@ -1,5 +1,10 @@
 import Vector2D from './vector2d';
 
+export const idGen = (prefix = '') => {
+  let id = 0;
+  return () => `${prefix}:${id++}`;
+};
+
 export const wait = (delay) => {
   return new Promise((resolve, _) => {
     setTimeout(resolve, delay)
@@ -28,4 +33,8 @@ export const getSceneAreaSize = (sceneObjects, window) => {
 
     return result;
   }, new Vector2D());
+};
+
+export const isObjectEmpty = (obj) => {
+  return Object.getOwnPropertyNames(obj).length === 0;
 };

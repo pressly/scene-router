@@ -17,8 +17,13 @@ var {
 
 var window = Dimensions.get('window');
 
-import Camera from './lib/camera';
-import * as util from './lib/util';
+import { Scene, SceneSide } from './lib';
+
+const wait = (delay) => {
+  return new Promise((resolve, _) => {
+    setTimeout(resolve, delay)
+  });
+};
 
 class Example2 extends Component {
   constructor(props, context) {
@@ -26,34 +31,31 @@ class Example2 extends Component {
   }
 
   async componentDidMount() {
-    await util.wait(3000);
-    this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.LEFT, true);
-    await util.wait(3000);
-    this.refs.camera.pushScene(Scene, "3", { color: 'yellow' }, Camera.AnimatedTo.LEFT, true);
-    await util.wait(3000);
-    this.refs.camera.popScene();
-    await util.wait(3000);
-    this.refs.camera.popScene();
-    // await util.wait(3000);
+    const scene = this.refs['scene'];
+    await wait(3000);
+    scene.goto("/scene/red");
+    await wait(3000);
+    scene.goto("/scene/yellow");
+    await wait(3000);
+    scene.goback();
+    // await wait(3000);
+    // this.refs.camera.popScene();
+    // await wait(3000);
     // this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, false);
-    // await util.wait(3000);
+    // await wait(3000);
     // this.refs.camera.popScene();
   }
 
   render() {
     return (
-      <Camera ref="camera" initialScene={{
-          id: "1",
-          sceneComponent: Scene,
-          props: {
-            color: 'red'
-          }
-        }}/>
+      <Scene ref="scene" initialPath="/scene/blue" initialProps={{}}>
+        <Scene path="scene/:color" component={CustomScene}></Scene>
+      </Scene>
     );
   }
 }
 
-class Scene extends Component {
+class CustomScene extends Component {
   constructor(props, context) {
     super(props, context);
   }
@@ -75,7 +77,7 @@ class Scene extends Component {
   }
 
   render() {
-    const { color } = this.props;
+    const { params: { color } } = this.props;
     return (
       <View style={[styles.view, { backgroundColor: color }]}>
         <Text style={{top: 20 }} onPress={()=>console.log('hello')}>Press Me</Text>
