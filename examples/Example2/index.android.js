@@ -33,17 +33,17 @@ class Example2 extends Component {
   async componentDidMount() {
     const scene = this.refs['scene'];
     await wait(3000);
-    scene.goto("/scene/red");
+    scene.goto("/scene/red", {}, { side: SceneSide.TOP });
     await wait(3000);
     scene.goto("/scene/yellow");
     await wait(3000);
     scene.goback();
-    // await wait(3000);
-    // this.refs.camera.popScene();
-    // await wait(3000);
-    // this.refs.camera.pushScene(Scene, "2", { color: 'blue' }, Camera.AnimatedTo.TOP, false);
-    // await wait(3000);
-    // this.refs.camera.popScene();
+    await wait(3000);
+    scene.goback();
+    await wait(3000);
+    scene.goto("/scene/yellow", {}, { withAnimation: false });
+    await wait(3000);
+    scene.goback();
   }
 
   render() {
@@ -61,19 +61,23 @@ class CustomScene extends Component {
   }
 
   sceneWillFocus() {
-    console.log(`scene with color '${this.props.color}' will focus.`);
+    const { params: { color } } = this.props;
+    console.log(`scene with color '${color}' will focus.`);
   }
 
   sceneDidFocus() {
-    console.log(`scene with color '${this.props.color}' did focus.`);
+    const { params: { color } } = this.props;
+    console.log(`scene with color '${color}' did focus.`);
   }
 
   sceneWillBlur() {
-    console.log(`scene with color '${this.props.color}' will blur.`);
+    const { params: { color } } = this.props;
+    console.log(`scene with color '${color}' will blur.`);
   }
 
   sceneDidBlur() {
-    console.log(`scene with color '${this.props.color}' did blur.`);
+    const { params: { color } } = this.props;
+    console.log(`scene with color '${color}' did blur.`);
   }
 
   render() {
