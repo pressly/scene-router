@@ -43,11 +43,18 @@ class App extends Component {
     scene.goto("/scene/yellow", {}, { withAnimation: false });
     await wait(3000);
     scene.goback();
+    await wait(3000);
+    scene.goto("/scene/yellow", {});
+    await wait(3000);
+    scene.goto("/scene/red", {}, { reset: true });
+    await wait(3000);
   }
 
   render() {
     return (
-      <Scene ref="scene" initialPath="/scene/blue" initialProps={{}}>
+      <Scene ref="scene" initialPath="/scene/blue" initialProps={{}} onSceneChange={(event) => {
+          console.log(event);
+        }}>
         <Scene path="scene/:color" component={CustomScene}></Scene>
       </Scene>
     );

@@ -52,7 +52,9 @@ class MyAwesomeApp extends React.Component {
 
   render() {
     return (
-      <Scene ref="sceneRef" initialPath="/home" initialProps={{}}>
+      <Scene ref="sceneRef" initialPath="/home" initialProps={{}} onSceneChange={({position, path}) => {
+        console.log(position, path);
+      }}>
         <Scene path="home" component={Home}/>
         <Scene path="about" component={About}/>
       </Scene>
@@ -64,6 +66,10 @@ class MyAwesomeApp extends React.Component {
 so the above example transits to `About` component after 2 seconds and transits back to `Home` component after 2 seconds.
 
 Don't worry about `goto` and `goback` we will talk about them in few mins.
+
+##### onSceneChange
+
+this will be called once scene is about to change. This is good time to update any state in your main application such as `redux`. The callback function gets one argument, `event`, which contains `position` and `path`.
 
 ##### goto
 
@@ -81,6 +87,7 @@ goto(path, props, options);
 - options: an object defines how scene transits. at the moment option can have only 2 keys. `withAnimation` and `side`.
   - withAnimation: is a boolean value the default value is `true`. This flag enables animations between scenes.
   - side: is an enum which can be found in `scene-router` module as `SceneSide`. it can be accessed by `import { SceneSide } from 'scene-router';` The default value is `LEFT`. At the moment only 2 possible value is available. `LEFT` and `TOP`.
+  - reset: is a boolean value. if it's true, it will clear scene stack. Reset stack will forces `withAnimation` to `false`.
 
 
 ##### goback
