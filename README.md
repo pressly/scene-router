@@ -52,7 +52,9 @@ class MyAwesomeApp extends React.Component {
 
   render() {
     return (
-      <Scene ref="sceneRef" initialPath="/home" initialProps={{}}>
+      <Scene ref="sceneRef" initialPath="/home" initialProps={{}} onSceneChange={({position, path}) => {
+        console.log(position, path);
+      }}>
         <Scene path="home" component={Home}/>
         <Scene path="about" component={About}/>
       </Scene>
@@ -64,6 +66,10 @@ class MyAwesomeApp extends React.Component {
 so the above example transits to `About` component after 2 seconds and transits back to `Home` component after 2 seconds.
 
 Don't worry about `goto` and `goback` we will talk about them in few mins.
+
+##### onSceneChange
+
+this will be called once scene is about to change. This is good time to update any state in your main application such as `redux`. The callback function gets one argument, `event`, which contains `position` and `path`.
 
 ##### goto
 
