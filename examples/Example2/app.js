@@ -34,7 +34,7 @@ class App extends Component {
     await wait(3000);
     scene.goto("/scene/red", {}, { side: SceneSide.TOP });
     await wait(3000);
-    scene.goto("/scene/yellow");
+    scene.goto("/scene/yellow", {}, { duration: 300 });
     await wait(3000);
     scene.goback();
     await wait(3000);
