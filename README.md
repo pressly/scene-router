@@ -1,9 +1,9 @@
 ## SCENE-ROUTER
 
-A complete scene routing library written in pure js for react native. It supports **iOS** and **Android**.
+A complete scene routing library written in pure JavaScript for React Native. It supports **iOS** and **Android**.
 
 ## Description
-We, at [Pressly](https://pressly.com), love react-router so much that we miss it in React-Native world. So we decided to make one for react-native. I think if you already read this, I suggest don't stop reading and continue...
+We, at [Pressly](https://pressly.com), love react-router so much that we miss it in React Native world. So we decided to make one for react-native. I think if you already read this, I suggest don't stop reading and continue...
 
 ## Installation
 
@@ -28,9 +28,9 @@ in the above example, we are defining 2 scenes. As soon as you run the app, `Sce
 
 ### Transition
 
-In order to transit between scene, `scene-router` exposes 2 simple method which they can be called by accessing to `Scene` object using `ref` props.
+In order to transit between scene, `scene-router` exposes two simple methods which can be called by accessing the `Scene` object using `ref` props.
 
-Here's an simple example
+Here's a simple example:
 
 ```js
 class MyAwesomeApp extends React.Component {
@@ -45,7 +45,7 @@ class MyAwesomeApp extends React.Component {
       scene.goto('/about');
     }, 2000);
 
-    setTimoueout(() => {
+    setTimeout(() => {
       scene.goback();
     }, 4000);
   }
@@ -63,17 +63,17 @@ class MyAwesomeApp extends React.Component {
 }
 ```
 
-so the above example transits to `About` component after 2 seconds and transits back to `Home` component after 2 seconds.
+The above example transits to `About` component after 2 seconds and transits back to `Home` component after 2 seconds.
 
 Don't worry about `goto` and `goback` we will talk about them in few mins.
 
 ##### onSceneChange
 
-this will be called once scene is about to change. This is good time to update any state in your main application such as `redux`. The callback function gets one argument, `event`, which contains `position` and `path`.
+This will be called once the scene is about to change. This is a good time to update any state in your main application such as `redux`. The callback function gets one argument, `event`, which contains `position` and `path`.
 
 ##### goto
 
-This method accepts 3 arguments. only the first one is required. As you already figured this out, it transits to specific route, defines in `Scene`'s
+This method accepts 3 arguments. Only the first one is required. As you already figured this out, it transits to specific route, defined in the `Scene`'s
 hierarchy.
 
 So here's the method's definition:
@@ -92,7 +92,7 @@ goto(path, props, options);
 
 ##### goback
 
-this method remove the last scene and transit back to previous scene. It does not accept any arguments.
+This method removes the last scene and transits back to the previous scene. It does not accept any arguments.
 
 ### LifeCycle
 
@@ -100,53 +100,53 @@ The power of `scene-router` comes with its life cycle system. The `scene-router`
 
 ##### sceneWillFocus
 
-this method will be called once a scene mounted and right before transition is start. Do not do heavy async calls here. it makes transition slow. Use it for small tasks.
+This method will be called once a scene has mounted and right before a transition starts. Do not do use heavy async calls here. It makes transition slow. Use it for small tasks.
 
 ##### sceneDidFocus
 
-this method will be called once the transition is completed. This is a good time for you to do network call or heavy task.
+This method will be called once the transition is completed. This is a good time for you to do network calls or heavy tasks.
 
 ##### sceneWillBlur
 
-this method will be called once another scene is planned to be focused. It is a good practice to clean or remove unnecessary element from scene to make the transition as smooth as possible.
+This method will be called once another scene is planned to be focused. It is a good practice to clean or remove unnecessary elements from the scene to make the transition as smooth as possible.
 
 ##### sceneDidBlur
 
-this method will be called once transition is done and the scene is out of seen of user.
+This method will be called once the transition is done and the scene is not visible.
 
 
 ### Path
 
-at the moment we are supporting query string and params in our path.
+At the moment we are supporting query strings and params in our path.
 
-for example:
+For example:
 
 ```js
-<scene initialPath="/user/1?showAll=true">
-  <scene path="user/:id" component={User}/>
-</scene>
+<Scene initialPath="/user/1?showAll=true">
+  <Scene path="user/:id" component={User}/>
+</Scene>
 ```
 
-we are defining a route with variable params. and we navigate to that path with a new param, id, and query strings. All of these will be parsed and injected as `params` and `qs` props to `User` component.
+We define a route with variable params and navigate to that path with a new param, id, and query strings. All of these will be parsed and injected as `params` and `qs` props to `User` component.
 
 This enables you to do `deeplinking` very easy and you can control where you want to go.
 
 
-You can also do nesting scene as well.
+You can also nest `Scene`s as well.
 
 ```js
-<scene initialPath="/user/1?showAll=true">
-  <scene path="user/:id" component={User}>
-    <scene path="setting" component={UserSetting}/>
-  </scene>
-</scene>
+<Scene initialPath="/user/1?showAll=true">
+  <Scene path="user/:id" component={User}>
+    <Scene path="setting" component={UserSetting}/>
+  </Scene>
+</Scene>
 ```
 
-so now I can easily call `scenePush('/user/1/settings')` and go to user's setting scene.
+So now we can easily call `scenePush('/user/1/settings')` and go to user's setting scene.
 
 
 ## Contributions
 
-please use it give us feedback and with help of you we can make it better.
+Please use it give us feedback and with help of you we can make it better.
 
-cheers,
+Cheers.
