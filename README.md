@@ -85,6 +85,7 @@ goto(path, props, options);
 - path: must be string
 - props: an object map of key values which needs to be passed to component
 - options: an object defines how scene transits. at the moment option can have only 2 keys. `withAnimation` and `side`.
+  - duration: is an integer value in millisecond, defining animation's duration. Default value is 2000.
   - withAnimation: is a boolean value the default value is `true`. This flag enables animations between scenes.
   - side: is an enum which can be found in `scene-router` module as `SceneSide`. it can be accessed by `import { SceneSide } from 'scene-router';` The default value is `LEFT`. At the moment only 2 possible value is available. `LEFT` and `TOP`.
   - reset: is a boolean value. if it's true, it will clear scene stack. Reset stack will forces `withAnimation` to `false`.
