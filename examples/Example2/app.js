@@ -31,28 +31,34 @@ class App extends Component {
 
   async componentDidMount() {
     const scene = this.refs['scene'];
-    await wait(3000);
-    scene.goto("/scene/red", {}, { side: SceneSide.TOP });
-    await wait(3000);
-    scene.goto("/scene/yellow", {}, { duration: 300 });
-    await wait(3000);
-    scene.goback();
-    await wait(3000);
-    scene.goback();
-    await wait(3000);
-    scene.goto("/scene/yellow", {}, { withAnimation: false });
-    await wait(3000);
-    scene.goback();
-    await wait(3000);
-    scene.goto("/scene/yellow", {});
-    await wait(3000);
-    scene.goto("/scene/red", {}, { reset: true });
-    await wait(3000);
+    // await wait(3000);
+    // scene.goto("/scene/red", {}, { side: SceneSide.TOP });
+    // scene.goto("/scene/red", {}, { side: SceneSide.TOP });
+    // scene.goto("/scene/red", {}, { side: SceneSide.TOP });
+    // await wait(3000);
+    // scene.goto("/scene/yellow", {}, { duration: 300 });
+    // await wait(3000);
+    // scene.goback();
+    // await wait(3000);
+    // scene.goback();
+    // await wait(3000);
+    // scene.goto("/scene/yellow", {}, { withAnimation: false });
+    // await wait(3000);
+    // scene.goback();
+    // await wait(3000);
+    // scene.goto("/scene/yellow", {});
+    // await wait(3000);
+    // scene.goto("/scene/red", {}, { reset: true });
+    // await wait(3000);
+  }
+
+  getSceneRef() {
+    return this.refs['scene']
   }
 
   render() {
     return (
-      <Scene ref="scene" initialPath="/scene/blue" initialProps={{}} onSceneChange={(event) => {
+      <Scene ref="scene" initialPath="/scene/blue" initialProps={{ scene: this.getSceneRef.bind(this) }} onSceneChange={(event) => {
           console.log(event);
         }}>
         <Scene path="scene/:color" component={CustomScene}></Scene>
@@ -87,10 +93,11 @@ class CustomScene extends Component {
   }
 
   render() {
-    const { params: { color } } = this.props;
+    const { scene, params: { color } } = this.props;
     return (
       <View style={[styles.view, { backgroundColor: color }]}>
-        <Text style={{top: 20 }} onPress={()=>console.log('hello')}>Press Me</Text>
+        <Text style={{top: 20 }} onPress={()=>scene().goto("/scene/yellow", { scene: scene })}>goto</Text>
+        <Text style={{top: 20 }} onPress={()=>scene().goback()}>goback</Text>
       </View>
     );
   }
