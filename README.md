@@ -1,5 +1,7 @@
 ## SCENE-ROUTER
 
+> version 0.3.7 and above are supporting ReactNative 0.25 and above
+
 A complete scene routing library written in pure JavaScript for React Native. It supports **iOS** and **Android**.
 
 ## Description
