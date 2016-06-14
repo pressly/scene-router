@@ -29,7 +29,7 @@ const window = Dimensions.get('window')
 */
 @scene({
   path: "home",
-  side: Side.R
+  side: Side.T
 })
 class Home extends Component {
   render() {
@@ -46,7 +46,7 @@ class Home extends Component {
 
 @scene({
   path: "about",
-  side: Side.L
+  side: Side.B
 })
 class About extends Component {
   render() {

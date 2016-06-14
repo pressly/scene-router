@@ -77,26 +77,40 @@ const calcSide = (side) => {
   return { y, x }
 }
 
-const calcReverseSide = (side) => {
+const shouldSceneClose = (side, threshold, x, y) => {
+  let result = false
+
+  threshold = Math.abs(threshold)
+
   switch (side) {
-    case Side.L:
-      side = Side.R
-      break
     case Side.R:
-      side = Side.L
+      result = (x - threshold) > activePosition.x
+      break
+    case Side.L:
+      result = (x + threshold) < activePosition.x
       break
     case Side.T:
-      side = Side.B
+      result = (y + threshold) < activePosition.y
       break
     case Side.B:
-      side = Side.T
+      result = (y - threshold) > activePosition.y
       break
   }
 
-  return calcSide(side)
+  return result
 }
 
-export const scene = (opts) => (Wrap) => {
+const defaultOpts = {
+  side: Side.L
+}
+
+export const scene = (opts = {}) => (Wrap) => {
+
+  opts = {
+    ...defaultOpts,
+    ...opts
+  }
+
   const Scene = class extends Component {
     constructor(props, context) {
       super(props, context)
@@ -124,16 +138,25 @@ export const scene = (opts) => (Wrap) => {
     }
 
     _handleStartShouldSetPanResponder = (evt, gestureState) => {
-      console.log('should start?')
       this.state.startTouchPos.x = this.state.position.x.__getValue()
       this.state.startTouchPos.y = this.state.position.y.__getValue()
       return false
     }
 
     _handleMoveShouldSetPanResponder = (evt, gestureState) => {
-      console.log('should move?')
-
-      return true
+      const { dx, dy } = gestureState
+      switch(this.state.side) {
+        case Side.L:
+          return dx < 0
+        case Side.R:
+          return dx > 0
+        case Side.T:
+          return dy < 0
+        case Side.B:
+          return dy > 0
+        default:
+          false
+      }
     }
 
     _handlePanResponderGrant = (evt, gestureState) => {
@@ -144,13 +167,49 @@ export const scene = (opts) => (Wrap) => {
 
     _handlePanResponderMove = (evt, gestureState) => {
       //console.log(this.state.position)
-      console.log('moving:', this.state.position.x, gestureState.dx)
-      this.state.position.x.setValue(this.state.startTouchPos.x + gestureState.dx)
+      const { dx, dy } = gestureState
+      const {
+        position,
+        startTouchPos
+      } = this.state
+
+      switch (this.state.side) {
+        case Side.L:
+          if (dx < 0) {
+            position.x.setValue(startTouchPos.x + dx)
+          }
+          break;
+        case Side.R:
+          if (dx > 0) {
+            position.x.setValue(startTouchPos.x + dx)
+          }
+        case Side.T:
+          if (dy < 0) {
+            position.y.setValue(startTouchPos.y + dy)
+          }
+          break
+        case Side.B:
+          if (dy > 0) {
+            position.y.setValue(startTouchPos.y + dy)
+          }
+        default:
+          //do nothing
+      }
+
+      //this.state.position.x.setValue(this.state.startTouchPos.x + gestureState.dx)
     }
 
     _handlePanResponderEnd = (evt, gestureState) => {
+      const { side, position: { x, y } } = this.state
+
       //this responded has been canceled or another respondeded take over
       console.log('terminated')
+      if (shouldSceneClose(side, 50, x.__getValue(), y.__getValue())) {
+        this.close()
+      } else {
+        this.open()
+      }
+
       this.state.opacity.setValue(1)
     }
 
@@ -170,7 +229,7 @@ export const scene = (opts) => (Wrap) => {
       Animated.timing(
         this.state.position,
         {
-          toValue: calcReverseSide(this.state.side),
+          toValue: calcSide(this.state.side),
           duration: 300
         }
       ).start(() => {
