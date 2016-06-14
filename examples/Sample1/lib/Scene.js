@@ -32,6 +32,16 @@ export const Side = {
   B: 4
 }
 
+export const SceneStatus = {
+  //if componentDidMount called does not mean the scene is visible. you have to wait for
+  //props.sceneStatus to be `Activated`
+  Activating: 1,    //when the scene is already mounted and will active shortly
+  Activated: 2,     //when the scene is completely visible
+  Deactivating: 3,  //when the scene is covered by another scene or being deactivating
+  Deactivated: 4    //when the scene is completely hidden
+  //
+}
+
 const calcSide = (side) => {
   let y
   let x
@@ -67,6 +77,25 @@ const calcSide = (side) => {
   return { y, x }
 }
 
+const calcReverseSide = (side) => {
+  switch (side) {
+    case Side.L:
+      side = Side.R
+      break
+    case Side.R:
+      side = Side.L
+      break
+    case Side.T:
+      side = Side.B
+      break
+    case Side.B:
+      side = Side.T
+      break
+  }
+
+  return calcSide(side)
+}
+
 export const scene = (opts) => (Wrap) => {
   const Scene = class extends Component {
     constructor(props, context) {
@@ -85,7 +114,7 @@ export const scene = (opts) => (Wrap) => {
       const side = overrideOpts.side || opts.side
 
       this.state = {
-        isActive: false,
+        sceneStatus: SceneStatus.Activating,
         side,
         position: new Animated.ValueXY(calcSide(side)),
         opacity: new Animated.Value(1),
@@ -125,7 +154,7 @@ export const scene = (opts) => (Wrap) => {
       this.state.opacity.setValue(1)
     }
 
-    componentDidMount() {
+    open = () => {
       Animated.timing(
         this.state.position,
         {
@@ -133,21 +162,41 @@ export const scene = (opts) => (Wrap) => {
           duration: 300
         }
       ).start(() => {
-        console.log('animation done')
+        console.log('view is active')
       })
+    }
+
+    close = () => {
+      Animated.timing(
+        this.state.position,
+        {
+          toValue: calcReverseSide(this.state.side),
+          duration: 300
+        }
+      ).start(() => {
+        console.log('view is inactive')
+      })
+    }
+
+    componentDidMount() {
+      this.open()
     }
 
     render() {
       const { position, panResponder, opacity } = this.state
       const { opts, ...rest } = this.props
 
-      const pos = position.getTranslateTransform()
+      const pos = position.getLayout()
 
       return (
         <Animated.View
-          style={[styles.container, { transform: pos }, { opacity }]}
+          style={[styles.container, {...pos}]}
           {...panResponder.panHandlers}>
-          <Wrap {...this.props}/>
+          <View style={{ backgroundColor: 'white' }}>
+            <Animated.View style={{ opacity }}>
+              <Wrap {...this.props}/>
+            </Animated.View>
+          </View>
         </Animated.View>
       )
     }
