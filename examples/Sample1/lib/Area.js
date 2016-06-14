@@ -18,6 +18,14 @@ const styles = StyleSheet.create({
     top: -window.height,
     left: -window.width,
     overflow: 'hidden'
+  },
+  staticView: {
+    position: 'absolute',
+    overflow: 'hidden',
+    width: window.width,
+    height: window.height,
+    top: window.height,
+    left: window.width
   }
 })
 
@@ -29,7 +37,7 @@ export default class Area extends Component {
 
     registerScenes.forEach(({ Component, opts }) => {
       router.path(opts.path, (params, qs, extra) => {
-        const scene = this.handler(Component, params, qs, opts, extra)
+        const scene = this.renderScene(Component, params, qs, opts, extra)
         const { scenes } = this.state
 
         scenes.push(scene)
@@ -44,6 +52,7 @@ export default class Area extends Component {
     })
 
     this.state = {
+      id: 0,
       router,
       scenes: []
     }
@@ -51,17 +60,21 @@ export default class Area extends Component {
     //clear register scene
     registerScenes = null
 
-    this.process(router, props.path, props.opts, props.props)
+    this.goto(router, props.path, props.opts, props.props)
   }
 
-  process = (router, path, opts, props) => {
+  goto = (router, path, opts, props) => {
     const err = router.process(path, { opts, props })
     if (err) {
       console.log(err)
     }
   }
 
-  handler = (Component, params, qs, opts, extra) => {
+  goback = () => {
+    console.log('goback')
+  }
+
+  renderScene = (Component, params, qs, opts, extra) => {
     const props = {
       route: {
         params,
@@ -74,21 +87,31 @@ export default class Area extends Component {
       ...extra.props
     }
 
+    this.state.id++;
+
     return (
-      <Component key={1} {...props}/>
+      <Component key={this.state.id} {...props}/>
     )
   }
 
   componentWillReceiveProps(nextProps) {
-    const { path, opts, props } = nextProps
+    const { path, opts, props, goback } = nextProps
     const { router } = this.state
-    this.process(router, path, opts, props)
+
+    if (!goback) {
+      this.goto(router, path, opts, props)
+    } else {
+      this.goback()
+    }
   }
 
   render() {
     const { scenes } = this.state
     return (
       <View style={styles.container}>
+        <View style={styles.staticView}>
+          {this.props.children}
+        </View>
         {scenes}
       </View>
     )
@@ -98,12 +121,15 @@ export default class Area extends Component {
 Area.propTypes = {
   path: PropTypes.string,
   opts: PropTypes.object,
-  props: PropTypes.object
+  props: PropTypes.object,
+  goback: PropTypes.bool
 }
 
 Area.defaultProps = {
+  path: "",
   opts: {},
-  props: {}
+  props: {},
+  goback: false
 }
 
 export const registerScene = (Component, opts) => {

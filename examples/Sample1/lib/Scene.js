@@ -84,8 +84,6 @@ export const scene = (opts) => (Wrap) => {
       const overrideOpts = props.opts
       const side = overrideOpts.side || opts.side
 
-      console.log(overrideOpts.side)
-
       this.state = {
         isActive: false,
         side,

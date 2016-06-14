@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, Text, Dimensions } from 'react-native'
 
-import Area from './lib/Area'
+import Area, { access } from './lib/Area'
 import { scene, Side } from './lib/scene'
 
 const window = Dimensions.get('window')
@@ -52,7 +52,7 @@ class About extends Component {
   render() {
     return (
       <View style={{
-        backgroundColor: 'red',
+        backgroundColor: 'green',
         flex: 1,
         height: window.height,
         width: window.width
@@ -64,14 +64,39 @@ class About extends Component {
 export default class App extends Component {
   constructor(props, context) {
     super(props, context)
+
+    this.state = {
+      path: ''
+    }
+
+    setTimeout(() => {
+      this.setState({
+        path: this.state.path == 'home'? 'about' : 'home'
+      })
+    }, 2000)
+
+    setTimeout(() => {
+      this.setState({
+        path: this.state.path == 'home'? 'about' : 'home'
+      })
+    }, 4000)
   }
 
   render() {
     return (
       <Area
-        path="home"
+        path={this.state.path}
         opts={{ }}
         props={{ }}>
+
+      <View style={{
+          backgroundColor: 'blue',
+          flex: 1,
+          height: window.height,
+          width: window.width
+        }}
+      />
+
       </Area>
     )
   }
