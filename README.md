@@ -69,10 +69,10 @@ there are 3 things you need to know, `scene` and `Area` and scene life cycle.
 Scene has the following `options` which can be configured at Component scope and Runtime scope
 
 
-| option  | type | required | default value | scope
-| ------------- | ------------- | -- | -- | -- |
-| path  | String  | Yes | N/A | Component Level only |
-| side | Side | No | Side.L | Component and Runtime Levels |
+| option  | type | required | default value | scope |
+| ------- | ---- | -------- | ------------- | ----- |
+| path    | String  | Yes | N/A | Component Level only |
+| side    | Side | No | Side.L | Component and Runtime Levels |
 | threshold | Number | No | 50 | Component and Runtime Levels |
 | gesture | Boolean | No | true | Component and Runtime Levels |
 | reset | Boolean | No | false | Component and Runtime Levels |
@@ -80,8 +80,8 @@ Scene has the following `options` which can be configured at Component scope and
 
 Side: is a enum that has the following constant values
 
-| name  | description |
-| -- | -- |
+| name| description |
+| --- | ----------- |
 | L | Animate the Scene From Left to Right |
 | R | Animate the Scene From Right to Left |
 | T | Animate the Scene From Top to Bottom |
@@ -94,7 +94,7 @@ Once you connect your view with `scene` function, `scene` will inject a new prop
 `sceneStatus` can have one of the following values.
 
 | value | Description |
-| -- | -- |
+| ----- | ----------- |
 | Activating | when a scene is about to appears |
 | Activated | when the animation is done and scene is visible |
 | Deactivating | when a scene is about to go away or cover by another scene |
