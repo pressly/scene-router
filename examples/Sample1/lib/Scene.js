@@ -203,7 +203,7 @@ export const scene = (opts = {}) => (Wrap) => {
     _handlePanResponderGrant = (evt, gestureState) => {
       //show visiual to user that this view has responded.
       console.log('fadding')
-      this.state.opacity.setValue(0.7)
+      this.setOpacity(0.7)
     }
 
     _handlePanResponderMove = (evt, gestureState) => {
@@ -278,12 +278,22 @@ export const scene = (opts = {}) => (Wrap) => {
       })
     }
 
+    setSceneStatus = (sceneStatus) => {
+      this.setState({
+        sceneStatus
+      })
+    }
+
+    setOpacity = (val) => {
+      this.state.opacity.setValue(val)
+    }
+
     componentDidMount() {
       this.open()
     }
 
     render() {
-      const { position, panResponder, opacity } = this.state
+      const { position, panResponder, opacity, sceneStatus } = this.state
       const { onClose, opts, ...rest } = this.props
 
       const pos = position.getLayout()
@@ -294,7 +304,9 @@ export const scene = (opts = {}) => (Wrap) => {
           {...panResponder.panHandlers}>
           <View style={{ backgroundColor: 'white' }}>
             <Animated.View style={{ opacity }}>
-              <Wrap {...this.props}/>
+              <Wrap
+                sceneStatus={sceneStatus}
+                {...this.props}/>
             </Animated.View>
           </View>
         </Animated.View>

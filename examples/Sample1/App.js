@@ -2,9 +2,28 @@ import React, { Component } from 'react'
 import { View, Text, Dimensions } from 'react-native'
 
 import Area, { access } from './lib/Area'
-import { scene, Side } from './lib/scene'
+import { scene, Side, SceneStatus } from './lib/scene'
 
 const window = Dimensions.get('window')
+
+const showSceneStatus = (sceneStatus) => {
+  switch (sceneStatus) {
+    case SceneStatus.Activating:
+      console.log('Activating')
+      break
+    case SceneStatus.Activated:
+      console.log('Activated')
+      break
+    case SceneStatus.Deactivating:
+      console.log('Deactivating')
+      break
+    case SceneStatus.Deactivated:
+      console.log('Deactivated')
+      break
+    default:
+      console.log('unknown scene status')
+  }
+}
 
 // <View style={{
 //   position: 'absolute',
@@ -28,7 +47,7 @@ const window = Dimensions.get('window')
   }
 */
 @scene({
-  path: "home",
+  path: "/home",
   side: Side.R
 })
 class Home extends Component {
@@ -42,6 +61,8 @@ class Home extends Component {
   }
 
   render() {
+    showSceneStatus(this.props.sceneStatus)
+
     return (
       <View style={{
         backgroundColor: 'red',
@@ -54,7 +75,7 @@ class Home extends Component {
 }
 
 @scene({
-  path: "about",
+  path: "/about",
   side: Side.L
 })
 class About extends Component {
@@ -68,6 +89,8 @@ class About extends Component {
   }
 
   render() {
+    showSceneStatus(this.props.sceneStatus)
+
     return (
       <View style={{
         backgroundColor: 'green',
@@ -88,11 +111,11 @@ export default class App extends Component {
     }
 
     setTimeout(() => {
-      this.state.areaRef.goto('about', {}, {})
+      this.state.areaRef.goto('/about', {}, {})
     }, 2000)
 
     setTimeout(() => {
-      this.state.areaRef.goto('home', {}, {})
+      this.state.areaRef.goto('/home', {}, {})
     }, 4000)
 
     setTimeout(() => {
