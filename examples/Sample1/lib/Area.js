@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { View, StyleSheet, Dimensions } from 'react-native'
-
 import route from 'trie-route'
+
+import { SceneStatus } from './constants'
 
 let registerScenes = []
 
@@ -35,9 +36,9 @@ export class Area extends Component {
 
     const router = route.create()
 
-    registerScenes.forEach(({ Component, opts }) => {
+    registerScenes.forEach(({ Scene, opts }) => {
       router.path(opts.path, (params, qs, extra) => {
-        const scene = this.renderScene(Component, params, qs, opts, extra)
+        const scene = this.renderScene(Scene, params, qs, opts, extra)
         this.state.scenes.push(scene)
         this.setState(this.state)
       })
@@ -47,18 +48,43 @@ export class Area extends Component {
       id: 0,
       router,
       scenes: [],
-      stackRefs: []
+      stackRefs: [],
+      isDraging: false
     }
 
     //clear register scene
     registerScenes = null
   }
 
+  getTopSceneRef(index = 1) {
+    const { stackRefs } = this.state
+    if (stackRefs.length < index - 1) {
+      return null
+    }
+
+    return stackRefs[stackRefs.length - index]
+  }
+
+  setCurrentActiveSceneStatue(status)  {
+
+    return currentActiveSceneRef
+  }
+
   goto(path, props, opts) {
     const { router } = this.state
+
+    const currentActiveSceneRef = this.getTopSceneRef()
+    if (currentActiveSceneRef) {
+      currentActiveSceneRef.setSceneStatus(SceneStatus.Deactivating)
+    }
+
     const err = router.process(path, { opts, props })
     if (err) {
       console.log(err)
+    }
+
+    if (currentActiveSceneRef) {
+      currentActiveSceneRef.setSceneStatus(SceneStatus.Deactivated)
     }
   }
 
@@ -66,12 +92,24 @@ export class Area extends Component {
     const ref = this.state.stackRefs.pop()
     this.state.scenes.pop()
 
+    ref.setSceneStatus(SceneStatus.Deactivating)
+
+    const prevSceneRef = this.getTopSceneRef()
+    if (prevSceneRef) {
+      prevSceneRef.setSceneStatus(SceneStatus.Activating)
+    }
+
     ref.close(() => {
+      if (prevSceneRef) {
+        prevSceneRef.setSceneStatus(SceneStatus.Activated)
+      }
+      ref.setSceneStatus(SceneStatus.Deactivated)
+
       this.setState(this.state)
     })
   }
 
-  renderScene (Component, params, qs, opts, extra) {
+  renderScene (Scene, params, qs, opts, extra) {
     const props = {
       route: {
         params,
@@ -82,15 +120,42 @@ export class Area extends Component {
         ...extra.opts
       },
       ...extra.props,
-      onClose: () => { this.goback() }
+      onClose: () => {
+        this.goback()
+      },
+      onOpen: () => {
+        const currentActiveSceneRef = this.getTopSceneRef()
+        currentActiveSceneRef.setSceneStatus(SceneStatus.Activated)
+      },
+      onDrag: () => {
+        this.state.isDraging = true
+
+        const currentActiveSceneRef = this.getTopSceneRef()
+        currentActiveSceneRef.setSceneStatus(SceneStatus.MigthDeactivating)
+
+        const prevSceneRef = this.getTopSceneRef(2)
+        if (prevSceneRef) {
+          prevSceneRef.setSceneStatus(SceneStatus.MightActivating)
+        }
+      },
+      onDragCancel: () => {
+        if (this.state.isDraging) {
+          this.state.isDraging = false
+
+          const prevSceneRef = this.getTopSceneRef(2)
+          if (prevSceneRef) {
+            prevSceneRef.setSceneStatus(SceneStatus.Deactivating)
+          }
+        }
+      }
     }
 
     this.state.id++;
 
-    let componentId = this.state.id
+    let sceneId = this.state.id
 
     return (
-      <Component
+      <Scene
         ref={(ref) => {
           //when a component is being deleted,
           //this function is called
@@ -98,7 +163,7 @@ export class Area extends Component {
             this.state.stackRefs.push(ref)
           }
         }}
-        key={componentId}
+        key={sceneId}
         {...props}/>
     )
   }
@@ -115,6 +180,6 @@ export class Area extends Component {
   }
 }
 
-export const registerScene = (Component, opts) => {
-  registerScenes.push({ Component, opts })
+export const registerScene = (Scene, opts) => {
+  registerScenes.push({ Scene, opts })
 }

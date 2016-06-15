@@ -5,22 +5,28 @@ import { Area, scene, Side, SceneStatus } from './lib'
 
 const window = Dimensions.get('window')
 
-const showSceneStatus = (sceneStatus) => {
+const showSceneStatus = (name, sceneStatus) => {
   switch (sceneStatus) {
     case SceneStatus.Activating:
-      console.log('Activating')
+      console.log(name, 'Activating')
       break
     case SceneStatus.Activated:
-      console.log('Activated')
+      console.log(name, 'Activated')
       break
     case SceneStatus.Deactivating:
-      console.log('Deactivating')
+      console.log(name, 'Deactivating')
       break
     case SceneStatus.Deactivated:
-      console.log('Deactivated')
+      console.log(name, 'Deactivated')
+      break
+    case SceneStatus.MightActivating:
+      console.log(name, 'MightActivating')
+      break
+    case SceneStatus.MigthDeactivating:
+      console.log(name, 'MigthDeactivating')
       break
     default:
-      console.log('unknown scene status')
+      console.log(name, 'unknown scene status')
   }
 }
 
@@ -60,7 +66,7 @@ class Home extends Component {
   }
 
   render() {
-    showSceneStatus(this.props.sceneStatus)
+    showSceneStatus('home', this.props.sceneStatus)
 
     return (
       <View style={{
@@ -88,7 +94,7 @@ class About extends Component {
   }
 
   render() {
-    showSceneStatus(this.props.sceneStatus)
+    showSceneStatus('about', this.props.sceneStatus)
 
     return (
       <View style={{
@@ -110,20 +116,52 @@ export default class App extends Component {
     }
 
     setTimeout(() => {
+      console.log('')
       this.state.areaRef.goto('/about', {}, {})
     }, 2000)
 
     setTimeout(() => {
+      console.log('')
       this.state.areaRef.goto('/home', {}, {})
     }, 4000)
 
     setTimeout(() => {
-      this.state.areaRef.goback()
+      console.log('')
+      this.state.areaRef.goto('/about', {}, { side: Side.T })
     }, 6000)
+
+    setTimeout(() => {
+      console.log('')
+      this.state.areaRef.goto('/home', {}, { side: Side.B })
+    }, 8000)
+
+    // setTimeout(() => {
+    //   console.log('')
+    //   this.state.areaRef.goback()
+    // }, 6000)
 
     // setTimeout(() => {
     //   this.state.areaRef.goback()
     // }, 8000)
+
+    /*
+      about Activating
+      about is created
+      about Activated
+
+      about Deactivating
+      home Activating
+      home is created
+      about Deactivated
+      home Activated
+
+      home Deactivating
+      about Activating
+      about Activated
+      home Deactivated
+      home is deleted
+
+    */
   }
 
   render() {

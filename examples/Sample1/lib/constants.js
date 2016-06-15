@@ -11,7 +11,9 @@ export const SceneStatus = {
   Activating: 1,    //when the scene is already mounted and will active shortly
   Activated: 2,     //once the animation is done and scene is visiable
   Deactivating: 3,  //once the user drags or a new scene about to replace the current scene
-  Deactivated: 4    //when the scene is completed cover by another scene.
+  Deactivated: 4,   //when the scene is completed cover by another scene.
   //when the scene is being removed from stack, componentWillUnmount should be used.
   //
+  MigthDeactivating: 5,
+  MightActivating: 6
 }
