@@ -30,27 +30,6 @@ const showSceneStatus = (name, sceneStatus) => {
   }
 }
 
-// <View style={{
-//   position: 'absolute',
-//   overflow: 'hidden',
-//   top: 120,
-//   left: 20,
-//   width: window.width,
-//   height: window.height,
-//   backgroundColor: 'red'
-// }}/>
-
-/*
-  <Link path="/....." props={{}}
-*/
-
-/*
-  options can be
-  {
-    path,
-    side
-  }
-*/
 @scene({
   path: "/home",
   side: Side.R
@@ -118,6 +97,7 @@ export default class App extends Component {
     setTimeout(() => {
       console.log('')
       this.state.areaRef.goto('/about', {}, {})
+      this.state.areaRef.goto('/home', {}, {})
     }, 2000)
 
     setTimeout(() => {
@@ -143,25 +123,6 @@ export default class App extends Component {
     // setTimeout(() => {
     //   this.state.areaRef.goback()
     // }, 8000)
-
-    /*
-      about Activating
-      about is created
-      about Activated
-
-      about Deactivating
-      home Activating
-      home is created
-      about Deactivated
-      home Activated
-
-      home Deactivating
-      about Activating
-      about Activated
-      home Deactivated
-      home is deleted
-
-    */
   }
 
   render() {

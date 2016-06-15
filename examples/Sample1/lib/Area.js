@@ -49,7 +49,8 @@ export class Area extends Component {
       router,
       scenes: [],
       stackRefs: [],
-      isDraging: false
+      isDraging: false,
+      inProgress: false
     }
 
     //clear register scene
@@ -65,13 +66,14 @@ export class Area extends Component {
     return stackRefs[stackRefs.length - index]
   }
 
-  setCurrentActiveSceneStatue(status)  {
-
-    return currentActiveSceneRef
-  }
-
   goto(path, props, opts) {
-    const { router } = this.state
+    const { router, inProgress } = this.state
+
+    if (inProgress) {
+      return
+    }
+
+    this.state.inProgress = true
 
     const currentActiveSceneRef = this.getTopSceneRef()
     if (currentActiveSceneRef) {
@@ -89,6 +91,12 @@ export class Area extends Component {
   }
 
   goback() {
+    if (this.state.inProgress) {
+      return;
+    }
+
+    this.state.inProgress = true
+
     const ref = this.state.stackRefs.pop()
     this.state.scenes.pop()
 
@@ -104,6 +112,8 @@ export class Area extends Component {
         prevSceneRef.setSceneStatus(SceneStatus.Activated)
       }
       ref.setSceneStatus(SceneStatus.Deactivated)
+
+      this.state.inProgress = false
 
       this.setState(this.state)
     })
@@ -124,6 +134,7 @@ export class Area extends Component {
         this.goback()
       },
       onOpen: () => {
+        this.state.inProgress = false
         const currentActiveSceneRef = this.getTopSceneRef()
         currentActiveSceneRef.setSceneStatus(SceneStatus.Activated)
       },
