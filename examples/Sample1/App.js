@@ -97,7 +97,7 @@ export default class App extends Component {
 
     setTimeout(() => {
       console.log('')
-      this.state.areaRef.goto('/home', { opts: { gesture: false } })
+      this.state.areaRef.goto('/home', { opts: { animate: false } })
     }, 2000)
 
     setTimeout(() => {

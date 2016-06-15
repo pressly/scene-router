@@ -88,7 +88,8 @@ const defaultOpts = {
   side: Side.L,
   threshold: 50,
   gesture: true,
-  reset: false
+  reset: false,
+  animate: true
 }
 
 const isSet = (value, defaultValue) => {
@@ -112,7 +113,8 @@ export const scene = (opts = {}) => (Wrap) => {
       const userOpts = props.opts
       const side = isSet(userOpts.side, opts.side)
       const threshold = isSet(userOpts.threshold, opts.threshold)
-      const gesture = isSet(userOpts.gesture, opts.gesture)
+      const animate = isSet(userOpts.animate, opts.animate)
+      const gesture = animate && isSet(userOpts.gesture, opts.gesture)
       const reset = isSet(userOpts.reset, opts.reset)
 
       const panResponder = gesture ? PanResponder.create({
@@ -133,7 +135,8 @@ export const scene = (opts = {}) => (Wrap) => {
         startTouchPos: { x: 0, y: 0 },
         threshold,
         shouldSceneDrag: false,
-        reset
+        reset,
+        animate
       }
     }
 
@@ -248,20 +251,21 @@ export const scene = (opts = {}) => (Wrap) => {
     }
 
     open = (fn) => {
+      if (!this.state.animate) {
+        this.state.position.setValue(activePosition)
+        setTimeout(() => {
+          if (fn) { fn() }
+        }, 100)
+        return
+      }
+
       Animated.timing(
         this.state.position,
         {
           toValue: activePosition,
           duration: 300
         }
-      ).start(() => {
-        if (fn) {
-          fn()
-        } else {
-          this.props.onOpen(this.state.reset)
-        }
-        this.props.onDragCancel()
-      })
+      ).start(fn)
     }
 
     close = (fn) => {
@@ -291,7 +295,10 @@ export const scene = (opts = {}) => (Wrap) => {
     }
 
     componentDidMount() {
-      this.open()
+      this.open(() => {
+        this.props.onOpen(this.state.reset)
+        this.props.onDragCancel()
+      })
     }
 
     render() {
