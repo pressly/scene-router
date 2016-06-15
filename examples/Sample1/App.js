@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { View, Text, Dimensions } from 'react-native'
 
-import Area, { access } from './lib/Area'
-import { scene, Side, SceneStatus } from './lib/scene'
+import { Area, scene, Side, SceneStatus } from './lib'
 
 const window = Dimensions.get('window')
 

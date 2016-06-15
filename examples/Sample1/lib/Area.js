@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   }
 })
 
-export default class Area extends Component {
+export class Area extends Component {
   constructor(props, context) {
     super(props, context)
 
@@ -65,8 +65,6 @@ export default class Area extends Component {
   goback() {
     const ref = this.state.stackRefs.pop()
     this.state.scenes.pop()
-
-    //calling lifecycle
 
     ref.close(() => {
       this.setState(this.state)

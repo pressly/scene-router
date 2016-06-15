@@ -8,6 +8,7 @@ import {
   PanResponder
 } from 'react-native'
 
+import { Side, SceneStatus } from './constants'
 import { registerScene } from './Area'
 
 const window = Dimensions.get('window')
@@ -24,23 +25,6 @@ const styles = StyleSheet.create({
     height: window.height
   }
 })
-
-export const Side = {
-  L: 1,
-  R: 2,
-  T: 3,
-  B: 4
-}
-
-export const SceneStatus = {
-  //if componentDidMount called does not mean the scene is visible. you have to wait for
-  //props.sceneStatus to be `Activated`
-  Activating: 1,    //when the scene is already mounted and will active shortly
-  Activated: 2,     //when the scene is completely visible
-  Deactivating: 3,  //when the scene is covered by another scene or being deactivating
-  Deactivated: 4    //when the scene is completely hidden
-  //
-}
 
 const calcSide = (side) => {
   let y
@@ -112,7 +96,7 @@ export const scene = (opts = {}) => (Wrap) => {
     ...opts
   }
 
-  const Scene = class extends Component {
+  class Scene extends Component {
     constructor(props, context) {
       super(props, context)
 
@@ -258,7 +242,11 @@ export const scene = (opts = {}) => (Wrap) => {
           toValue: activePosition,
           duration: 300
         }
-      ).start(fn)
+      ).start(() => {
+        if (fn) {
+          fn()
+        }
+      })
     }
 
     close = (fn) => {
@@ -272,7 +260,6 @@ export const scene = (opts = {}) => (Wrap) => {
         if (fn) {
           fn()
         } else {
-          //console.log(this.props)
           this.props.onClose()
         }
       })
