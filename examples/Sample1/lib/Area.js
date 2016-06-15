@@ -66,7 +66,7 @@ export class Area extends Component {
     return stackRefs[stackRefs.length - index]
   }
 
-  goto(path, props, opts) {
+  goto(path, args = {}) {
     const { router, inProgress } = this.state
 
     if (inProgress) {
@@ -80,7 +80,10 @@ export class Area extends Component {
       currentActiveSceneRef.setSceneStatus(SceneStatus.Deactivating)
     }
 
-    const err = router.process(path, { opts, props })
+    args.props = args.props || {}
+    args.opts = args.opts || {}
+
+    const err = router.process(path, args)
     if (err) {
       console.log(err)
     }

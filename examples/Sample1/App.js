@@ -107,12 +107,12 @@ export default class App extends Component {
 
     setTimeout(() => {
       console.log('')
-      this.state.areaRef.goto('/about', {}, { side: Side.T })
+      this.state.areaRef.goto('/about', { opts: { side: Side.T } })
     }, 6000)
 
     setTimeout(() => {
       console.log('')
-      this.state.areaRef.goto('/home', {}, { side: Side.B })
+      this.state.areaRef.goto('/home', { opts: { side: Side.B } })
     }, 8000)
 
     // setTimeout(() => {
