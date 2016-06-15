@@ -101,7 +101,8 @@ const shouldSceneClose = (side, threshold, x, y) => {
 }
 
 const defaultOpts = {
-  side: Side.L
+  side: Side.L,
+  threshold: 50
 }
 
 export const scene = (opts = {}) => (Wrap) => {
@@ -126,6 +127,7 @@ export const scene = (opts = {}) => (Wrap) => {
 
       const overrideOpts = props.opts
       const side = overrideOpts.side || opts.side
+      const threshold = overrideOpts.threshold || opts.threshold
 
       this.state = {
         sceneStatus: SceneStatus.Activating,
@@ -133,17 +135,58 @@ export const scene = (opts = {}) => (Wrap) => {
         position: new Animated.ValueXY(calcSide(side)),
         opacity: new Animated.Value(1),
         panResponder,
-        startTouchPos: { x: 0, y: 0 }
+        startTouchPos: { x: 0, y: 0 },
+        threshold,
+        shouldSceneDrag: false
       }
     }
 
     _handleStartShouldSetPanResponder = (evt, gestureState) => {
+      const {
+        nativeEvent: { pageX, pageY }
+      } = evt
+
+      const { threshold, side } = this.state
+
+      this.state.shouldSceneDrag = false
+
+      switch (side) {
+        case Side.B:
+          if (pageY > threshold) {
+            return false
+          }
+          break
+        case Side.T:
+          if (window.height - threshold > pageY) {
+            return false
+          }
+          break
+        case Side.L:
+          if (window.width - threshold > pageX) {
+            return false
+          }
+          break
+        case Side.R:
+          if (pageX > threshold) {
+            return false
+          }
+          break
+      }
+
+      console.log('hahaha')
+
+      this.state.shouldSceneDrag = true
+
       this.state.startTouchPos.x = this.state.position.x.__getValue()
       this.state.startTouchPos.y = this.state.position.y.__getValue()
       return false
     }
 
     _handleMoveShouldSetPanResponder = (evt, gestureState) => {
+      if (!this.state.shouldSceneDrag) {
+        return false
+      }
+
       const { dx, dy } = gestureState
       switch(this.state.side) {
         case Side.L:
@@ -155,7 +198,7 @@ export const scene = (opts = {}) => (Wrap) => {
         case Side.B:
           return dy > 0
         default:
-          false
+          return false
       }
     }
 
@@ -195,8 +238,6 @@ export const scene = (opts = {}) => (Wrap) => {
         default:
           //do nothing
       }
-
-      //this.state.position.x.setValue(this.state.startTouchPos.x + gestureState.dx)
     }
 
     _handlePanResponderEnd = (evt, gestureState) => {
@@ -226,7 +267,7 @@ export const scene = (opts = {}) => (Wrap) => {
     }
 
     close = () => {
-      Animated.timing(
+      Animated.spring(
         this.state.position,
         {
           toValue: calcSide(this.state.side),

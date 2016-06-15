@@ -29,7 +29,7 @@ const window = Dimensions.get('window')
 */
 @scene({
   path: "home",
-  side: Side.T
+  side: Side.R
 })
 class Home extends Component {
   render() {
@@ -46,7 +46,7 @@ class Home extends Component {
 
 @scene({
   path: "about",
-  side: Side.B
+  side: Side.L
 })
 class About extends Component {
   render() {
@@ -71,13 +71,13 @@ export default class App extends Component {
 
     setTimeout(() => {
       this.setState({
-        path: this.state.path == 'home'? 'about' : 'home'
+        path: 'home'
       })
     }, 2000)
 
     setTimeout(() => {
       this.setState({
-        path: this.state.path == 'home'? 'about' : 'home'
+        path: 'about'
       })
     }, 4000)
   }
