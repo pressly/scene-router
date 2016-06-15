@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, Text, Dimensions } from 'react-native'
 
-import { Area, scene, Side, SceneStatus } from './lib'
+import { Area, scene, Side, SceneStatus } from 'scene-router'
 
 const window = Dimensions.get('window')
 

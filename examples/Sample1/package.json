@@ -8,7 +8,7 @@
   "dependencies": {
     "react": "15.1.0",
     "react-native": "0.27.2",
-    "trie-route": "0.0.5"
+    "scene-router": "../.."
   },
   "devDependencies": {
     "babel-plugin-transform-decorators-legacy": "^1.3.4"

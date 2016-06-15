@@ -1,6 +1,6 @@
 {
   "name": "scene-router",
-  "version": "0.3.8",
+  "version": "1.0.0",
   "description": "A complete scene routing library for react native",
   "main": "lib/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "url": "https://github.com/pressly/scene-router.git"
   },
   "dependencies": {
-    "trie-route": "0.0.4"
+    "trie-route": "0.0.5"
   },
   "keywords": [
     "react-component",
