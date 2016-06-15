@@ -60,7 +60,8 @@ class Home extends Component {
 
 @scene({
   path: "/about",
-  side: Side.L
+  side: Side.L,
+  gesture: false
 })
 class About extends Component {
 
@@ -96,24 +97,23 @@ export default class App extends Component {
 
     setTimeout(() => {
       console.log('')
-      this.state.areaRef.goto('/about', {}, {})
-      this.state.areaRef.goto('/home', {}, {})
+      this.state.areaRef.goto('/home', { opts: { gesture: false } })
     }, 2000)
 
     setTimeout(() => {
       console.log('')
-      this.state.areaRef.goto('/home', {}, {})
+      this.state.areaRef.goto('/about', { opts: { gesture: true } })
     }, 4000)
 
-    setTimeout(() => {
-      console.log('')
-      this.state.areaRef.goto('/about', { opts: { side: Side.T } })
-    }, 6000)
-
-    setTimeout(() => {
-      console.log('')
-      this.state.areaRef.goto('/home', { opts: { side: Side.B } })
-    }, 8000)
+    // setTimeout(() => {
+    //   console.log('')
+    //   this.state.areaRef.goto('/about', { opts: { side: Side.T } })
+    // }, 6000)
+    //
+    // setTimeout(() => {
+    //   console.log('')
+    //   this.state.areaRef.goto('/home', { opts: { side: Side.B } })
+    // }, 8000)
 
     // setTimeout(() => {
     //   console.log('')

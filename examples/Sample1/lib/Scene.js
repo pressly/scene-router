@@ -86,7 +86,15 @@ const shouldSceneClose = (side, threshold, x, y) => {
 
 const defaultOpts = {
   side: Side.L,
-  threshold: 50
+  threshold: 50,
+  gesture: true
+}
+
+const isSet = (value, defaultValue) => {
+  if (typeof value !== value) {
+    return value
+  }
+  return defaultValue
 }
 
 export const scene = (opts = {}) => (Wrap) => {
@@ -100,18 +108,19 @@ export const scene = (opts = {}) => (Wrap) => {
     constructor(props, context) {
       super(props, context)
 
-      const panResponder = PanResponder.create({
+      const overrideOpts = props.opts
+      const side = isSet(overrideOpts.side, opts.side)
+      const threshold = isSet(overrideOpts.threshold, opts.threshold)
+      const gesture = isSet(overrideOpts.gesture, opts.gesture)
+
+      const panResponder = gesture ? PanResponder.create({
         onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
         onMoveShouldSetPanResponder: this._handleMoveShouldSetPanResponder,
         onPanResponderGrant: this._handlePanResponderGrant,
         onPanResponderMove: this._handlePanResponderMove,
         onPanResponderRelease: this._handlePanResponderEnd,
         onPanResponderTerminate: this._handlePanResponderEnd,
-      })
-
-      const overrideOpts = props.opts
-      const side = overrideOpts.side || opts.side
-      const threshold = overrideOpts.threshold || opts.threshold
+      }) : {}
 
       this.state = {
         sceneStatus: SceneStatus.Activating,
