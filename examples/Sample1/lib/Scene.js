@@ -87,7 +87,8 @@ const shouldSceneClose = (side, threshold, x, y) => {
 const defaultOpts = {
   side: Side.L,
   threshold: 50,
-  gesture: true
+  gesture: true,
+  reset: false
 }
 
 const isSet = (value, defaultValue) => {
@@ -108,10 +109,11 @@ export const scene = (opts = {}) => (Wrap) => {
     constructor(props, context) {
       super(props, context)
 
-      const overrideOpts = props.opts
-      const side = isSet(overrideOpts.side, opts.side)
-      const threshold = isSet(overrideOpts.threshold, opts.threshold)
-      const gesture = isSet(overrideOpts.gesture, opts.gesture)
+      const userOpts = props.opts
+      const side = isSet(userOpts.side, opts.side)
+      const threshold = isSet(userOpts.threshold, opts.threshold)
+      const gesture = isSet(userOpts.gesture, opts.gesture)
+      const reset = isSet(userOpts.reset, opts.reset)
 
       const panResponder = gesture ? PanResponder.create({
         onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
@@ -130,7 +132,8 @@ export const scene = (opts = {}) => (Wrap) => {
         panResponder,
         startTouchPos: { x: 0, y: 0 },
         threshold,
-        shouldSceneDrag: false
+        shouldSceneDrag: false,
+        reset
       }
     }
 
@@ -255,7 +258,7 @@ export const scene = (opts = {}) => (Wrap) => {
         if (fn) {
           fn()
         } else {
-          this.props.onOpen()
+          this.props.onOpen(this.state.reset)
         }
         this.props.onDragCancel()
       })

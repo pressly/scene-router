@@ -136,10 +136,16 @@ export class Area extends Component {
       onClose: () => {
         this.goback()
       },
-      onOpen: () => {
+      onOpen: (reset) => {
         this.state.inProgress = false
         const currentActiveSceneRef = this.getTopSceneRef()
         currentActiveSceneRef.setSceneStatus(SceneStatus.Activated)
+
+        if (reset) {
+          this.state.stackRefs.splice(0, this.state.stackRefs.length - 1)
+          this.state.scenes.splice(0, this.state.scenes.length - 1)
+          this.setState(this.state)
+        }
       },
       onDrag: () => {
         this.state.isDraging = true
