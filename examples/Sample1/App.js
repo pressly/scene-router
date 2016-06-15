@@ -32,6 +32,15 @@ const window = Dimensions.get('window')
   side: Side.R
 })
 class Home extends Component {
+
+  componentDidMount() {
+    console.log('home is created')
+  }
+
+  componentWillUnmount() {
+    console.log('home is deleted')
+  }
+
   render() {
     return (
       <View style={{
@@ -49,6 +58,15 @@ class Home extends Component {
   side: Side.L
 })
 class About extends Component {
+
+  componentDidMount() {
+    console.log('about is created')
+  }
+
+  componentWillUnmount() {
+    console.log('about is deleted')
+  }
+
   render() {
     return (
       <View style={{
@@ -66,28 +84,30 @@ export default class App extends Component {
     super(props, context)
 
     this.state = {
-      path: ''
+      areaRef: null
     }
 
     setTimeout(() => {
-      this.setState({
-        path: 'home'
-      })
+      this.state.areaRef.goto('about', {}, {})
     }, 2000)
 
     setTimeout(() => {
-      this.setState({
-        path: 'about'
-      })
+      this.state.areaRef.goto('home', {}, {})
     }, 4000)
+
+    setTimeout(() => {
+      this.state.areaRef.goback()
+    }, 6000)
+
+    setTimeout(() => {
+      this.state.areaRef.goback()
+    }, 8000)
   }
 
   render() {
     return (
       <Area
-        path={this.state.path}
-        opts={{ }}
-        props={{ }}>
+        ref={(ref) => this.state.areaRef = ref }>
 
       <View style={{
           backgroundColor: 'blue',

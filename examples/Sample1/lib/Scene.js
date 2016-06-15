@@ -254,27 +254,26 @@ export const scene = (opts = {}) => (Wrap) => {
       this.state.opacity.setValue(1)
     }
 
-    open = () => {
+    open = (fn) => {
       Animated.timing(
         this.state.position,
         {
           toValue: activePosition,
           duration: 300
         }
-      ).start(() => {
-        console.log('view is active')
-      })
+      ).start(fn)
     }
 
-    close = () => {
-      Animated.spring(
+    close = (fn) => {
+      Animated.timing(
         this.state.position,
         {
           toValue: calcSide(this.state.side),
           duration: 300
         }
       ).start(() => {
-        console.log('view is inactive')
+        console.log('close animation is done')
+        fn()
       })
     }
 

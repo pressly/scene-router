@@ -38,43 +38,44 @@ export default class Area extends Component {
     registerScenes.forEach(({ Component, opts }) => {
       router.path(opts.path, (params, qs, extra) => {
         const scene = this.renderScene(Component, params, qs, opts, extra)
-        const { scenes } = this.state
-
-        scenes.push(scene)
-
-        //by using this we are making sure the timing issue.
-        //you can't call the setState when the component has't been mounted.
-        //this condition makes it happen.
-        if (this.state.scenes.length == 0) {
-          this.setState(this.state)
-        }
+        this.state.scenes.push(scene)
+        this.setState(this.state)
       })
     })
 
     this.state = {
       id: 0,
       router,
-      scenes: []
+      scenes: [],
+      stackRefs: []
     }
 
     //clear register scene
     registerScenes = null
 
-    this.goto(router, props.path, props.opts, props.props)
+    //this.goto(props.path, props.opts, props.props)
   }
 
-  goto = (router, path, opts, props) => {
+  goto(path, props, opts) {
+    const { router } = this.state
     const err = router.process(path, { opts, props })
     if (err) {
       console.log(err)
     }
   }
 
-  goback = () => {
-    console.log('goback')
+  goback() {
+    const ref = this.state.stackRefs.pop()
+    this.state.scenes.pop()
+
+    //calling lifecycle
+
+    ref.close(() => {
+      this.setState(this.state)
+    })
   }
 
-  renderScene = (Component, params, qs, opts, extra) => {
+  renderScene (Component, params, qs, opts, extra) {
     const props = {
       route: {
         params,
@@ -89,47 +90,32 @@ export default class Area extends Component {
 
     this.state.id++;
 
+    let componentId = this.state.id
+
     return (
-      <Component key={this.state.id} {...props}/>
+      <Component
+        ref={(ref) => {
+          //when a component is being deleted,
+          //this function is called
+          if (ref != null) {
+            this.state.stackRefs.push(ref)
+          }
+        }}
+        key={componentId}
+        {...props}/>
     )
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { path, opts, props, goback } = nextProps
-    const { router } = this.state
-
-    if (!goback) {
-      this.goto(router, path, opts, props)
-    } else {
-      this.goback()
-    }
-  }
-
   render() {
-    const { scenes } = this.state
     return (
       <View style={styles.container}>
         <View style={styles.staticView}>
           {this.props.children}
         </View>
-        {scenes}
+        {this.state.scenes}
       </View>
     )
   }
-}
-
-Area.propTypes = {
-  path: PropTypes.string,
-  opts: PropTypes.object,
-  props: PropTypes.object,
-  goback: PropTypes.bool
-}
-
-Area.defaultProps = {
-  path: "",
-  opts: {},
-  props: {},
-  goback: false
 }
 
 export const registerScene = (Component, opts) => {
