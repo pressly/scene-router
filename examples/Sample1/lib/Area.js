@@ -52,8 +52,6 @@ export default class Area extends Component {
 
     //clear register scene
     registerScenes = null
-
-    //this.goto(props.path, props.opts, props.props)
   }
 
   goto(path, props, opts) {
@@ -85,7 +83,8 @@ export default class Area extends Component {
         ...opts,
         ...extra.opts
       },
-      ...extra.props
+      ...extra.props,
+      onClose: () => { this.goback() }
     }
 
     this.state.id++;

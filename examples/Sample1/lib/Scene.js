@@ -173,8 +173,6 @@ export const scene = (opts = {}) => (Wrap) => {
           break
       }
 
-      console.log('hahaha')
-
       this.state.shouldSceneDrag = true
 
       this.state.startTouchPos.x = this.state.position.x.__getValue()
@@ -244,7 +242,6 @@ export const scene = (opts = {}) => (Wrap) => {
       const { side, position: { x, y } } = this.state
 
       //this responded has been canceled or another respondeded take over
-      console.log('terminated')
       if (shouldSceneClose(side, 50, x.__getValue(), y.__getValue())) {
         this.close()
       } else {
@@ -272,8 +269,12 @@ export const scene = (opts = {}) => (Wrap) => {
           duration: 300
         }
       ).start(() => {
-        console.log('close animation is done')
-        fn()
+        if (fn) {
+          fn()
+        } else {
+          //console.log(this.props)
+          this.props.onClose()
+        }
       })
     }
 
@@ -283,7 +284,7 @@ export const scene = (opts = {}) => (Wrap) => {
 
     render() {
       const { position, panResponder, opacity } = this.state
-      const { opts, ...rest } = this.props
+      const { onClose, opts, ...rest } = this.props
 
       const pos = position.getLayout()
 

@@ -99,9 +99,9 @@ export default class App extends Component {
       this.state.areaRef.goback()
     }, 6000)
 
-    setTimeout(() => {
-      this.state.areaRef.goback()
-    }, 8000)
+    // setTimeout(() => {
+    //   this.state.areaRef.goback()
+    // }, 8000)
   }
 
   render() {
