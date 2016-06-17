@@ -77,6 +77,7 @@ Scene has the following `options` which can be configured at Component scope and
 | gesture | Boolean | No | true | Component and Runtime Levels |
 | reset | Boolean | No | false | Component and Runtime Levels |
 | animate | Boolean | No | true | Component and Runtime Levels |
+| backgroundColor | String | No | white | the back color of each scene |
 
 Side: is a enum that has the following constant values
 
