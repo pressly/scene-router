@@ -5,6 +5,12 @@ import { Area, scene, Side, SceneStatus } from 'scene-router'
 
 const window = Dimensions.get('window')
 
+const wait = (delay) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay)
+  })
+}
+
 const showSceneStatus = (name, sceneStatus) => {
   switch (sceneStatus) {
     case SceneStatus.Activating:
@@ -52,16 +58,19 @@ class Home extends Component {
         backgroundColor: 'red',
         flex: 1,
         height: window.height,
-        width: window.width
-      }}></View>
+        width: window.width,
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <Text>Home</Text>
+      </View>
     )
   }
 }
 
 @scene({
   path: "/about",
-  side: Side.L,
-  gesture: false
+  side: Side.R
 })
 class About extends Component {
 
@@ -81,8 +90,44 @@ class About extends Component {
         backgroundColor: 'green',
         flex: 1,
         height: window.height,
-        width: window.width
-      }}></View>
+        width: window.width,
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <Text>About</Text>
+      </View>
+    )
+  }
+}
+
+@scene({
+  path: "/contact",
+  side: Side.R
+})
+class Contact extends Component {
+
+  componentDidMount() {
+    console.log('contact is created')
+  }
+
+  componentWillUnmount() {
+    console.log('contact is deleted')
+  }
+
+  render() {
+    showSceneStatus('contact', this.props.sceneStatus)
+
+    return (
+      <View style={{
+        backgroundColor: 'yellow',
+        flex: 1,
+        height: window.height,
+        width: window.width,
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <Text>Contact</Text>
+      </View>
     )
   }
 }
@@ -94,16 +139,6 @@ export default class App extends Component {
     this.state = {
       areaRef: null
     }
-
-    setTimeout(() => {
-      console.log('')
-      this.state.areaRef.goto('/home', { opts: { animate: false } })
-    }, 2000)
-
-    setTimeout(() => {
-      console.log('')
-      this.state.areaRef.goto('/about', { opts: { gesture: true, reset: true } })
-    }, 4000)
 
     // setTimeout(() => {
     //   console.log('')
@@ -125,6 +160,24 @@ export default class App extends Component {
     // }, 8000)
   }
 
+  async componentDidMount() {
+    await wait(2000)
+
+    this.state.areaRef.goto('/home', { opts: { animate: false } })
+
+    await wait(2000)
+
+    this.state.areaRef.goto('/about')
+
+    await wait(2000)
+
+    this.state.areaRef.goto('/contact')
+
+    // await wait(2000)
+    //
+    // this.state.areaRef.goback('/home')
+  }
+
   render() {
     return (
       <Area
@@ -134,9 +187,12 @@ export default class App extends Component {
           backgroundColor: 'blue',
           flex: 1,
           height: window.height,
-          width: window.width
-        }}
-      />
+          width: window.width,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <Text>Landing</Text>
+        </View>
 
       </Area>
     )

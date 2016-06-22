@@ -117,9 +117,13 @@ accepts a path and tries to find the scene related to that path. userOpts is an 
 this.refs['areaRef'].goto('/profile/123', { props:{}, opts: {side: Side.R }})
 ```
 
-- goback()
+- goback(path)
 
-simply returns to the previous scene.
+simply returns to the previous scene. if `path` is provided, it goes back to that path.
+
+if you want to `goback` to previous scene, don't provide any `path`.
+
+if the path not found, the `goback` is noop.
 
 ## Contributions
 
