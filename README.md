@@ -101,7 +101,7 @@ Once you connect your view with `scene` function, `scene` will inject a new prop
 | Deactivating | when a scene is about to go away or cover by another scene |
 | Deactivated | when a scene is already covered or gone |
 | MigthDeactivate | during dragging a scene. the current scene will get this value |
-| MigthActivating | the previous and covered scene by current during dragging with get this value|
+| MigthActivate | the previous and covered scene by current during dragging with get this value|
 
 #### Area
 
