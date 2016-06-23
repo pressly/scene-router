@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, Text, Dimensions } from 'react-native'
 
-import { Area, scene, Side, SceneStatus } from 'scene-router'
+import { Area, AreaList, scene, Side, SceneStatus } from 'scene-router'
 
 const window = Dimensions.get('window')
 
@@ -25,11 +25,11 @@ const showSceneStatus = (name, sceneStatus) => {
     case SceneStatus.Deactivated:
       console.log(name, 'Deactivated')
       break
-    case SceneStatus.MightActivating:
-      console.log(name, 'MightActivating')
+    case SceneStatus.MightActivate:
+      console.log(name, 'MightActivate')
       break
-    case SceneStatus.MigthDeactivating:
-      console.log(name, 'MigthDeactivating')
+    case SceneStatus.MigthDeactivate:
+      console.log(name, 'MigthDeactivate')
       break
     default:
       console.log(name, 'unknown scene status')
@@ -139,25 +139,6 @@ export default class App extends Component {
     this.state = {
       areaRef: null
     }
-
-    // setTimeout(() => {
-    //   console.log('')
-    //   this.state.areaRef.goto('/about', { opts: { side: Side.T } })
-    // }, 6000)
-    //
-    // setTimeout(() => {
-    //   console.log('')
-    //   this.state.areaRef.goto('/home', { opts: { side: Side.B } })
-    // }, 8000)
-
-    // setTimeout(() => {
-    //   console.log('')
-    //   this.state.areaRef.goback()
-    // }, 6000)
-
-    // setTimeout(() => {
-    //   this.state.areaRef.goback()
-    // }, 8000)
   }
 
   async componentDidMount() {
@@ -173,28 +154,47 @@ export default class App extends Component {
 
     this.state.areaRef.goto('/contact')
 
-    // await wait(2000)
-    //
+    await wait(2000)
+
     // this.state.areaRef.goback('/home')
+
+    this.state.areaRef.activeArea('hubs')
+
+    await wait(2000)
+
+    this.state.areaRef.goto('/about')
+
+    await wait(2000)
+
+    this.state.areaRef.activeArea('stream')
   }
 
   render() {
     return (
-      <Area
-        ref={(ref) => this.state.areaRef = ref }>
-
-      <View style={{
-          backgroundColor: 'blue',
-          flex: 1,
-          height: window.height,
-          width: window.width,
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <Text>Landing</Text>
-        </View>
-
-      </Area>
+      <AreaList ref={(ref) => { this.state.areaRef = ref }}>
+        <Area name="stream">
+          <View style={{
+              backgroundColor: 'blue',
+              flex: 1,
+              height: window.height,
+              width: window.width,
+              alignItems: 'center',
+              justifyContent: 'center'}}>
+              <Text>Stream Landing</Text>
+          </View>
+        </Area>
+        <Area name="hubs">
+          <View style={{
+              backgroundColor: 'blue',
+              flex: 1,
+              height: window.height,
+              width: window.width,
+              alignItems: 'center',
+              justifyContent: 'center'}}>
+              <Text>Hubs Landing</Text>
+          </View>
+        </Area>
+      </AreaList>
     )
   }
 }

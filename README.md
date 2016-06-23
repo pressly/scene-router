@@ -60,7 +60,7 @@ export default scene({ path: '/home' })(MyView)
 
 # APIs
 
-there are 3 things you need to know, `scene` and `Area` and scene life cycle.
+there are 4 things you need to know, `scene`, `Area`, `AreaList` and scene life cycle.
 
 #### scene
 
@@ -100,12 +100,14 @@ Once you connect your view with `scene` function, `scene` will inject a new prop
 | Activated | when the animation is done and scene is visible |
 | Deactivating | when a scene is about to go away or cover by another scene |
 | Deactivated | when a scene is already covered or gone |
-| MigthDeactivating | during dragging a scene. the current scene will get this value |
+| MigthDeactivate | during dragging a scene. the current scene will get this value |
 | MigthActivating | the previous and covered scene by current during dragging with get this value|
 
 #### Area
 
 Area is a component that needs to be places where you need to display the scene. This is the main component of `scene-router`
+
+> if you are planning to use `AreaList`, make sure to pass a unique names to each `Area` components by `name` prop.
 
 it has 2 main methods which can be accessed by `ref`
 
@@ -124,6 +126,13 @@ simply returns to the previous scene. if `path` is provided, it goes back to tha
 if you want to `goback` to previous scene, don't provide any `path`.
 
 if the path not found, the `goback` is noop.
+
+#### AreaList
+
+if you plan to implement tabs with scene-router, you should use `AreaList`. This component is wrapping all the `Area` component that you need and you can easily switch
+between them by using `activeArea('name of area')`. Please refer to the example.
+
+`AreaList` has all the methods of `Area` plus `activeArea`.
 
 ## Contributions
 
