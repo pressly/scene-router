@@ -28,8 +28,8 @@ const showSceneStatus = (name, sceneStatus) => {
     case SceneStatus.MightActivate:
       console.log(name, 'MightActivate')
       break
-    case SceneStatus.MigthDeactivate:
-      console.log(name, 'MigthDeactivate')
+    case SceneStatus.MightDeactivate:
+      console.log(name, 'MightDeactivate')
       break
     default:
       console.log(name, 'unknown scene status')
