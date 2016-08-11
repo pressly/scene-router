@@ -134,6 +134,10 @@ between them by using `activeArea('name of area')`. Please refer to the example.
 
 `AreaList` has all the methods of `Area` plus `activeArea`.
 
+#### etc
+
+for complex operation, `onGestureClosed` props is added to `Area` and `AreaList`. If user closes the scene by gesture, this callback is being called.
+
 ## Contributions
 
 Please use it give us feedback and with help of you we can make it better.
