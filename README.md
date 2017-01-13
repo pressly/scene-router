@@ -138,6 +138,17 @@ between them by using `activeArea('name of area')`. Please refer to the example.
 
 for complex operation, `onGestureClosed` props is added to `Area` and `AreaList`. If user closes the scene by gesture, this callback is being called.
 
+#### performance
+
+in latest React-Native, `useNativeDrive` was introduced to boost performance. you can enable it by using `enableNativeDrive(true)`. This is a global set for all scenes.
+the default value is `false`
+
+```js
+import { enableNativeDrive } from 'scene-router'
+
+enableNativeDrive(true)
+```
+
 ## Contributions
 
 Please use it give us feedback and with help of you we can make it better.
