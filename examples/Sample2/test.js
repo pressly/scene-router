@@ -3,7 +3,13 @@
 import React, { Component } from 'react'
 import { View } from 'react-native'
 
-import { scene, Router } from './scene-router'
+import { scene, Router, Side, Status } from './scene-router'
+
+const delay = (timeout: number) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, timeout)
+  })
+}
 
 class Scene1 extends Component { 
   render() {
@@ -32,32 +38,48 @@ scene({
 })(Scene2)
 
 export class App extends Component {
-  state: { path: string }
+  state: { area: string, action: 'goto' | 'goback', options: any }
 
   constructor(props: any, context: any) {
     super(props, context)
 
     this.state = {
-      path: '/scene1'
+      area: "default",
+      action: 'goto',
+      options: {
+        path: '/scene1'
+      }
     }
   }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({ path: '/scene2' })
-    }, 2000)
+  async componentDidMount(): any {
+    await delay(2000)
+    this.setState({ 
+      area: "default",
+      action: 'goto',
+      options: {
+        path: '/scene2' 
+      }
+    })
+
+    await delay(3000)
+    this.setState({
+      area: "default2",
+      action: 'goto',
+      options: {
+        path: '/scene1' 
+      }
+    })
   }
 
   render() {
-    const { path } = this.state
+    const { area, action, options } = this.state
 
     return (
       <Router
-        area="default"
-        action="goto"
-        options={{
-          path
-        }}
+        area={area}
+        action={action}
+        options={options}
       />
     )
   }

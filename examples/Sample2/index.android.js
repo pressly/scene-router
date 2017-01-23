@@ -7,7 +7,9 @@
 import React, { Component } from 'react';
 import { AppRegistry } from 'react-native';
 
-import { App } from './app'
+// import { App } from './app'
+//import { AddArea } from './addarea'
+import { App } from './test'
 
 export default class Sample2 extends Component {
   render() {

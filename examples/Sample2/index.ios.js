@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry } from 'react-native';
+import { View, AppRegistry } from 'react-native';
 
 // import { App } from './app'
 //import { AddArea } from './addarea'
