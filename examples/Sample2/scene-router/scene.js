@@ -93,6 +93,8 @@ export class Scene extends Component {
   }
 
   side(sceneConfig: SceneConfig): number {
+    // NOTE: `sceneConfig.side` will always have a value as soon as being passed to
+    // Scene component and the reason, I'm doing this to just remove the flow error
     return sceneConfig.side || constants.FromRight
   }
 
