@@ -84,7 +84,7 @@ export class App extends Component {
       action: 'goto',
       config: {
         path: '/scene1/3',
-        reset: true
+        //reset: true
       }
     })
 
@@ -115,8 +115,10 @@ export class App extends Component {
       <Router
         area={area}
         action={action}
-        config={config}
-      />
+        config={config}>
+        <View style={{ flex: 1, backgroundColor: 'red' }}>
+        </View>
+      </Router>
     )
   }
 }

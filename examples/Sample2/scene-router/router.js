@@ -20,7 +20,8 @@ type RouterProps = {
   area: string,
   action?: 'goto' | 'goback',
   config?: SceneConfig,
-  props?: Object 
+  props?: Object,
+  children?: React.Element<*>
 }
 
 type RouterState = {
@@ -42,8 +43,14 @@ export class Router extends Component {
 
     sceneManager.setSceneResponse(this.sceneResponse)
 
+    const area = (
+      <Area key={`area:${idCount++}`} ref={this.registerAreaRef}>
+        {props.children}
+      </Area>
+    )
+
     this.state = {
-      areas: [<Area key={`area:${idCount++}`} ref={this.registerAreaRef}/>],
+      areas: [area],
       names: [props.area],
       areaRefs: new Map()
     }
