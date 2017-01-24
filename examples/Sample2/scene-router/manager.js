@@ -4,25 +4,15 @@ import React from 'react'
 import route from 'trie-route'
 
 import * as constants from './constants'
-import type { SceneOptions } from './scene'
 import { Scene } from './scene'
+
+import type { SceneOptions, RouteOptions, Router, SceneResponse, RouterExtra } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
-type RouterExtra = {
-  props: Object,
-  options: SceneOptions
-}
-
-interface Router {
-  path(path: string, callback: (params: Object, qs: Object, extra: RouterExtra) => void): void;
-  process(path: string, extra: Object): void;
-}
-
-export type SceneResponse = (scene: Function, params: ?Object, qs: ?Object, props: ?Object, options: SceneOptions) => void
-
-export type SceneWrapProps = {
-  sceneRef: (ref: any) => void
+type SceneWrapProps = {
+  sceneRef: (ref: any) => void,
+  routeOptions: RouteOptions
 }
 
 // internal functions /////////////////////////////////////////////////////////
@@ -54,7 +44,7 @@ export class SceneManager {
     })
   }
 
-  request(path: string, props: ?Object, options: SceneOptions) {
+  request(path: string, props: ?Object = {}, options: SceneOptions) {
     this.router.process(path, { props, options })
   }
 
@@ -66,7 +56,7 @@ export class SceneManager {
 
 export const sceneManager = new SceneManager()
 
-// cecorators /////////////////////////////////////////////////////////////////
+// dcecorators /////////////////////////////////////////////////////////////////
 
 export const scene = (opt: SceneOptions) => {
   opt = mergeDefaultSceneOptions(opt)

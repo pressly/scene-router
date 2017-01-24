@@ -5,7 +5,8 @@ import { View } from 'react-native'
 
 import { Area } from './area'
 import { sceneManager } from './manager'
-import type { SceneOptions } from './scene'
+
+import type { SceneOptions } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
@@ -65,10 +66,16 @@ export class Router extends Component {
     return areaRefs.get(this.currentAreaName)
   }
 
-  sceneResponse = (scene: Function, params: ?Object, qs: ?Object, props: ?Object, options: SceneOptions) => {
+  sceneResponse = (scene: Function, params: Object, qs: Object, props: Object, options: SceneOptions) => {
     const ref = this.currentAreRef
+    const routeOptions = {
+      params,
+      qs,
+      props,
+      options
+    }
     if (ref) {
-      ref.push(scene)
+      ref.push(scene, routeOptions)
     }
   }
 

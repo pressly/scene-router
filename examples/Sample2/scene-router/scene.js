@@ -5,21 +5,9 @@ import { Animated, View, StyleSheet, Dimensions, Platform } from 'react-native'
 
 import * as constants from './constants'
 
+import type { SceneOptions, Point } from './types'
+
 // types //////////////////////////////////////////////////////////////////////
-
-type Point = {
-  x: number,
-  y: number
-}
-
-export type SceneOptions = {
-  path: string,
-  side?: number,
-  threshold?: number,
-  gesture?: boolean,
-  reset?: boolean,
-  backgroundColor?: string
-}
 
 type SceneProps = {
   WrapComponent: Function,

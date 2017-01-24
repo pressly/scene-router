@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import { View, StyleSheet, Dimensions } from 'react-native'
 
 import { Scene } from './scene'
-import type { SceneWrapProps } from './manager'
+import type { SceneOptions, RouteOptions } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
@@ -63,11 +63,12 @@ export class Area extends Component {
 
   // this Scene is SceneWrap function.
   // so we need to get the ref of scene itself
-  push(SceneWrap: Function) {
+  push(SceneWrap: Function, routeOptions: RouteOptions) {
     this.state.scenes.push(
       <SceneWrap
         key={`scenewrap:${sceneIdCount++}`}
-        sceneRefs={(ref) => this.state.sceneRefs.push(ref)} 
+        sceneRefs={(ref) => this.state.sceneRefs.push(ref)}
+        routeOptions={routeOptions}
       />
     )
 
