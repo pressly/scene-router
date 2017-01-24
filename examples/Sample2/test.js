@@ -11,6 +11,9 @@ const delay = (timeout: number) => {
   })
 }
 
+@scene({
+  path: '/scene1'
+})
 class Scene1 extends Component { 
   render() {
     return (
@@ -20,10 +23,10 @@ class Scene1 extends Component {
   }
 }
 
-scene({
-  path: '/scene1'
-})(Scene1)
 
+@scene({
+  path: '/scene2'
+})
 class Scene2 extends Component { 
   render() {
     return (
@@ -33,9 +36,6 @@ class Scene2 extends Component {
   }
 }
 
-scene({
-  path: '/scene2'
-})(Scene2)
 
 export class App extends Component {
   state: { area: string, action: 'goto' | 'goback', options: any }

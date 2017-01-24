@@ -12,6 +12,7 @@
 		"trie-route": "^0.0.5"
 	},
 	"devDependencies": {
+		"babel-plugin-transform-decorators-legacy": "^1.3.4",
 		"babel-jest": "18.0.0",
 		"babel-preset-react-native": "1.9.1",
 		"jest": "18.1.0",

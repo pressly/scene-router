@@ -22,8 +22,8 @@ node_modules/react-native/flow
 flow/
 
 [options]
+esproposal.decorators=ignore
 module.system=haste
-
 experimental.strict_type_args=true
 
 munge_underscores=true
