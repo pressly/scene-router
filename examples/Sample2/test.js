@@ -15,7 +15,7 @@ const delay = (timeout: number) => {
 
 @scene({
   path: '/scene1/:id',
-  side: Side.FromBottom
+  side: Side.FromRight
 })
 class Scene1 extends Component {
   updateSceneStatus(status: number) {
@@ -102,46 +102,46 @@ export class App extends Component {
 
   async componentDidMount(): any {
 
-    await delay(2000)
-    this.setState({ 
-      area: "default",
-      action: 'goto',
-      config: {
-        path: '/scene1/2'
-      }
-    })
+    // await delay(2000)
+    // this.setState({ 
+    //   area: "default",
+    //   action: 'goto',
+    //   config: {
+    //     path: '/scene1/2'
+    //   }
+    // })
 
-    await delay(2000)
-    this.setState({ 
-      area: "default",
-      action: 'goto',
-      config: {
-        path: '/scene1/3',
-        //reset: true
-      }
-    })
+    // await delay(2000)
+    // this.setState({ 
+    //   area: "default",
+    //   action: 'goto',
+    //   config: {
+    //     path: '/scene1/3',
+    //     //reset: true
+    //   }
+    // })
 
-    await delay(2000)
-    this.setState({
-      area: "default",
-      action: 'goback',
-      config: {}
-    })
+    // await delay(2000)
+    // this.setState({
+    //   area: "default",
+    //   action: 'goback',
+    //   config: {}
+    // })
 
-    await delay(2000)
-    this.setState({
-      area: "default2",
-      action: 'goto',
-      config: {
-        path: '/scene2/1',
-        //reset: true
-      }
-    })    
+    // await delay(2000)
+    // this.setState({
+    //   area: "default2",
+    //   action: 'goto',
+    //   config: {
+    //     path: '/scene2/1',
+    //     //reset: true
+    //   }
+    // })    
 
-    await delay(2000)
-    this.setState({
-      area: "default",
-    })    
+    // await delay(2000)
+    // this.setState({
+    //   area: "default",
+    // })    
 
     // await delay(3000)
     // this.setState({
