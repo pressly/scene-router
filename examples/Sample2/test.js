@@ -16,6 +16,7 @@ const delay = (timeout: number) => {
 })
 class Scene1 extends Component { 
   render() {
+    console.log(this.props)
     return (
       <View style={{ flex: 1, backgroundColor: 'red' }}>
       </View>
@@ -25,10 +26,11 @@ class Scene1 extends Component {
 
 
 @scene({
-  path: '/scene2'
+  path: '/scene2/:id'
 })
 class Scene2 extends Component { 
   render() {
+    console.log(this.props)
     return (
       <View style={{ flex: 1, backgroundColor: 'blue' }}>
       </View>
@@ -58,7 +60,7 @@ export class App extends Component {
       area: "default",
       action: 'goto',
       options: {
-        path: '/scene2' 
+        path: '/scene2/10' 
       }
     })
 

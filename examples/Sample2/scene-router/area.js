@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import { View, StyleSheet, Dimensions } from 'react-native'
 
 import { Scene } from './scene'
+
 import type { SceneOptions, RouteOptions } from './types'
 
 // types //////////////////////////////////////////////////////////////////////

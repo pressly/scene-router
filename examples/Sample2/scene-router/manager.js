@@ -68,7 +68,8 @@ export const scene = (opt: SceneOptions) => {
         <Scene
           ref={props.sceneRef}
           WrapComponent={Wrap}
-          sceneOptions={opt}/>
+          sceneOptions={opt}
+          routeOptions={props.routeOptions}/>
       )
     }
 

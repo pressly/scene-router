@@ -5,13 +5,14 @@ import { Animated, View, StyleSheet, Dimensions, Platform } from 'react-native'
 
 import * as constants from './constants'
 
-import type { SceneOptions, Point } from './types'
+import type { SceneOptions, Point, RouteOptions } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
 type SceneProps = {
   WrapComponent: Function,
-  sceneOptions: SceneOptions
+  sceneOptions: SceneOptions,
+  routeOptions: RouteOptions
 }
 
 type SceneState = {
@@ -118,7 +119,7 @@ export class Scene extends Component {
   }
 
   render() {
-    const { WrapComponent, sceneOptions: { backgroundColor } } = this.props
+    const { routeOptions, WrapComponent, sceneOptions: { backgroundColor } } = this.props
     const { position } = this.state
     const style = [
       styles.container, 
@@ -130,7 +131,9 @@ export class Scene extends Component {
 
     return (
       <Animated.View style={style}>
-        <WrapComponent ref={(ref) => this.state.ref = ref}/>
+        <WrapComponent 
+          ref={(ref) => this.state.ref = ref}
+          routeOptions={routeOptions}/>
       </Animated.View>
     )
   }
