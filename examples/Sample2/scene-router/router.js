@@ -5,6 +5,7 @@ import { View } from 'react-native'
 
 import { Area } from './area'
 import { sceneManager } from './manager'
+import * as constants from './constants'
 
 import type { SceneConfig, Route } from './types'
 
@@ -73,6 +74,20 @@ export class Router extends Component {
     return areaRefs.get(this.currentAreaName)
   }
 
+  // we need this method to drill down to current area
+  // and current scene and call `updateSceneStatus`
+  // it is mainly used for updating status once area is being chnaged.
+  updateSceneStatus(status: number) {
+    let sceneRef: any
+    const currArea = this.currentAreRef
+    if (currArea) {
+      sceneRef = currArea.currentSceneRef
+      if (sceneRef) {
+        sceneRef.updateSceneStatus(status)
+      }
+    }
+  }
+
   sceneResponse = (scene: Function, 
                    route: Route, 
                    originalSceneConfig: SceneConfig, 
@@ -95,6 +110,8 @@ export class Router extends Component {
       return done()
     }
 
+    this.updateSceneStatus(constants.Inactive)
+
     let swap: any = this.state.names[lastItem]
     this.state.names[lastItem] = this.state.names[index]
     this.state.names[index] = swap
@@ -103,17 +120,22 @@ export class Router extends Component {
     this.state.areas[lastItem] = this.state.areas[index]
     this.state.areas[index] = swap
 
-    this.setState(this.state, done)
+    this.setState(this.state, () => {
+      this.updateSceneStatus(constants.Active)
+      done()
+    })
   }
 
   componentWillReceiveProps(nextProps: RouterProps) {
     const { area, action, config, props } = nextProps
-    
+
     let areaRef: ?Area = this.state.areaRefs.get(area)
     if (!areaRef) {
       if (action !== 'goto') {
         throw new Error(`you can't call '${String(action)}' on area that doesn't exist`)
       }
+
+      this.updateSceneStatus(constants.Inactive)
 
       // create a new Area
       this.state.areas.push(<Area key={`area:${idCount++}`} ref={this.registerAreaRef}/>)
@@ -122,14 +144,20 @@ export class Router extends Component {
       this.setState(this.state, () => {
         // so by now, area is set, so we can call the sceneManager to process the path
         // if a route is found, `sceneResponse` will be called.
-        config && sceneManager.request(config.path, props, config)
+        // NOTE: because `config` will always be an object, we need extra condition
+        //       to make sure it has right information. that's why you see 
+        //       `config && config.path && ...`
+        config && config.path && sceneManager.request(config.path, props, config)
       })
     } else {
       if (action === 'goto') {
         // we know that areaRef exists and we simply call `reOrder` to switch to requested area
         // when the match happens, `sceneResponse` will be called.
         this.reOrder(area, () => {
-          config && sceneManager.request(config.path, props, config)
+          // NOTE: because `config` will always be an object, we need extra condition
+          //       to make sure it has right information. that's why you see 
+          //       `config && config.path && ...`          
+          config && config.path && sceneManager.request(config.path, props, config)
         })
       } else {
         // if the type is `goback`, then we simply call the pop on areaRef

@@ -5,7 +5,7 @@ import { View, Text } from 'react-native'
 
 import { scene, Router, Side, Status } from './scene-router'
 
-const genColor = () => '#' + Math.floor(Math.random()*16777215).toString(16)
+const genColor = () => "#"+((Math.random()+2)*16777216|0).toString(16).slice(1)//'#' + Math.floor(Math.random()*16777215).toString(16)
 
 const delay = (timeout: number) => {
   return new Promise((resolve, reject) => {
@@ -18,8 +18,24 @@ const delay = (timeout: number) => {
   side: Side.FromBottom
 })
 class Scene1 extends Component {
-  updateSceneStatus(status) {
-    
+  updateSceneStatus(status: number) {
+    let statusStr: string
+    switch (status) {
+      case Status.Active:
+        statusStr = 'active'
+        break
+      case Status.Inactive:
+        statusStr = 'inactive'
+        break
+      default:
+        statusStr = 'undefined'
+    }
+
+    console.log(`Scene1 with id ${this.props.route.params.id} is ${statusStr}`)
+  }
+
+  componentWillUnmount() {
+    console.log(`Scene1 with id ${this.props.route.params.id} is removed`)
   }
 
   render() {
@@ -38,9 +54,26 @@ class Scene1 extends Component {
   path: '/scene2/:id'
 })
 class Scene2 extends Component {
-  updateSceneStatus(status) {
-    
+  updateSceneStatus(status: number) {
+    let statusStr: string
+    switch (status) {
+      case Status.Active:
+        statusStr = 'active'
+        break
+      case Status.Inactive:
+        statusStr = 'inactive'
+        break
+      default:
+        statusStr = 'undefined'
+    }
+
+    console.log(`Scene2 with id ${this.props.route.params.id} is ${statusStr}`)
   }
+
+  componentWillUnmount() {
+    console.log(`Scene2 with id ${this.props.route.params.id} is removed`)
+  }
+
   render() {
     const { route } = this.props
     return (
@@ -88,14 +121,27 @@ export class App extends Component {
       }
     })
 
-
-
     await delay(2000)
     this.setState({
       area: "default",
       action: 'goback',
       config: {}
     })
+
+    await delay(2000)
+    this.setState({
+      area: "default2",
+      action: 'goto',
+      config: {
+        path: '/scene2/1',
+        //reset: true
+      }
+    })    
+
+    await delay(2000)
+    this.setState({
+      area: "default",
+    })    
 
     // await delay(3000)
     // this.setState({
