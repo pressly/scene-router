@@ -5,14 +5,14 @@ import { Animated, View, StyleSheet, Dimensions, Platform } from 'react-native'
 
 import * as constants from './constants'
 
-import type { SceneOptions, Point, RouteOptions } from './types'
+import type { SceneConfig, Point, Route } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
 type SceneProps = {
   WrapComponent: Function,
-  sceneOptions: SceneOptions,
-  routeOptions: RouteOptions
+  sceneConfig: SceneConfig,
+  route: Route
 }
 
 type SceneState = {
@@ -88,8 +88,12 @@ export class Scene extends Component {
 
     this.state = {
       ref: null,
-      position: new Animated.ValueXY(calcSide(props.sceneOptions.side || constants.FromRight))
+      position: new Animated.ValueXY(calcSide(this.side(props.sceneConfig)))
     }
+  }
+
+  side(sceneConfig: SceneConfig): number {
+    return sceneConfig.side || constants.FromRight
   }
 
   updateSceneStatus = (status: number) => {
@@ -110,33 +114,36 @@ export class Scene extends Component {
   }
 
   close(done: ?Function) {
-    const { side } = this.props.sceneOptions
+    const { sceneConfig } = this.props
 
     Animated.timing(
       this.state.position,
       {
-        toValue: calcSide(side || constants.FromRight),
+        toValue: calcSide(this.side(sceneConfig)),
         duration: 300
       }
     ).start(done)
   }
 
   render() {
-    const { routeOptions, WrapComponent, sceneOptions: { backgroundColor } } = this.props
+    const { route, WrapComponent, sceneConfig } = this.props
     const { position } = this.state
     const style = [
       styles.container, 
       { 
         transform: position.getTranslateTransform(), 
-        backgroundColor 
+        backgroundColor: sceneConfig.backgroundColor
       }
     ]
+
+    // we need to attach sceneConfig to route
+    route.config = sceneConfig
 
     return (
       <Animated.View style={style}>
         <WrapComponent 
           ref={(ref) => this.state.ref = ref}
-          routeOptions={routeOptions}/>
+          route={route}/>
       </Animated.View>
     )
   }

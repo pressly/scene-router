@@ -6,7 +6,7 @@ import { View, StyleSheet, Dimensions } from 'react-native'
 import * as constants from './constants'
 import { Scene } from './scene'
 
-import type { SceneOptions, RouteOptions } from './types'
+import type { SceneConfig, Route } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
@@ -79,7 +79,7 @@ export class Area extends Component {
 
   // this Scene is SceneWrap function.
   // so we need to get the ref of scene itself
-  push(SceneWrap: Function, routeOptions: RouteOptions, done: ?Function) {
+  push(SceneWrap: Function, route: Route, originalSceneConfig: SceneConfig, customSceneConfig: SceneConfig, done: ?Function) {
     let currSceneRef = this.currentSceneRef
     currSceneRef && currSceneRef.updateSceneStatus(constants.Inactive)
 
@@ -87,10 +87,10 @@ export class Area extends Component {
       <SceneWrap
         key={`scenewrap:${sceneIdCount++}`}
         sceneRef={(ref) => {
-          console.log('scebeRef is called')
           ref && this.state.sceneRefs.push(ref)
         }}
-        routeOptions={routeOptions}
+        customSceneConfig={customSceneConfig}
+        route={route}
       />
     )
 

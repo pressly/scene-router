@@ -15,7 +15,11 @@ const delay = (timeout: number) => {
   path: '/scene1',
   side: Side.FromBottom
 })
-class Scene1 extends Component { 
+class Scene1 extends Component {
+  updateSceneStatus(status) {
+    console.log(`scene1's status`, status)
+  }
+
   render() {
     console.log(this.props)
     return (
@@ -29,7 +33,11 @@ class Scene1 extends Component {
 @scene({
   path: '/scene2/:id'
 })
-class Scene2 extends Component { 
+class Scene2 extends Component {
+  updateSceneStatus(status) {
+    console.log(`scene2's status`, status)
+  }
+
   render() {
     console.log(this.props)
     return (
@@ -41,7 +49,7 @@ class Scene2 extends Component {
 
 
 export class App extends Component {
-  state: { area: string, action: 'goto' | 'goback', options: any }
+  state: { area: string, action: 'goto' | 'goback', config: any }
 
   constructor(props: any, context: any) {
     super(props, context)
@@ -49,7 +57,7 @@ export class App extends Component {
     this.state = {
       area: "default",
       action: 'goto',
-      options: {
+      config: {
         path: '/scene1'
       }
     }
@@ -60,7 +68,7 @@ export class App extends Component {
     this.setState({ 
       area: "default",
       action: 'goto',
-      options: {
+      config: {
         path: '/scene2/10',
         side: Side.Static 
       }
@@ -70,14 +78,14 @@ export class App extends Component {
     this.setState({
       area: "default",
       action: 'goback',
-      options: {}
+      config: {}
     })    
 
     await delay(3000)
     this.setState({
       area: "default2",
       action: 'goto',
-      options: {
+      config: {
         path: '/scene2/12',
         side: Side.FromTop
       }
@@ -85,13 +93,13 @@ export class App extends Component {
   }
 
   render() {
-    const { area, action, options } = this.state
+    const { area, action, config } = this.state
 
     return (
       <Router
         area={area}
         action={action}
-        options={options}
+        config={config}
       />
     )
   }

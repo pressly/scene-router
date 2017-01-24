@@ -5,7 +5,7 @@ export type Point = {
   y: number
 }
 
-export type SceneOptions = {
+export type SceneConfig = {
   path: string,
   side?: number,
   threshold?: number,
@@ -14,9 +14,21 @@ export type SceneOptions = {
   backgroundColor?: string
 }
 
-export type RouterExtra = {
+// this object type will be pass as `route` props to 
+// user's scene
+export type Route = {
+  path: string,
+  params: Object,
+  qs: Object,
   props: Object,
-  options: SceneOptions
+  config: ?SceneConfig // this is just a raw information, it's good for debuging
+                       // config will be set inside scene's render
+}
+
+export type RouterExtra = {
+  path: string,
+  props: Object,
+  customSceneConfig: SceneConfig
 }
 
 export interface Router {
@@ -24,11 +36,11 @@ export interface Router {
   process(path: string, extra: Object): void;
 }
 
-export type RouteOptions = {
-  params: Object, 
-  qs: Object, 
-  props: Object, 
-  options: SceneOptions
-}
+export type SceneResponse = (
+  scene: Function, 
+  route: Route, 
+  originalSceneConfig: SceneConfig, 
+  customSceneConfig: SceneConfig
+) => void
 
-export type SceneResponse = (scene: Function, params: Object, qs: Object, props: Object, options: SceneOptions) => void
+

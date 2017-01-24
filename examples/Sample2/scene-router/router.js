@@ -6,7 +6,7 @@ import { View } from 'react-native'
 import { Area } from './area'
 import { sceneManager } from './manager'
 
-import type { SceneOptions } from './types'
+import type { SceneConfig, Route } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ import type { SceneOptions } from './types'
 type RouterProps = {
   area: string,
   action?: 'goto' | 'goback',
-  options?: SceneOptions,
+  config?: SceneConfig,
   props?: Object 
 }
 
@@ -66,16 +66,13 @@ export class Router extends Component {
     return areaRefs.get(this.currentAreaName)
   }
 
-  sceneResponse = (scene: Function, params: Object, qs: Object, props: Object, options: SceneOptions) => {
+  sceneResponse = (scene: Function, 
+                   route: Route, 
+                   originalSceneConfig: SceneConfig, 
+                   customSceneConfig: SceneConfig) => {
     const ref = this.currentAreRef
-    const routeOptions = {
-      params,
-      qs,
-      props,
-      options
-    }
     if (ref) {
-      ref.push(scene, routeOptions)
+      ref.push(scene, route, originalSceneConfig, customSceneConfig)
     }
   }
 
@@ -103,7 +100,7 @@ export class Router extends Component {
   }
 
   componentWillReceiveProps(nextProps: RouterProps) {
-    const { area, action, options, props } = nextProps
+    const { area, action, config, props } = nextProps
     
     let areaRef: ?Area = this.state.areaRefs.get(area)
     if (!areaRef) {
@@ -118,14 +115,14 @@ export class Router extends Component {
       this.setState(this.state, () => {
         // so by now, area is set, so we can call the sceneManager to process the path
         // if a route is found, `sceneResponse` will be called.
-        options && sceneManager.request(options.path, props, options)
+        config && sceneManager.request(config.path, props, config)
       })
     } else {
       if (action === 'goto') {
-        // we know that areaRef exists and we simply call method the route.
+        // we know that areaRef exists and we simply call `reOrder` to switch to requested area
         // when the match happens, `sceneResponse` will be called.
         this.reOrder(area, () => {
-          options && sceneManager.request(options.path, props, options)
+          config && sceneManager.request(config.path, props, config)
         })
       } else {
         // if the type is `goback`, then we simply call the pop on areaRef
@@ -145,10 +142,10 @@ export class Router extends Component {
   }
 
   componentDidMount() {
-    const { action, options, props } = this.props
+    const { action, config, props } = this.props
     
     if (action === 'goto') {
-      options && sceneManager.request(options.path, props, options)
+      config && sceneManager.request(config.path, props, config)
     }
   }
 
