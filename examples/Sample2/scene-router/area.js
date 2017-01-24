@@ -98,8 +98,21 @@ export class Area extends Component {
       currSceneRef = this.currentSceneRef
       if (currSceneRef) {
         currSceneRef.open(() => {
-          currSceneRef && currSceneRef.updateSceneStatus(constants.Active)
-          done && done()
+          // at this point, animation is done, and scene is visible
+          // we need to reset all the items inside array up to this scene
+          // if customSceneConfig.reset is true and then call another setState.
+          if (customSceneConfig.reset) {
+            this.state.scenes.splice(0, this.state.scenes.length - 1)
+            this.state.sceneRefs.splice(0, this.state.sceneRefs.length - 1)
+
+            this.setState(this.state, () => {
+              currSceneRef && currSceneRef.updateSceneStatus(constants.Active)
+              done && done()
+            })
+          } else {
+            currSceneRef && currSceneRef.updateSceneStatus(constants.Active)
+            done && done()
+          }
         })
       }
     })
