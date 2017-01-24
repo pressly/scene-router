@@ -104,12 +104,15 @@ export class Area extends Component {
           if (customSceneConfig.reset) {
             this.state.scenes.splice(0, this.state.scenes.length - 1)
             this.state.sceneRefs.splice(0, this.state.sceneRefs.length - 1)
-
+            // the reason we don't call updateSceneStatus right away, because,
+            // we still need to wait for render to be done then we can safely
+            // call updateSceneStatus and done 
             this.setState(this.state, () => {
               currSceneRef && currSceneRef.updateSceneStatus(constants.Active)
               done && done()
             })
           } else {
+            // because reset is false, we can call these two methods right away
             currSceneRef && currSceneRef.updateSceneStatus(constants.Active)
             done && done()
           }
