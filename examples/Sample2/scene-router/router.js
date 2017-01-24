@@ -13,7 +13,7 @@ import type { SceneConfig, Route } from './types'
 // - `area` must be passed by all times,
 // - if `action` is not pass, then Router will only change the area
 // router will throw an exception if area does not exists.
-// - options must be provided if `action` is 'goto'. options on 'goback'
+// - config must be provided if `action` is 'goto'. config on 'goback'
 // will be ignored.
 // - `props` only being used by 'goto' and it's optional
 type RouterProps = {
