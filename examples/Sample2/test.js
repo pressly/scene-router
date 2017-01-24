@@ -61,16 +61,24 @@ export class App extends Component {
       area: "default",
       action: 'goto',
       options: {
-        path: '/scene2/10' 
+        path: '/scene2/10',
+        side: Side.Static 
       }
     })
+
+    await delay(2000)
+    this.setState({
+      area: "default",
+      action: 'goback',
+      options: {}
+    })    
 
     await delay(3000)
     this.setState({
       area: "default2",
       action: 'goto',
       options: {
-        path: '/scene1',
+        path: '/scene2/12',
         side: Side.FromTop
       }
     })

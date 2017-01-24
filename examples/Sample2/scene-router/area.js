@@ -3,6 +3,7 @@
 import React, { Component } from 'react'
 import { View, StyleSheet, Dimensions } from 'react-native'
 
+import * as constants from './constants'
 import { Scene } from './scene'
 
 import type { SceneOptions, RouteOptions } from './types'
@@ -62,25 +63,74 @@ export class Area extends Component {
     }
   }
 
+  get currentIndex(): number {
+    return this.state.scenes.length - 1
+  }
+
+  get currentSceneRef(): ?Scene {
+    const index = this.currentIndex
+    return index > -1 ? this.state.sceneRefs[index] : null
+  }
+
+  get previousSceneRef(): ?Scene {
+    const index = this.currentIndex - 1
+    return index > -1 ? this.state.sceneRefs[index] : null
+  }
+
   // this Scene is SceneWrap function.
   // so we need to get the ref of scene itself
-  push(SceneWrap: Function, routeOptions: RouteOptions) {
+  push(SceneWrap: Function, routeOptions: RouteOptions, done: ?Function) {
+    let currSceneRef = this.currentSceneRef
+    currSceneRef && currSceneRef.updateSceneStatus(constants.Inactive)
+
     this.state.scenes.push(
       <SceneWrap
         key={`scenewrap:${sceneIdCount++}`}
-        sceneRefs={(ref) => this.state.sceneRefs.push(ref)}
+        sceneRef={(ref) => {
+          console.log('scebeRef is called')
+          ref && this.state.sceneRefs.push(ref)
+        }}
         routeOptions={routeOptions}
       />
     )
 
-    this.setState(this.state)
+    this.setState(this.state, () => {
+      currSceneRef = this.currentSceneRef
+      if (currSceneRef) {
+        currSceneRef.open(() => {
+          currSceneRef && currSceneRef.updateSceneStatus(constants.Active)
+          done && done()
+        })
+      }
+    })
   }
 
-  pop() {
-    this.state.scenes.pop()
-    this.state.sceneRefs.pop()
+  pop(done: ?Function) {
+    // if the current index is zero, it means that
+    // we can't pop the view. This is the first view
+    if (this.currentIndex < 1) {
+      return
+    }
 
-    this.setState(this.state)
+    // because the current scene will be destroyed, 
+    // there is no point of calling `updateSceneStatus(Status.Inactive)`
+    // we are letting `componentWillUnmount` does the job
+    //this.previousSceneRef.
+    const currSceneRef = this.currentSceneRef
+    const prevSceneRef = this.previousSceneRef
+
+    currSceneRef && currSceneRef.close(() => {
+      // remove the scene
+      this.state.scenes.pop()
+      this.state.sceneRefs.pop()
+      
+      // set the new state, this will rerender the area and once it's done,
+      // we simply call the updateSceneStatus
+      this.setState(this.state, () => {
+        prevSceneRef && prevSceneRef.updateSceneStatus(constants.Active)
+        done && done()
+      })
+    })
   }
 
   render() {

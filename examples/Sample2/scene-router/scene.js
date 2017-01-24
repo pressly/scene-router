@@ -66,8 +66,8 @@ const calcSide = (side: number): Point => {
       break
 
     case constants.Static:
-      x = 0
-      y = 0
+      y = window.height
+      x = window.width
       break
 
     default:
@@ -92,17 +92,24 @@ export class Scene extends Component {
     }
   }
 
-  open() {
+  updateSceneStatus = (status: number) => {
+    const { ref } = this.state
+    if (ref) {
+      ref.updateSceneStatus && ref.updateSceneStatus(status)
+    }
+  }
+
+  open(done: ?Function) {
     Animated.timing(
       this.state.position,
       {
         toValue: pointOfView,
         duration: 300
       }
-    ).start()
+    ).start(done)
   }
 
-  close() {
+  close(done: ?Function) {
     const { side } = this.props.sceneOptions
 
     Animated.timing(
@@ -111,11 +118,7 @@ export class Scene extends Component {
         toValue: calcSide(side || constants.FromRight),
         duration: 300
       }
-    ).start()
-  }
-
-  componentDidMount() {
-    this.open()
+    ).start(done)
   }
 
   render() {
