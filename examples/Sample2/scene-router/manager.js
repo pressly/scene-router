@@ -28,6 +28,19 @@ const mergeDefaultSceneOptions = (options: SceneOptions): SceneOptions => {
   }
 }
 
+// what we have to do is,
+const mergeCustomSceneOptions = (currentOpts: SceneOptions, userOpts: SceneOptions): SceneOptions => {
+  // currentOpts is the one which was configured at scene decorator.
+  // userOpts is the one which was passed by router to chnage the behaviour
+  // so, we need to make sure to remove userOpts.path and merge it with currentOpts
+  delete userOpts.path
+
+  return {
+    ...currentOpts,
+    ...userOpts
+  }
+}
+
 // SceneManager ///////////////////////////////////////////////////////////////
 
 export class SceneManager {
@@ -64,11 +77,13 @@ export const scene = (opt: SceneOptions) => {
   return (Wrap: Function): Function => {
 
     const SceneWrap = (props: SceneWrapProps): React.Element<any> => {
+      const sceneOptions = mergeCustomSceneOptions(opt, props.routeOptions.options)
+
       return (
         <Scene
           ref={props.sceneRef}
           WrapComponent={Wrap}
-          sceneOptions={opt}
+          sceneOptions={sceneOptions}
           routeOptions={props.routeOptions}/>
       )
     }

@@ -12,7 +12,8 @@ const delay = (timeout: number) => {
 }
 
 @scene({
-  path: '/scene1'
+  path: '/scene1',
+  side: Side.FromBottom
 })
 class Scene1 extends Component { 
   render() {
@@ -69,7 +70,8 @@ export class App extends Component {
       area: "default2",
       action: 'goto',
       options: {
-        path: '/scene1' 
+        path: '/scene1',
+        side: Side.FromTop
       }
     })
   }
