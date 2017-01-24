@@ -9,11 +9,17 @@ import type { SceneOptions } from './scene'
 
 // types //////////////////////////////////////////////////////////////////////
 
+// - `area` must be passed by all times,
+// - if `action` is not pass, then Router will only change the area
+// router will throw an exception if area does not exists.
+// - options must be provided if `action` is 'goto'. options on 'goback'
+// will be ignored.
+// - `props` only being used by 'goto' and it's optional
 type RouterProps = {
   area: string,
-  action: 'goto' | 'goback',
+  action?: 'goto' | 'goback',
   options?: SceneOptions,
-  props?: Object,
+  props?: Object 
 }
 
 type RouterState = {
@@ -49,10 +55,14 @@ export class Router extends Component {
     }
   }
 
+  get currentAreaName(): string {
+    const { names } = this.state
+    return names[names.length - 1]
+  }
+
   get currentAreRef(): ?Area {
-    const { names, areaRefs } = this.state
-    const lastName = names[names.length - 1]
-    return areaRefs.get(lastName)
+    const { areaRefs } = this.state
+    return areaRefs.get(this.currentAreaName)
   }
 
   sceneResponse = (scene: Function, params: ?Object, qs: ?Object, props: ?Object, options: SceneOptions) => {
@@ -62,7 +72,7 @@ export class Router extends Component {
     }
   }
 
-  reorder = (name: string, done: Function) => {
+  reOrder = (name: string, done: Function) => {
     const index = this.state.names.indexOf(name)
     if (index === -1) {
       throw new Error('should not happen, but happened anyway! FUCK!')
@@ -91,7 +101,7 @@ export class Router extends Component {
     let areaRef: ?Area = this.state.areaRefs.get(area)
     if (!areaRef) {
       if (action !== 'goto') {
-        throw new Error(`you can't call '${action}' on area that doesn't exist`)
+        throw new Error(`you can't call '${String(action)}' on area that doesn't exist`)
       }
 
       // create a new Area
@@ -100,20 +110,21 @@ export class Router extends Component {
 
       this.setState(this.state, () => {
         // so by now, area is set, so we can call the sceneManager to process the path
+        // if a route is found, `sceneResponse` will be called.
         options && sceneManager.request(options.path, props, options)
       })
     } else {
       if (action === 'goto') {
-        // we know that areaRef exists and we simply call mathc the route.
+        // we know that areaRef exists and we simply call method the route.
         // when the match happens, `sceneResponse` will be called.
-        this.reorder(area, () => {
+        this.reOrder(area, () => {
           options && sceneManager.request(options.path, props, options)
         })
       } else {
         // if the type is `goback`, then we simply call the pop on areaRef
         // obviously, pop does more than just a pop. It does the animation and hide the
         // previous scene and call `updateSceneState` on both previous and current scenes.
-        this.reorder(area, () => {
+        this.reOrder(area, () => {
           areaRef && areaRef.pop()
         })
       }
@@ -121,6 +132,8 @@ export class Router extends Component {
   }
 
   shouldComponentUpdate(nextProps: RouterProps, nextState: RouterState) {
+    // TODO: we need to optimize this to increase the performance,
+    // for now it's good enough
     return true
   }
 

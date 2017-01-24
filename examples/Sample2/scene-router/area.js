@@ -9,7 +9,7 @@ import type { SceneWrapProps } from './manager'
 // types //////////////////////////////////////////////////////////////////////
 
 type AreaProps = {
-
+  children?: any
 }
 
 type AreaState = {
@@ -30,6 +30,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     transform: [{ translateX: -window.width }, { translateY: -window.height }],
     overflow: 'hidden'
+  },
+  staticView: {
+    position: 'absolute',
+    overflow: 'hidden',
+    width: window.width,
+    height: window.height,
+    transform: [{ translateX: window.width }, { translateY: window.height }],
   }
 })
 
@@ -79,6 +86,9 @@ export class Area extends Component {
 
     return (
       <View style={styles.container}>
+        <View style={styles.staticView}>
+          {this.props.children}
+        </View>
         {scenes}
       </View>
     )
