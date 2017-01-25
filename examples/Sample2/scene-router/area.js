@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react'
-import { View, StyleSheet, Dimensions } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 
 import * as constants from './constants'
 import { Scene } from './scene'
@@ -22,7 +22,7 @@ type AreaState = {
 // constants //////////////////////////////////////////////////////////////////
 
 const sizeOfArea = 3
-const window = Dimensions.get('window')
+const window = constants.window
 const styles = StyleSheet.create({
   container: {
     flex: 1,

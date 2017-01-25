@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react'
-import { Animated, View, StyleSheet, Dimensions, Platform, PanResponder } from 'react-native'
+import { Animated, View, StyleSheet, PanResponder } from 'react-native'
 
 import * as constants from './constants'
 
