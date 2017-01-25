@@ -143,7 +143,7 @@ here's an example of `Router`
 ```js
 import React, { Component } from 'react'
 import { View, Text } from 'react-native'
-import { scene, Router } from 'scene-router`
+import { scene, Router } from 'scene-router'
 
 @scene({
   path: '/scenes/:id'
