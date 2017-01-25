@@ -1,5 +1,10 @@
 // @flow
 
+export type GestureStatus
+  = 'open' 
+  | 'close' 
+  | 'cancel'
+
 export type Point = {
   x: number,
   y: number

@@ -5,14 +5,15 @@ import { Animated, View, StyleSheet, PanResponder } from 'react-native'
 
 import * as constants from './constants'
 
-import type { SceneConfig, Point, Route } from './types'
+import type { SceneConfig, Point, Route, GestureStatus } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
 type SceneProps = {
   WrapComponent: Function,
   sceneConfig: SceneConfig,
-  route: Route
+  route: Route,
+  onGesture: (status: GestureStatus) => void
 }
 
 type SceneState = {
@@ -171,8 +172,12 @@ export class Scene extends Component {
   }
 
   onStartDrag = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+    const { onGesture } = this.props
+
     startTouchPos.x = this.state.position.x.__getValue()
     startTouchPos.y = this.state.position.y.__getValue()
+
+    onGesture('open')
   }
 
   onMoveDrag = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
@@ -205,7 +210,7 @@ export class Scene extends Component {
   }
 
   onEndDrag = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-    const { sceneConfig: { side, threshold } } = this.props
+    const { onGesture, sceneConfig: { side, threshold } } = this.props
     const { position } = this.state
     const x = position.x.__getValue()
     const y = position.y.__getValue()
@@ -215,9 +220,13 @@ export class Scene extends Component {
     }
 
     if (shouldSceneClose(side, threshold, x, y)) {
-      this.close()
+      this.close(() => {
+        onGesture('close')
+      })
     } else {
-      this.open()
+      this.open(() => {
+        onGesture('cancel')
+      })
     }
   }
 

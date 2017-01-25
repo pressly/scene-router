@@ -27,6 +27,12 @@ class Scene1 extends Component {
       case Status.Inactive:
         statusStr = 'inactive'
         break
+      case Status.MightActive:
+        statusStr = 'might active'
+        break
+      case Status.MightInactive:
+        statusStr = 'might inactive'
+        break        
       default:
         statusStr = 'undefined'
     }
@@ -95,24 +101,21 @@ export class App extends Component {
       area: "default",
       action: 'goto',
       config: {
-        path: '/scene1/1',
-        threshold: 30,
-        side: Side.FromLeft,
-        gesture: true
+        path: '/scene1/1'
       }
     }
   }
 
   async componentDidMount(): any {
 
-    // await delay(2000)
-    // this.setState({ 
-    //   area: "default",
-    //   action: 'goto',
-    //   config: {
-    //     path: '/scene1/2'
-    //   }
-    // })
+    await delay(2000)
+    this.setState({ 
+      area: "default",
+      action: 'goto',
+      config: {
+        path: '/scene1/2'
+      }
+    })
 
     // await delay(2000)
     // this.setState({ 

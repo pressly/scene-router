@@ -6,14 +6,15 @@ import route from 'trie-route'
 import * as constants from './constants'
 import { Scene } from './scene'
 
-import type { SceneConfig, Route, Router, SceneResponse, RouterExtra } from './types'
+import type { SceneConfig, Route, Router, SceneResponse, RouterExtra, GestureStatus } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
 type SceneWrapProps = {
   sceneRef: (ref: any) => void,
   customSceneConfig: SceneConfig,
-  route: Route
+  route: Route,
+  onGesture: (status: GestureStatus) => void
 }
 
 // internal functions /////////////////////////////////////////////////////////
@@ -85,7 +86,7 @@ export const scene = (originalSceneConfig: SceneConfig): Function => {
 
   return (WrapComponent: Function): Function => {
     const SceneWrap = (props: SceneWrapProps): React.Element<any> => {
-      const { customSceneConfig, route } = props
+      const { customSceneConfig, route, onGesture } = props
       const sceneConfig = mergeCustomSceneOptions(originalSceneConfig, customSceneConfig)
 
       return (
@@ -93,7 +94,8 @@ export const scene = (originalSceneConfig: SceneConfig): Function => {
           ref={props.sceneRef}
           WrapComponent={WrapComponent}
           sceneConfig={sceneConfig}
-          route={route}/>
+          route={route}
+          onGesture={onGesture}/>
       )
     }
 

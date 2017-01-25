@@ -6,7 +6,7 @@ import { View, StyleSheet } from 'react-native'
 import * as constants from './constants'
 import { Scene } from './scene'
 
-import type { SceneConfig, Route } from './types'
+import type { SceneConfig, Route, GestureStatus } from './types'
 
 // types //////////////////////////////////////////////////////////////////////
 
@@ -77,6 +77,35 @@ export class Area extends Component {
     return index > -1 ? this.state.sceneRefs[index] : null
   }
 
+  onGesture = (status: GestureStatus) => {
+    const currSceneRef = this.currentSceneRef
+    const prevSceneRef = this.previousSceneRef
+
+    switch(status) {
+      case 'open':
+        currSceneRef && currSceneRef.updateSceneStatus(constants.MightInactive)
+        prevSceneRef && prevSceneRef.updateSceneStatus(constants.MightActive)
+        break
+
+      case 'close':
+        // remove the scene
+        this.state.scenes.pop()
+        this.state.sceneRefs.pop()
+        
+        // set the new state, this will rerender the area and once it's done,
+        // we simply call the updateSceneStatus
+        this.setState(this.state, () => {
+          prevSceneRef && prevSceneRef.updateSceneStatus(constants.Active)
+        })
+        break
+
+      case 'cancel':
+        currSceneRef && currSceneRef.updateSceneStatus(constants.Active)
+        prevSceneRef && prevSceneRef.updateSceneStatus(constants.Inactive)      
+        break
+    }
+  }
+
   // this Scene is SceneWrap function.
   // so we need to get the ref of scene itself
   push(SceneWrap: Function, route: Route, originalSceneConfig: SceneConfig, customSceneConfig: SceneConfig, done: ?Function) {
@@ -89,6 +118,7 @@ export class Area extends Component {
         sceneRef={(ref) => {
           ref && this.state.sceneRefs.push(ref)
         }}
+        onGesture={this.onGesture}
         customSceneConfig={customSceneConfig}
         route={route}
       />

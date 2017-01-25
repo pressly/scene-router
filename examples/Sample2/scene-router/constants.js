@@ -18,6 +18,7 @@ export const FromBottom           = 8
 export const Static               = 9
 
 // window and screen //////////////////////////////////////////////////////////
+
 export const isAndroid = Platform.OS === 'android'
 
 export const window = (() => {
