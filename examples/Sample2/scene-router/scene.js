@@ -54,7 +54,7 @@ const window = Dimensions.get('window')
 const isAndroid = Platform.OS === 'android'
 const toolbarHeight = isAndroid ? 25 : 0
 const pointOfView: Point = { x: window.width, y: window.height }
-const activePosition: Point = { x: window.width, y: window.height }
+const startTouchPos: Point = { x: 0, y: 0 }
 
 const styles = StyleSheet.create({
   container: {
@@ -111,26 +111,26 @@ const shouldSceneClose = (side: number, threshold: number, x: number, y: number)
 
   switch (side) {
     case constants.FromRight:
-      return (x - threshold) > activePosition.x
+      return (x - threshold) > pointOfView.x
     case constants.FromLeft:
-      return (x + threshold) < activePosition.x
+      return (x + threshold) < pointOfView.x
     case constants.FromTop:
-      return (y + threshold) < activePosition.y
+      return (y + threshold) < pointOfView.y
     case constants.FromBottom:
-      return (y - threshold) > activePosition.y
+      return (y - threshold) > pointOfView.y
     default:
       return false
   }
 }
 
 // Scene Component ////////////////////////////////////////////////////////////
+const ignore = () => false
 
 export class Scene extends Component {
   props: SceneProps
   state: SceneState
 
   panResponder: Object
-  startTouchPos: Point
 
   constructor(props: SceneProps, context: any) {
     super(props, context)
@@ -141,79 +141,90 @@ export class Scene extends Component {
       isDragging: false
     }
 
-    this.startTouchPos = { x: 0, y: 0 }
-
     this.panResponder = props.sceneConfig.gesture ? PanResponder.create({
-      onStartShouldSetPanResponder: this.onStartShouldSetPanResponder,
-      onMoveShouldSetPanResponder: this.onMoveShouldSetPanResponder,
-      onPanResponderGrant: this.onPanResponderGrant,
-      onPanResponderMove: this.onPanResponderMove,
-      onPanResponderRelease: this.onPanResponderRelease,
-      onPanResponderTerminate: this.onPanResponderTerminate
+      onStartShouldSetPanResponderCapture: this.shouldStartDrag,
+      onStartShouldSetPanResponder: ignore,
+      onMoveShouldSetPanResponderCapture: ignore,
+      onMoveShouldSetPanResponder: ignore,
+      onPanResponderGrant: this.onStartDrag,
+      onPanResponderMove: this.onMoveDrag,
+      onPanResponderRelease: this.onEndDrag
     }) : {}
   }
 
-  onStartShouldSetPanResponder = (evt: GestureResponderEvent, gestureState: PanResponderGestureState): boolean => {
+  shouldStartDrag = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
     const { pageX, pageY } = evt.nativeEvent
-    const { sceneConfig: { threshold, side } } = this.props
+    const { sceneConfig: { threshold, side, gesture } } = this.props
 
     // this if is only here to remove flow error
-    if (!threshold) {
-      return true
+    if (!threshold || !gesture) {
+      return false
     }
 
     // we need to know if finger starts at the right side of window
     switch (side) {
       case constants.FromBottom:
-        if (pageY > threshold) {
-          return true
+        return pageY <= threshold
+      case constants.FromTop:
+        return window.height - threshold <= pageY
+      case constants.FromLeft:
+        return window.width - threshold <= pageX
+      case constants.FromRight:
+        return pageX <= threshold
+      default:
+        return false
+    }
+  }
+
+  onStartDrag = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+    startTouchPos.x = this.state.position.x.__getValue()
+    startTouchPos.y = this.state.position.y.__getValue()
+  }
+
+  onMoveDrag = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+    const { dx, dy, moveX, moveY, x0, vx } = gestureState
+    const { sceneConfig: { side } } = this.props
+    const { position } = this.state
+
+    switch (side) {
+      case constants.FromLeft:
+        if (dx < 0) {
+          position.x.setValue(startTouchPos.x + dx)
+        }      
+      case constants.FromRight:
+        if (dx > 0) {
+          position.x.setValue(startTouchPos.x + dx)
         }
         break
       case constants.FromTop:
-        if (window.height - threshold > pageY) {
-          return true
+        if (dy < 0) {
+          position.y.setValue(startTouchPos.y + dy)
         }
         break
-      case constants.FromLeft:
-        if (window.width - threshold > pageX) {
-          return true
+      case constants.FromBottom:
+        if (dy > 0) {
+          position.y.setValue(startTouchPos.y + dy)
         }
         break
-      case constants.FromRight:
-        if (pageX > threshold) {
-          return true
-        }
-        break
-      default:
-        return true
+    }
+  }
+
+  onEndDrag = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+    const { sceneConfig: { side, threshold } } = this.props
+    const { position } = this.state
+    const x = position.x.__getValue()
+    const y = position.y.__getValue()
+
+    if (!side || !threshold) {
+      return
     }
 
-    this.startTouchPos.x = this.state.position.x.__getValue()
-    this.startTouchPos.y = this.state.position.y.__getValue()    
-
-    return false
+    if (shouldSceneClose(side, threshold, x, y)) {
+      this.close()
+    } else {
+      this.open()
+    }
   }
-
-  onMoveShouldSetPanResponder = (evt: GestureResponderEvent, gestureState: PanResponderGestureState): boolean => {
-    console.log('move')
-    return false
-  }
-
-  onPanResponderGrant = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-
-  }
-
-  onPanResponderMove = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-
-  }
-
-  onPanResponderRelease = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-
-  }
-
-  onPanResponderTerminate = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-
-  }  
 
   side(sceneConfig: SceneConfig): number {
     // NOTE: `sceneConfig.side` will always have a value as soon as being passed to

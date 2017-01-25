@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 
 import { scene, Router, Side, Status } from './scene-router'
 
@@ -42,9 +42,9 @@ class Scene1 extends Component {
     const { route } = this.props
 
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: genColor() }}>
+      <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: genColor() }}>
         <Text>Scene1: {route.params.id}</Text>
-      </View>
+      </ScrollView>
     )
   }
 }
@@ -95,7 +95,10 @@ export class App extends Component {
       area: "default",
       action: 'goto',
       config: {
-        path: '/scene1/1'
+        path: '/scene1/1',
+        threshold: 100,
+        side: Side.FromLeft,
+        gesture: true
       }
     }
   }
@@ -162,8 +165,10 @@ export class App extends Component {
         area={area}
         action={action}
         config={config}>
-        <View style={{ flex: 1, backgroundColor: 'red' }}>
-        </View>
+        <View style={{ 
+          flex: 1, 
+          backgroundColor: 'red' 
+        }}/>
       </Router>
     )
   }
