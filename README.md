@@ -1,11 +1,22 @@
-## SCENE-ROUTER
+## scene-Router (v2)
 
 A complete scene routing library written in pure JavaScript for React Native. It supports **iOS** and **Android**.
+The api is so easy that you just have to learn only 2 simple things, `scene` decorator and `Router` component.
 
 ## Description
-We, at [Pressly](https://pressly.com), using react-native at the beginning. Our app compose of a huge number of views and in order to maintain the code base we decided to refer to each View by link. Link can have `params` and `query strings`. There is no need for nested Route.
 
-> Note: the api has been redesigned from scratch to improve performance and modularity.
+We, at [Pressly](https://pressly.com), using react-native and our app consists of large number of scenes. We wanted somthing super simple, it went through a lot of internal reversion, until we decided to open source it.
+
+`scene-router` supports the following out of box:
+
+- url like path, which can contains `params` and `query strings`. e.g. '/user/:id'
+- passing custom props to target scene
+- storeless, you can connect to `redux` or `mobx` stores
+- reset stack of scenes
+- animating scene from all 4 direction
+- gesture enable
+- configure scene settings at scene difinition and route time
+- all animation are being configure to optimize `useNativeDriver` feature
 
 ## Installation
 
@@ -13,144 +24,168 @@ We, at [Pressly](https://pressly.com), using react-native at the beginning. Our 
 npm install scene-router
 ```
 
-## Usage
+## Prerequisite
 
 we recommended to use decorator. It makes the code a lot easier to maintain. If you don't want to use it, that's ok too.
 
-with decorator
+in order to enable decorator in your `react-native` project follow the 3 steps below, 
+
+1: install `babel-plugin-transform-decorators-legacy` using `yarn` or `npm` and
+2: configure your `.babelrc` file as follows
 
 ```js
+{
+  "extends": "react-native/packager/react-packager/rn-babelrc.json",
+  "plugins": ["transform-decorators-legacy"]
+}
+```
+
+3: if you are using flowtype, make sure to add `esproposal.decorators=ignore` under `[options]` tags inside `.flowconfig` file
+
+## Usage
+
+There are 2 things you should learn about `scene-router` in oreder to start using it in your project
+
+### `scene` decorator
+
+`scene` is a decorator feature which register your component as a scene. here's an example
+
+```js
+import React, { Component } from 'react'
+import { scene } from 'scene-router'
+
 @scene({
-  path: "/home"
+  path: '/scene1'
 })
-class MyView extends Component {
+class MyFirstScene extends Component {
   render() {
-    return (
-      <View style={{
-        backgroundColor: 'red',
-        flex: 1,
-        height: window.height,
-        width: window.width
-      }}/>
-    )
+    ...
   }
 }
-
-export default MyView
 ```
 
-without decorator
+a little bit of explaination, what we did was adding `scene` as a decorator on top of our first component `MyFirstScene`. We were passing `path`. This is our path to this scene.
+so every time, `Router` wants to render this scene, all it needs a path url. `scene-router` will handle all coordinations and animations behind the scene.
 
-```js
-class MyView extends Component {
-  render() {
-    return (
-      <View style={{
-        backgroundColor: 'red',
-        flex: 1,
-        height: window.height,
-        width: window.width
-      }}/>
-    )
-  }
-}
+you might ask, so what if I want to show my scene from top to bottom. As I said, `scene` decorator accepts many arguments. except `path` the rest of the arguments are optional.
+here's the list of all options
 
-export default scene({ path: '/home' })(MyView)
-```
+| option  | type | required | default value | route time change | Description |
+| ------- | ---- | -------- | ------------- | ----- | ----- |
+| path    | String  | Yes | N/A | No | register a scene with this unique path |
+| side    | Side | No | Side.FromRight | Yes | how the scene will animated, from which side |
+| threshold | Number | No | 30 | Yes | how far from side you have to swip to make the gesture working |
+| gesture | Boolean | No | true | Yes | enable or disable gesture |
+| reset | Boolean | No | false | Yes | all scenes prior to this scene will be destroyed |
+| backgroundColor | String | No | white | Yes | the back color of each scene |
 
-# APIs
-
-there are 4 things you need to know, `scene`, `Area`, `AreaList` and scene life cycle.
-
-#### scene
-
-`scene` is a decorator that register your component internally so the `Area` component can place it on screen.
-
-Scene has the following `options` which can be configured at Component scope and Runtime scope
-
-
-| option  | type | required | default value | scope |
-| ------- | ---- | -------- | ------------- | ----- |
-| path    | String  | Yes | N/A | Component Level only |
-| side    | Side | No | Side.L | Component and Runtime Levels |
-| threshold | Number | No | 50 | Component and Runtime Levels |
-| gesture | Boolean | No | true | Component and Runtime Levels |
-| reset | Boolean | No | false | Component and Runtime Levels |
-| animate | Boolean | No | true | Component and Runtime Levels |
-| backgroundColor | String | No | white | the back color of each scene |
-
-Side: is a enum that has the following constant values
+ther are 5 differant sides you can choose from
 
 | name| description |
 | --- | ----------- |
-| L | Animate the Scene From Left to Right |
-| R | Animate the Scene From Right to Left |
-| T | Animate the Scene From Top to Bottom |
-| B | Animate the Scene From Bottom to Top |
+| FromLeft | Animate the Scene From Left to Right |
+| FromRight | Animate the Scene From Right to Left |
+| FromTop | Animate the Scene From Top to Bottom |
+| FromBottom | Animate the Scene From Bottom to Top |
+| Static | No animation |
 
-#### Scene Life Cycle
 
-Once you connect your view with `scene` function, `scene` will inject a new props to your component with the name `sceneStatus`
+There is one little thing, every component which decorated with `scene` will have a method called, `updateSceneStatus(status: Status)`. This method will be called based on whether your scene is 
+`Active`, `InActive`, `MightActive` or `MightInActive`. In other words, We are adding 4 more lifecycles to React. remember this is just a utility to help you!
 
-`sceneStatus` can have one of the following values.
+```js
+import React, { Component } from 'react'
+import { scene, Status } from 'scene-router'
+
+@scene({
+  path: '/scene1'
+})
+class MyFirstScene extends Component {
+  updateSceneStatus(status) {
+    switch(status) {
+      case Status.Active:
+        break
+      case Status.InActive:
+        break
+      case Status.MightActive:
+        break
+      case Status.MightInActive:
+        break
+    }
+  }
+
+  render() {
+    ...
+  }
+}
+```
+
+here's a little bit of description:
 
 | value | Description |
 | ----- | ----------- |
-| Activating | when a scene is about to appears |
-| Activated | when the animation is done and scene is visible |
-| Deactivating | when a scene is about to go away or cover by another scene |
-| Deactivated | when a scene is already covered or gone |
-| MightDeactivate | during dragging a scene. the current scene will get this value |
-| MightActivate | the previous and covered scene by current during dragging with get this value|
+| Active | when the animation is done and scene is visible |
+| InActive | when a scene is already covered or gone |
+| MightInActive | during dragging a scene. the current scene will get this value |
+| MightActive | the previous and covered scene by current during dragging with get this value|
 
-#### Area
 
-Area is a component that needs to be places where you need to display the scene. This is the main component of `scene-router`
+### `Router` component
 
-> if you are planning to use `AreaList`, make sure to pass a unique names to each `Area` components by `name` prop.
+the second thing to learn is `Router`. This is your entry point of your app. It has only 3 props, `area`, `action` and `config`.
 
-it has 2 main methods which can be accessed by `ref`
+- `area` is a string which defines an area with a name. if you plan to use tabs, each individual tab must have a unique name, that name can be passed to `area`
+- `action` is a string which accepts either `goto` or `goback`. if you pass `goback`, the 3rd prop, `config`, will be ignored.
+- `config` is defining which `path` you want to go and if you want to override any `scene` configuration.
 
-- goto(path, userOpts)
-
-accepts a path and tries to find the scene related to that path. userOpts is an object contains 2 keys. `props` and `opts`. props the props that you want to send to your component. `opts` is the override values of value `options` which described in first table.
+here's an example of `Router`
 
 ```js
-this.refs['areaRef'].goto('/profile/123', { props:{}, opts: {side: Side.R }})
+import React, { Component } from 'react'
+import { View, Text } from 'react-native'
+import { scene, Router } from 'scene-router`
+
+@scene({
+  path: '/scenes/:id'
+})
+class Scenes extends Component {
+  render() {
+    const { route: { params } } = this.props
+
+    return (
+      <View style={{ flex: 1}}>
+        <Text>{params.id}</Text>
+      </View>
+    )
+  }
+}
+
+class App extends Component {
+  constructor(props: any, context: any) {
+    super(props, context)
+
+    this.state = {
+      area: "default",
+      action: 'goto',
+      config: {
+        path: '/scenes/1'
+      }
+    }
+  }
+
+  render() {
+    const { area, action, config } = this.state
+
+    return (
+      <Router
+        area={area}
+        action={action}
+        config={config} />
+    )
+  }
+}
 ```
 
-- goback(path)
-
-simply returns to the previous scene. if `path` is provided, it goes back to that path.
-
-if you want to `goback` to previous scene, don't provide any `path`.
-
-if the path not found, the `goback` is noop.
-
-#### AreaList
-
-if you plan to implement tabs with scene-router, you should use `AreaList`. This component is wrapping all the `Area` component that you need and you can easily switch
-between them by using `activeArea('name of area')`. Please refer to the example.
-
-`AreaList` has all the methods of `Area` plus `activeArea`.
-
-#### etc
-
-for complex operation, `onGestureClosed` props is added to `Area` and `AreaList`. If user closes the scene by gesture, this callback is being called.
-
-#### performance
-
-in latest React-Native, `useNativeDrive` was introduced to boost performance. you can enable it by using `enableNativeDrive(true)`. This is a global set for all scenes.
-the default value is `false`
-
-```js
-import { enableNativeDrive } from 'scene-router'
-
-enableNativeDrive(true)
-```
-
-## Contributions
-
-Please use it give us feedback and with help of you we can make it better.
+> NOTE `Router` component also accepts one Componet as a child, This Component is being displayed and renderd first before the first route is triggered. this is a good place to put your splash screen.
 
 Cheers.
