@@ -49,10 +49,7 @@ type PanResponderGestureState = {
 }
 
 // constants //////////////////////////////////////////////////////////////////
-
-const window = Dimensions.get('window')
-const isAndroid = Platform.OS === 'android'
-const toolbarHeight = isAndroid ? 25 : 0
+const window = constants.window
 const pointOfView: Point = { x: window.width, y: window.height }
 const startTouchPos: Point = { x: 0, y: 0 }
 
@@ -87,11 +84,8 @@ const calcSide = (side: number): Point => {
       break
 
     case constants.FromBottom:
-      y = 2 * window.height
+      y = 2 * window.height - window.softMenuHeight
       x = window.width
-      if (isAndroid) {
-        y -= toolbarHeight
-      }
       break
 
     case constants.Static:
