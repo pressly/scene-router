@@ -96,7 +96,7 @@ export class App extends Component {
       action: 'goto',
       config: {
         path: '/scene1/1',
-        threshold: 100,
+        threshold: 30,
         side: Side.FromLeft,
         gesture: true
       }

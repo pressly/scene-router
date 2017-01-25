@@ -184,7 +184,8 @@ export class Scene extends Component {
       case constants.FromLeft:
         if (dx < 0) {
           position.x.setValue(startTouchPos.x + dx)
-        }      
+        }
+        break 
       case constants.FromRight:
         if (dx > 0) {
           position.x.setValue(startTouchPos.x + dx)
