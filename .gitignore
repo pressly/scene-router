@@ -38,3 +38,4 @@ npm-debug.log
 
 tmp
 .vscode
+.flowconfig
