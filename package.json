@@ -1,6 +1,6 @@
 {
   "name": "scene-router",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "A complete scene routing library for react native",
   "main": "lib/index.js",
   "scripts": {
