@@ -4,6 +4,8 @@ import React, { Component } from 'react'
 import { Animated, StyleSheet } from 'react-native'
 import { window } from 'react-native-dimensions'
 
+import { sceneManager } from './manager'
+
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
@@ -63,20 +65,30 @@ class Scene extends Component {
   }
 }
 
-type SceneOptions = {
+export type SceneOptions = {
   path: string,
   gesture: boolean,
   state: () => SceneState,
   animations: Animations
 }
 
-export const scene = (options: SceneOptions) => (SceneWrapper: Function): React.Element<any> => {
-  return (
-    <Scene 
-      state={options.state} 
-      animations={options.animations}
-      gesture={options.gesture}>
-      <SceneWrapper />
-    </Scene>
-  )
+export type WrappedSceneProps = {
+  //TODO: need to define props which passes to scene as props.route such as params, path that matched
+}
+
+export const scene = (options: SceneOptions) => (SceneWrapper: Function): Function => {
+  const WrappedScene = (props: WrappedSceneProps): React.Element<any> => {
+    return (
+      <Scene 
+        state={options.state} 
+        animations={options.animations}
+        gesture={options.gesture}>
+        <SceneWrapper route={props}/>
+      </Scene>
+    )
+  }
+
+  sceneManager.register(WrappedScene, options)
+
+  return SceneWrapper
 }
