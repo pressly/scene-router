@@ -1492,6 +1492,10 @@ find-up@^2.1.0:
   dependencies:
     locate-path "^2.0.0"
 
+flow-bin@0.40.0:
+  version "0.40.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.40.0.tgz#e10d60846d923124e47f548f16ba60fd8baff5a5"
+
 for-in@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
@@ -2918,6 +2922,10 @@ react-devtools-core@^2.0.8:
   dependencies:
     cross-env "^3.1.4"
     ws "^2.0.3"
+
+react-native-dimensions@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-dimensions/-/react-native-dimensions-0.0.1.tgz#12c9961411996eaa1946dc6382d633f972c20ff8"
 
 react-native@0.43.3:
   version "0.43.3"
